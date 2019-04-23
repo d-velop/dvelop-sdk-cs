@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Dvelop.Sdk.All</AssemblyName>
+    <RootNamespace>Dvelop.Sdk.All</RootNamespace>
+    <Version>0.0.1</Version>
+    <Copyright>Copyright (c) 2018</Copyright>
+    <Product>TenantMiddleware</Product>
+    <Company>d.velop AG</Company>
   </PropertyGroup>
 
   <ItemGroup>
