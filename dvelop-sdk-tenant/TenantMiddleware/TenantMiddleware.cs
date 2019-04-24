@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace Dvelop.Sdk.TenantMiddleware
+namespace dvelop.TenantMiddleware
 {
     public class TenantMiddleware
     {

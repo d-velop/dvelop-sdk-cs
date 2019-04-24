@@ -2,13 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>Dvelop.Sdk.TenantMiddleware</AssemblyName>
-    <RootNamespace>Dvelop.Sdk.TenantMiddleware</RootNamespace>
+    <AssemblyName>dvelop.TenantMiddleware</AssemblyName>
+    <RootNamespace>dvelop.TenantMiddleware</RootNamespace>
     <Version>0.0.1</Version>
     <Copyright>Copyright (c) 2018</Copyright>
     <Product>TenantMiddleware</Product>
     <Company>d.velop AG</Company>
     <Authors />
+    <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 

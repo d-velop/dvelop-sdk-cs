@@ -1,13 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>dvelop.Sdk</PackageId>
+
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>Dvelop.Sdk.All</AssemblyName>
-    <RootNamespace>Dvelop.Sdk.All</RootNamespace>
+    <AssemblyName>dvelop.Sdk</AssemblyName>
+    <RootNamespace>dvelop.Sdk</RootNamespace>
     <Version>0.0.1</Version>
-    <Copyright>Copyright (c) 2018</Copyright>
-    <Product>TenantMiddleware</Product>
+    <Copyright>Copyright (c) 2019</Copyright>
+    <Product>d.velop cloud SDK</Product>
     <Company>d.velop AG</Company>
+    <IsPackable>true</IsPackable>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageProjectUrl></PackageProjectUrl>
+    
+    <RepositoryUrl>https://github.com/d-velop/dvelop-sdk-cs</RepositoryUrl>
+    
+    <Authors>Christian Kütbach</Authors>
+
   </PropertyGroup>
 
   <ItemGroup>

@@ -5,9 +5,9 @@
 
     <IsPackable>false</IsPackable>
 
-    <AssemblyName>Dvelop.Sdk.TenantMiddleware.UnitTest</AssemblyName>
+    <AssemblyName>dvelop.TenantMiddleware.UnitTest</AssemblyName>
 
-    <RootNamespace>Dvelop.Sdk.TenantMiddleware.UnitTest</RootNamespace>
+    <RootNamespace>dvelop.TenantMiddleware.UnitTest</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
