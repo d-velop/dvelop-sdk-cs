@@ -8,4 +8,4 @@ install:
 script:
 - dotnet build -c Release
 - dotnet test
-- dotnet pack -c Release
+- dotnet pack -c Release --version-suffix $TRAVIS_BUILD_NUMBER

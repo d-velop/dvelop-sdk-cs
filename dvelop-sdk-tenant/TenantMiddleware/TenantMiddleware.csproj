@@ -1,16 +1,19 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>dvelop.Sdk.TenantMiddleware</PackageId>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>dvelop.TenantMiddleware</AssemblyName>
     <RootNamespace>dvelop.TenantMiddleware</RootNamespace>
     <Version>0.0.1</Version>
-    <Copyright>Copyright (c) 2018</Copyright>
+    <Copyright>Copyright (c) 2019</Copyright>
     <Product>TenantMiddleware</Product>
     <Company>d.velop AG</Company>
     <Authors />
     <IsPackable>true</IsPackable>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/d-velop/dvelop-sdk-cs</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
