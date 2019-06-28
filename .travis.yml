@@ -4,6 +4,7 @@ dotnet: 2.1.603
 
 install:
 - dotnet restore
+- echo $TRAVIS_BUILD_NUMBER
 
 script:
 - dotnet build -c Release
