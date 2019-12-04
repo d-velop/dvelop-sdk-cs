@@ -1,8 +1,9 @@
 language: csharp
 mono: none
-dotnet: 2.1.603
+dotnet: 2.1.802
+solution: DvelopSdk.sln
 
-install:
+script:
 - dotnet restore
 - bash travis/deploy.sh
 
