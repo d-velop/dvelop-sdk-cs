@@ -1,11 +1,10 @@
 export VERSION=$(<./version.txt)
 
 echo $TRAVIS_BUILD_NUMBER
-echo $SOMEVAR
 
 echo "clean"
 dotnet clean
-
+dotnet build -c Release
 if [ ! -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == 'false' ]; then
     echo "pack release"
     dotnet pack -c Release /p:Version=$VERSION.$TRAVIS_BUILD_NUMBER /p:InformationalVersion="$VERSION+$TRAVIS_BRANCH/$TRAVIS_COMMIT"

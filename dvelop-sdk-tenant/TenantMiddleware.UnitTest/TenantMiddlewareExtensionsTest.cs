@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace dvelop.TenantMiddleware.UnitTest
+namespace Dvelop.Sdk.TenantMiddleware.UnitTest
 {
     [TestClass]
     public class TenantMiddlewareExtensionsTest

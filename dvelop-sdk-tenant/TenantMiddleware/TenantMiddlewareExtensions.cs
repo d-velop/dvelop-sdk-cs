@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
 
-namespace dvelop.TenantMiddleware
+namespace Dvelop.Sdk.TenantMiddleware
 {
     public static class TenantMiddlewareExtensions
     {

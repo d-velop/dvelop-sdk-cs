@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <IsPackable>false</IsPackable>
-    <AssemblyName>dvelop.TenantMiddleware.UnitTest</AssemblyName>
-    <RootNamespace>dvelop.TenantMiddleware.UnitTest</RootNamespace>
+    <AssemblyName>Dvelop.Sdk.TenantMiddleware.UnitTest</AssemblyName>
+    <RootNamespace>Dvelop.Sdk.TenantMiddleware.UnitTest</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

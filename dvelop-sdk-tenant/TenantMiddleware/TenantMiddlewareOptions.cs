@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace dvelop.TenantMiddleware
+namespace Dvelop.Sdk.TenantMiddleware
 {
 
     public enum TenantMiddlewareLogLevel

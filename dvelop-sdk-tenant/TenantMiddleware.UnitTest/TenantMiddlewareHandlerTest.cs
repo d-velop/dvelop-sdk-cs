@@ -2,7 +2,7 @@
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace dvelop.TenantMiddleware.UnitTest
+namespace Dvelop.Sdk.TenantMiddleware.UnitTest
 {
     [TestClass]
     public class TenantMiddlewareHandlerTest

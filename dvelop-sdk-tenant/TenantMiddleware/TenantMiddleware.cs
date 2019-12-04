@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace dvelop.TenantMiddleware
+namespace Dvelop.Sdk.TenantMiddleware
 {
     public class TenantMiddleware
     {
@@ -72,8 +72,8 @@ namespace dvelop.TenantMiddleware
                 else
                 {
                     var encoding = new ASCIIEncoding();
-                    string data = systemBaseUriFromHeader + tenantIdFromHeader;
-                    tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Debug, $"Signature will be calulated using '{data}'");
+                    var data = systemBaseUriFromHeader + tenantIdFromHeader;
+                    tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Debug, $"Signature will be calculated using '{data}'");
                     var messageBytes = encoding.GetBytes(data);
                     try
                     {

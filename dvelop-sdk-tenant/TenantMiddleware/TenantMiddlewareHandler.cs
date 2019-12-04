@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace dvelop.TenantMiddleware
+namespace Dvelop.Sdk.TenantMiddleware
 {
     public class TenantMiddlewareHandler : DelegatingHandler
     {

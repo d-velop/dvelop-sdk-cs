@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace dvelop.TenantMiddleware.UnitTest
+namespace Dvelop.Sdk.TenantMiddleware.UnitTest
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     [ExcludeFromCodeCoverage]
