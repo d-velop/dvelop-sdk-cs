@@ -5,8 +5,11 @@ dotnet: 2.1.603
 install:
 - dotnet restore
 - echo $TRAVIS_BUILD_NUMBER
+- echo $SOMEVAR
 
 script:
-- dotnet build -c Release
-- dotnet test
-- dotnet pack -c Release --version-suffix $TRAVIS_BUILD_NUMBER
+- ./travis/build.sh
+
+env:
+  global:
+    secure: FwJFP9OF4fyPZlZOUfYi/7+OR0mKyMBbmHWv9xDtYAYRZYDuctfauZOHahVa0cQ/P1l6yDHPSAmeM9ruBKbCfnOpma5BuB563ghYPwA+aMXWc1HrT1PjwGUOJVvPl2/JVfFLXODK4HqnUa4Xwzfl/93Sf9cNwOFPqgdPbk/g+/6/QXVdbrQPL5bEpzCc9l1D/hOUTWN8fZagsZYQ0Zet42meW+JTBS1LPwmu+v603qqjwR8AGnaTMX/T2ctw80z2RKvMelo7DEFSn2qEqCWCi/BVeeub4X3cQKA14FrlFy1D21zeucTuGAqGA2qukW5vjKG8jinS/hrir6LsnT11O1BHV3ocuft5T7ZuSEcAb5zongr0W9DPhpGmZtTEKsVMImze16SDygTfFVVr9W70S6NFJ+vbvwq98jIIyOW8VZoC3hym3+5STsnHbj0GIGycrQWyFYXvriWLSe9zkN8Z+iYBnqyTPfm+FkKKv+eKmcquzH8gna5fNLYu2CXrXxwyDyLmX2XnkuwJbVnifrAijxTcRS0OoGH6bELUQ4dDexZScnvMt/ucdWJAjQNF5kZwiapp7lYdXSo0+O5SXwvIBwAYnmZylb5+L2S2Q7TUJI/mkm9kXmE1sTzHJCntBnJhvyBzhxIuiXEawl6dfIEv7MFQ8cMsYPvIWPW+hzYkXP0=
