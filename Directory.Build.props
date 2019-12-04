@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <Company>d.velop AG</Company>
+    <Copyright>Copyright (c) 2019</Copyright>
+    <PackageProjectUrl>https://github.com/d-velop/dvelop-sdk-cs</PackageProjectUrl>
+  </PropertyGroup>
+</Project>
