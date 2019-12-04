@@ -4,11 +4,13 @@ dotnet: 2.1.603
 
 install:
 - dotnet restore
-- echo $TRAVIS_BUILD_NUMBER
-- echo $SOMEVAR
 
-script:
-- ./travis/build.sh
+deploy:
+  provider: script
+  script: ./travis/deploy.sh
+#  on:
+#    all_branches: true
+#    condition: $TRAVIS_TAG =~ ^dvelop-sdk-[0-9]+\.[0-9]+\.[0-9]+
 
 env:
   global:
