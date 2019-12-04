@@ -5,7 +5,7 @@ dotnet: 2.1.603
 install:
 - dotnet restore
 
-deploy:
+script:
   provider: script
   script: ./travis/deploy.sh
 #  on:
