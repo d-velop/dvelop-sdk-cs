@@ -1,4 +1,4 @@
-export VERSION=$(<../version.txt)
+export VERSION=$(<./version.txt)
 
 echo $TRAVIS_BUILD_NUMBER
 echo $SOMEVAR
