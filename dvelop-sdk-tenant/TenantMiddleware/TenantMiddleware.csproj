@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Dvelop.Sdk.TenantMiddleware</PackageId>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Dvelop.Sdk.TenantMiddleware</AssemblyName>
+    <RootNamespace>Dvelop.Sdk.TenantMiddleware</RootNamespace>
+    <VersionPrefix>0.0.1</VersionPrefix>
+    <Copyright>Copyright (c) 2019</Copyright>
+    <Product>TenantMiddleware</Product>
+    <Company>d.velop AG</Company>
+    <Authors />
+    <IsPackable>true</IsPackable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/d-velop/dvelop-sdk-cs</PackageProjectUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.1" />
+  </ItemGroup>
+
+</Project>
