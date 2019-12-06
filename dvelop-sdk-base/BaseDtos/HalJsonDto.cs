@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Dvelop.Sdk.Base.Dtos
+namespace Dvelop.Sdk.Base.Dto
 {
     public class HalJsonDto
     {
