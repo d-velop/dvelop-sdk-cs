@@ -10,10 +10,13 @@ echo ${TRAVIS_BUILD_NUMBER}
 echo "clean"
 dotnet clean
 
-echo "build"
-dotnet build -c Release
+echo "test"
+dotnet test --logger:"console;verbosity=normal"
 
 if [[ ${TRAVIS_PULL_REQUEST} == 'false' ]]; then
+
+echo "build"
+dotnet build -c Release
 
     if [[ ! -z ${TRAVIS_TAG} ]]; then
         echo "pack release"
