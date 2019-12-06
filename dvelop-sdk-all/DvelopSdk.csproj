@@ -22,6 +22,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\dvelop-sdk-base\BaseDtos\BaseDtos.csproj" />
+    <ProjectReference Include="..\dvelop-sdk-config\ConfigAppDtos\ConfigAppDtos.csproj" />
     <ProjectReference Include="..\dvelop-sdk-tenant\TenantMiddleware\TenantMiddleware.csproj" />
   </ItemGroup>
 

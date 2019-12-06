@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Dvelop.Sdk.Base.Dtos</AssemblyName>
+    <RootNamespace>Dvelop.Sdk.Base.Dtos</RootNamespace>
+  </PropertyGroup>
+
+</Project>
