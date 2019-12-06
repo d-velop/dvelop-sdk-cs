@@ -12,7 +12,7 @@
     <Company>d.velop AG</Company>
     <IsPackable>true</IsPackable>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageProjectUrl></PackageProjectUrl>
     
     <RepositoryUrl>https://github.com/d-velop/dvelop-sdk-cs</RepositoryUrl>

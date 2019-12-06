@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Dvelop.Sdk.Base.Dtos;
 
 namespace Dvelop.Sdk.Config.Dto
 {
