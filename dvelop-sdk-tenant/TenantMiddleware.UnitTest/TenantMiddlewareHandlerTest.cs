@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Dvelop.Sdk.TenantMiddleware.UnitTest
 {
     [TestClass]
+    [ExcludeFromCodeCoverage]
     public class TenantMiddlewareHandlerTest
     {
         [TestMethod, UnitUnderTest(typeof(TenantMiddlewareHandler))]

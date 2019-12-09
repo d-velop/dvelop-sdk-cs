@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+
 namespace Dvelop.Sdk.TenantMiddleware.UnitTest
 {
     [TestClass]
+    [ExcludeFromCodeCoverage]
     public class TenantMiddlewareExtensionsTest
     {
         [TestMethod, UnitUnderTest(typeof(TenantMiddlewareExtensions))]
@@ -69,9 +72,6 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
 
         public IFeatureCollection ServerFeatures { get; }
 
-        public IDictionary<string, object> Properties
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public IDictionary<string, object> Properties => throw new NotImplementedException();
     }
 }
