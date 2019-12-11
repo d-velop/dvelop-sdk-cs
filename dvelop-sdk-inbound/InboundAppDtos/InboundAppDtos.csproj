@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Dvelop.Sdk.Inbound.Dto</AssemblyName>
+    <RootNamespace>Dvelop.Sdk.Inbound.Dto</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\dvelop-sdk-base\BaseDtos\BaseDtos.csproj" />
+  </ItemGroup>
+
+</Project>

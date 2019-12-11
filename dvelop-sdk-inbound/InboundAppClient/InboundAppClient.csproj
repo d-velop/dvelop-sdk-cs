@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Dvelop.Sdk.Inbound.Client</AssemblyName>
+    <RootNamespace>Dvelop.Sdk.Inbound.Client</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\InboundAppDtos\InboundAppDtos.csproj" />
+  </ItemGroup>
+
+</Project>
