@@ -1,0 +1,23 @@
+﻿using System;
+using Dvelop.Sdk.IdentityProvider.Client;
+
+namespace Dvelop.Sdk.IdentityProvider.Middleware
+{
+    public class IdentityProviderOptions
+    {
+        public IdentityProviderOptions()
+        {
+            BaseAddress = new Uri("http://localhost");
+            TriggerAuthentication = false;
+            AllowExternalValidation = false;
+        }
+
+        public Uri BaseAddress { get; set; }
+
+        public bool TriggerAuthentication { get; set; }
+
+        public Func<TenantInformation> TenantInformationCallback { get; set; }
+        
+        public bool AllowExternalValidation { get; set; }
+    }
+}

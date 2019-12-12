@@ -7,14 +7,19 @@ The project has alpha status. **So for now expect things to change.**
 
 ## Usage
 
-*For now, the sources of this SDK are not available here at [github.com](https://github.com/d-velop/dvelop-sdk-cs) (obviously). That is why we also did not made the binary distribution searchable.*
-
 Include the the d.velop cloud sdk as dependencies in your .NET Core 2.1 project file (`myproject.csproj`) and restore them with `dotnet restore` via commandline or from within your IDE.
 
 ```xml
 <ItemGroup>
-    <PackageReference Include="dvelop.IdentityProviderClient" Version="2.1.2" />
-    <PackageReference Include="dvelop.TenantMiddleware" Version="1.0.2" />
+    <PackageReference Include="Dvelop.Sdk." Version="0.0.1.28-prerelease" />
+</ItemGroup>
+```
+
+or the all-in-one dependency:
+
+```xml
+<ItemGroup>
+    <PackageReference Include="Dvelop.Sdk" Version="0.0.1.28-prerelease" />
 </ItemGroup>
 ```
 

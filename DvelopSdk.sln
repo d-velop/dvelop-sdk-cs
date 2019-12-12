@@ -32,6 +32,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeDtos", "dvelop-sdk-home
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dvelop-sdk-home", "dvelop-sdk-home", "{B85EB925-208C-4FD6-BC8A-7F3652533DA0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dvelop-sdk-identityprovider", "dvelop-sdk-identityprovider", "{FCF090E3-7025-463B-A453-A8501538F4CB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityProviderDtos", "dvelop-sdk-identityprovider\IdentityProviderDtos\IdentityProviderDtos.csproj", "{DC75E76E-24B2-464A-BD00-FE3FD9BE6E5C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityProviderClient", "dvelop-sdk-identityprovider\IdentityProviderClient\IdentityProviderClient.csproj", "{7DE4122C-9912-4873-9282-EAB61813A206}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityProviderMiddleware", "dvelop-sdk-identityprovider\IdentityProviderMiddleware\IdentityProviderMiddleware.csproj", "{E7ABBF92-ACFB-4B74-ACE0-771CD598BE66}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityProviderMiddleware.UnitTest", "dvelop-sdk-identityprovider\IdentityProviderMiddleware.UnitTest\IdentityProviderMiddleware.UnitTest.csproj", "{CE1AAD0D-7893-4180-ACB6-017880225D42}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +72,22 @@ Global
 		{748C3C4B-4230-4A09-A478-4141CC9CEBD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{748C3C4B-4230-4A09-A478-4141CC9CEBD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{748C3C4B-4230-4A09-A478-4141CC9CEBD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC75E76E-24B2-464A-BD00-FE3FD9BE6E5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC75E76E-24B2-464A-BD00-FE3FD9BE6E5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC75E76E-24B2-464A-BD00-FE3FD9BE6E5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC75E76E-24B2-464A-BD00-FE3FD9BE6E5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DE4122C-9912-4873-9282-EAB61813A206}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DE4122C-9912-4873-9282-EAB61813A206}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DE4122C-9912-4873-9282-EAB61813A206}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DE4122C-9912-4873-9282-EAB61813A206}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7ABBF92-ACFB-4B74-ACE0-771CD598BE66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7ABBF92-ACFB-4B74-ACE0-771CD598BE66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7ABBF92-ACFB-4B74-ACE0-771CD598BE66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7ABBF92-ACFB-4B74-ACE0-771CD598BE66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE1AAD0D-7893-4180-ACB6-017880225D42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE1AAD0D-7893-4180-ACB6-017880225D42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE1AAD0D-7893-4180-ACB6-017880225D42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE1AAD0D-7893-4180-ACB6-017880225D42}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,6 +99,10 @@ Global
 		{FEB1232C-C976-4E7E-9792-7EB78FCFBAAF} = {7DE66CAF-5879-447A-B24A-D028B850930D}
 		{FD69FF55-33C3-4EE3-8230-697A59439029} = {F992A8F0-E3DA-4ABF-9817-7663F66852EB}
 		{748C3C4B-4230-4A09-A478-4141CC9CEBD8} = {B85EB925-208C-4FD6-BC8A-7F3652533DA0}
+		{DC75E76E-24B2-464A-BD00-FE3FD9BE6E5C} = {FCF090E3-7025-463B-A453-A8501538F4CB}
+		{7DE4122C-9912-4873-9282-EAB61813A206} = {FCF090E3-7025-463B-A453-A8501538F4CB}
+		{E7ABBF92-ACFB-4B74-ACE0-771CD598BE66} = {FCF090E3-7025-463B-A453-A8501538F4CB}
+		{CE1AAD0D-7893-4180-ACB6-017880225D42} = {FCF090E3-7025-463B-A453-A8501538F4CB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DE71353A-0FC5-4E2E-9DB1-4E09961F1201}

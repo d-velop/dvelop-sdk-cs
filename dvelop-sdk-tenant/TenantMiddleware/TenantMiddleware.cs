@@ -52,6 +52,7 @@ namespace Dvelop.Sdk.TenantMiddleware
         internal static HttpStatusCode Invoke(TenantMiddlewareOptions tenantMiddlewareOptions, string systemBaseUriFromHeader,
             string tenantIdFromHeader, string base64Signature)
         {
+            tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Debug, $"TenantMiddleware invoke started with {systemBaseUriFromHeader}, {tenantIdFromHeader}, {base64Signature}");
             if (systemBaseUriFromHeader != null || tenantIdFromHeader != null)
             {
                 if (base64Signature == null)
