@@ -39,10 +39,10 @@ namespace Dvelop.Sdk.IdentityProvider.Client
         private readonly Func<TenantInformation> _tenantInformationCallback;
         private readonly bool _allowExternalValidation;
 
-        public IdentityProviderClient(HttpClient client, Func<TenantInformation> tenantInformationCallback,
+        public IdentityProviderClient(HttpClient httpClient, Func<TenantInformation> tenantInformationCallback,
             bool allowExternalValidation = false)
         {
-            _httpClient = client ?? throw new ArgumentNullException(nameof(client));
+            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             _tenantInformationCallback = tenantInformationCallback ?? throw new ArgumentNullException(nameof(tenantInformationCallback));
             _allowExternalValidation = allowExternalValidation;
         }

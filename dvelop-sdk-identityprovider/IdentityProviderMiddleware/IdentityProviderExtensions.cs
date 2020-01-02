@@ -15,18 +15,6 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
         {
             app.UseMiddleware<IdentityProviderMiddleware>(options??new IdentityProviderOptions());
         }
-        /*
-        public static void AddApiKey(this HttpClient httpClient, string apiKey)
-        {
-            //TODO
-        }
-        */
-        public static void AddSession(this HttpClient httpClient, HttpContext context)
-        {
-            var sessionId = context.GetAuthSessionId();
-            if (string.IsNullOrEmpty(sessionId)) return;
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessionId);
-        }
 
         private static string GetAuthSessionId(this HttpContext context)
         {

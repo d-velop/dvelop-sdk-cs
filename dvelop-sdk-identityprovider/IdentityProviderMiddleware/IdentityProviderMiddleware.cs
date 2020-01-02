@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Dvelop.Sdk.IdentityProvider.Client;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Primitives;
 
 namespace Dvelop.Sdk.IdentityProvider.Middleware
 {
@@ -61,7 +58,8 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
                     querystring += "&";
                 querystring += query.Key + "=" + query.Value;
             }
-            string logonuri = context.Request.Path;
+            string logonuri = context.Request.PathBase + context.Request.Path;
+
             if (!string.IsNullOrWhiteSpace(querystring))
             {
                 logonuri += "?" + querystring;
