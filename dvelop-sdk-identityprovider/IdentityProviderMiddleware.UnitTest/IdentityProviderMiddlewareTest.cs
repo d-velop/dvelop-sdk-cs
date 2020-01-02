@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
+using Dvelop.Sdk.IdentityProvider.Client;
 using Dvelop.Sdk.IdentityProvider.Middleware;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
@@ -150,13 +151,14 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             var client = new HttpClient(_fakeMessageHandler.Object);
             var nextMiddleware = new MiddlewareMock(null);
             await new IdentityProvider.Middleware.IdentityProviderMiddleware(nextMiddleware.InvokeAsync,
-                    new IdentityProviderOptions()
+                    new IdentityProviderOptions
                     {
                         BaseAddress = new Uri(DefaultSystemBaseUri),
                         TriggerAuthentication = false,
                         AllowExternalValidation = allowExternalValidation,
-                        TenantInformationCallback = null
-                    }, client)
+                        TenantInformationCallback = () => new TenantInformation{ TenantId = "0", SystemBaseUri = "https://localhost"},
+                        HttpClient = client
+                    })
                 .Invoke(context);
 
             context.Response.StatusCode.Should().Be(expectedStatus);

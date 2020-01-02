@@ -33,20 +33,17 @@ namespace Dvelop.Sdk.IdentityProvider.Client
 
         
         //TODO: evaluate https://docs.microsoft.com/de-de/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests
-        private static readonly HttpClient HttpClient = new HttpClient();
-        //private readonly HttpClient _httpClient;
+        private readonly HttpClient _httpClient;
         private readonly IdentityProviderSessionStore _sessionStore = new IdentityProviderSessionStore();
 
-        private readonly string _defaultSystemBaseUri;
         private readonly Func<TenantInformation> _tenantInformationCallback;
         private readonly bool _allowExternalValidation;
 
-        public IdentityProviderClient(Uri systemBaseUri, Func<TenantInformation> tenantInformationCallback = null,
+        public IdentityProviderClient(HttpClient client, Func<TenantInformation> tenantInformationCallback,
             bool allowExternalValidation = false)
         {
-            
-            _defaultSystemBaseUri = systemBaseUri.ToString();
-            _tenantInformationCallback = tenantInformationCallback;
+            _httpClient = client ?? throw new ArgumentNullException(nameof(client));
+            _tenantInformationCallback = tenantInformationCallback ?? throw new ArgumentNullException(nameof(tenantInformationCallback));
             _allowExternalValidation = allowExternalValidation;
         }
 
@@ -58,17 +55,9 @@ namespace Dvelop.Sdk.IdentityProvider.Client
 
         public async Task<ClaimsPrincipal> GetClaimsPrincipalAsync(string authSessionId)
         {
-            var tenantId = "0";
-            var systemBaseUri = _defaultSystemBaseUri;
-            if (_tenantInformationCallback == null)
-            {
-                return _sessionStore.GetPrincipal(authSessionId + "-" + tenantId) ??
-                       await CreatePrincipalAsync(authSessionId, tenantId, systemBaseUri).ConfigureAwait(false);
-            }
-
             var tenantInformation = _tenantInformationCallback();
-            tenantId = tenantInformation.TenantId;
-            systemBaseUri = tenantInformation.SystemBaseUri;
+            var tenantId = tenantInformation.TenantId;
+            var systemBaseUri = tenantInformation.SystemBaseUri;
 
             return _sessionStore.GetPrincipal(authSessionId + "-" + tenantId) ??
                    await CreatePrincipalAsync(authSessionId, tenantId, systemBaseUri).ConfigureAwait(false);
@@ -76,16 +65,13 @@ namespace Dvelop.Sdk.IdentityProvider.Client
 
         public async Task<AuthSessionInfoDto> GetAuthSessionIdFromApiKey(string apiKey)
         {
-            var systemBaseUri = _defaultSystemBaseUri;
-            if (_tenantInformationCallback != null)
-            {
-                var tenantInformation = _tenantInformationCallback();
-                systemBaseUri = tenantInformation.SystemBaseUri;
-            }
 
+            var tenantInformation = _tenantInformationCallback();
+            var systemBaseUri = tenantInformation.SystemBaseUri;
+            
             var loginUri = systemBaseUri + IDPBASE + IDP_LOGIN;
 
-            var response = await HttpClient.SendAsync(
+            var response = await _httpClient.SendAsync(
                 new HttpRequestMessage(HttpMethod.Get, loginUri)
                 {
                     Headers =
@@ -147,7 +133,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
                 validateUri += IDP_QUERY_EXTERNAL;
             }
 
-            var response = await HttpClient.SendAsync(
+            var response = await _httpClient.SendAsync(
                 new HttpRequestMessage(HttpMethod.Get, validateUri)
                 {
                     Headers =

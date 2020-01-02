@@ -17,10 +17,10 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
         private readonly RequestDelegate _next;
         
 
-        public IdentityProviderMiddleware(RequestDelegate next, IdentityProviderOptions options, HttpClient client)
+        public IdentityProviderMiddleware(RequestDelegate next, IdentityProviderOptions options)
         {
             _next = next;
-            _identityProviderClient = new IdentityProviderClient(client, options.BaseAddress, options.TenantInformationCallback, options.AllowExternalValidation);
+            _identityProviderClient = new IdentityProviderClient( options.HttpClient,  options.TenantInformationCallback, options.AllowExternalValidation);
         }
         
         private bool RedirectToLogin(HttpContext context)

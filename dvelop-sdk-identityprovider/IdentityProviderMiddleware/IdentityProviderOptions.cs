@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using Dvelop.Sdk.IdentityProvider.Client;
 
 namespace Dvelop.Sdk.IdentityProvider.Middleware
@@ -19,5 +20,7 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
         public Func<TenantInformation> TenantInformationCallback { get; set; }
         
         public bool AllowExternalValidation { get; set; }
+
+        public HttpClient HttpClient { get; set; }
     }
 }
