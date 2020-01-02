@@ -33,18 +33,18 @@ namespace Dvelop.Sdk.IdentityProvider.Client
 
         
         //TODO: evaluate https://docs.microsoft.com/de-de/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests
-        //private static readonly HttpClient HttpClient = new HttpClient();
-        private readonly HttpClient _httpClient;
+        private static readonly HttpClient HttpClient = new HttpClient();
+        //private readonly HttpClient _httpClient;
         private readonly IdentityProviderSessionStore _sessionStore = new IdentityProviderSessionStore();
 
         private readonly string _defaultSystemBaseUri;
         private readonly Func<TenantInformation> _tenantInformationCallback;
         private readonly bool _allowExternalValidation;
 
-        public IdentityProviderClient(HttpClient httpClient, Uri systemBaseUri, Func<TenantInformation> tenantInformationCallback = null,
+        public IdentityProviderClient(Uri systemBaseUri, Func<TenantInformation> tenantInformationCallback = null,
             bool allowExternalValidation = false)
         {
-            _httpClient = httpClient;
+            
             _defaultSystemBaseUri = systemBaseUri.ToString();
             _tenantInformationCallback = tenantInformationCallback;
             _allowExternalValidation = allowExternalValidation;
@@ -85,7 +85,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
 
             var loginUri = systemBaseUri + IDPBASE + IDP_LOGIN;
 
-            var response = await _httpClient.SendAsync(
+            var response = await HttpClient.SendAsync(
                 new HttpRequestMessage(HttpMethod.Get, loginUri)
                 {
                     Headers =
@@ -147,7 +147,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
                 validateUri += IDP_QUERY_EXTERNAL;
             }
 
-            var response = await _httpClient.SendAsync(
+            var response = await HttpClient.SendAsync(
                 new HttpRequestMessage(HttpMethod.Get, validateUri)
                 {
                     Headers =
