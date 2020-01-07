@@ -14,5 +14,14 @@ namespace Dvelop.Sdk.Base.Dto
         
         // ReSharper disable once InconsistentNaming
         public Dictionary<string, object> _embedded { get; set; }
+        
+        public bool ShouldSerialize_links()
+        {
+            return _links?.Count > 0;
+        }
+        public bool ShouldSerialize_embedded()
+        {
+            return _embedded?.Count > 0;
+        }
     }
 }
