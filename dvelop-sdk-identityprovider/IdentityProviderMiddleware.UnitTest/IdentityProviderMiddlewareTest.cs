@@ -153,7 +153,6 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             await new IdentityProvider.Middleware.IdentityProviderMiddleware(nextMiddleware.InvokeAsync,
                     new IdentityProviderOptions
                     {
-                        BaseAddress = new Uri(DefaultSystemBaseUri),
                         TriggerAuthentication = false,
                         AllowExternalValidation = allowExternalValidation,
                         TenantInformationCallback = () => new TenantInformation{ TenantId = "0", SystemBaseUri = "https://localhost"},
