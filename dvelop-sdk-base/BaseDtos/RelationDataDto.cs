@@ -10,5 +10,10 @@
         public string Href { get; set; }
 
         public bool Templated { get; set; }
+
+        public bool ShouldSerializeTemplated()
+        {
+            return Templated;
+        }
     }
 }
