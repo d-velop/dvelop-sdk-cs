@@ -1,6 +1,6 @@
 language: csharp
 mono: none
-dotnet: 2.1.804
+dotnet: 2.1.609
 solution: DvelopSdk.sln
 script:
 - dotnet restore
