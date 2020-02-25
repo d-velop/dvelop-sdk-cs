@@ -4,6 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Dvelop.Sdk.IdentityProvider.Middleware</AssemblyName>
     <RootNamespace>Dvelop.Sdk.IdentityProvider.Middleware</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

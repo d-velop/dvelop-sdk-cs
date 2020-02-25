@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using Dvelop.Sdk.Base.Dto;
 
 namespace Dvelop.Sdk.Config.Dto
 {
-    public class ConfigFeatureDto
+    public class ConfigFeatureDto: HalJsonDto
     {
         public string AppName { get; set; }
         public List<PredefinedHeadlineDto> PredefinedHeadlines { get; set; }

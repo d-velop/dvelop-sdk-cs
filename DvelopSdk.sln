@@ -22,7 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dvelop-sdk-config", "dvelop-sdk-config", "{7DE66CAF-5879-447A-B24A-D028B850930D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigAppDtos", "dvelop-sdk-config\ConfigAppDtos\ConfigAppDtos.csproj", "{FEB1232C-C976-4E7E-9792-7EB78FCFBAAF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigDtos", "dvelop-sdk-config\ConfigDtos\ConfigDtos.csproj", "{FEB1232C-C976-4E7E-9792-7EB78FCFBAAF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dvelop-sdk-base", "dvelop-sdk-base", "{F992A8F0-E3DA-4ABF-9817-7663F66852EB}"
 EndProject

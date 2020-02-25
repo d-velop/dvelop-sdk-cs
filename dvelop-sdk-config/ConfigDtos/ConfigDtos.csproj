@@ -6,4 +6,8 @@
     <RootNamespace>Dvelop.Sdk.Config.Dto</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\dvelop-sdk-base\BaseDtos\BaseDtos.csproj" />
+  </ItemGroup>
+
 </Project>
