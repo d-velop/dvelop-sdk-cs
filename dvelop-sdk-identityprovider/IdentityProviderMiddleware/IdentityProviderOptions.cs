@@ -9,13 +9,10 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
         public IdentityProviderOptions()
         {
             BaseAddress = new Uri("http://localhost");
-            TriggerAuthentication = false;
             AllowExternalValidation = false;
         }
 
         public Uri BaseAddress { get; set; }
-
-        public bool TriggerAuthentication { get; set; }
 
         public Func<TenantInformation> TenantInformationCallback { get; set; }
         

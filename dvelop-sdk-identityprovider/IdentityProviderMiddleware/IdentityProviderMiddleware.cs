@@ -13,15 +13,27 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
     {
         private readonly IdentityProviderClient _identityProviderClient;
         private readonly RequestDelegate _next;
-        private readonly bool _triggerAuthentication;
 
         public IdentityProviderMiddleware(RequestDelegate next, IdentityProviderOptions options)
         {
             _next = next;
-            _triggerAuthentication = options.TriggerAuthentication;
-            _identityProviderClient = new IdentityProviderClient( options.HttpClient,  options.TenantInformationCallback, options.AllowExternalValidation);
+            _identityProviderClient = new IdentityProviderClient( options.HttpClient, options.TenantInformationCallback, options.AllowExternalValidation);
         }
         
+        public async Task Invoke(HttpContext context)
+        {
+            var sessionId = context.GetAuthSessionId();
+           
+            if (!string.IsNullOrWhiteSpace(sessionId))
+            {
+                context.User = await _identityProviderClient.GetClaimsPrincipalAsync(sessionId);
+            }
+            
+            if (RequestRedirectedToLogin(context))
+                return;
+            
+            await _next.Invoke(context);
+        }
         
         private bool RequestRedirectedToLogin(HttpContext context)
         {
@@ -31,7 +43,7 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
             {
                 return false;
             }
-            
+      
             if (HandleUnauthorizedRequest(context))
             {
                 return true;
@@ -82,45 +94,7 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
 
         }
 
-        public async Task Invoke(HttpContext context)
-        {
-            var sessionId = context.GetAuthSessionIdFromCookie();
-            if (string.IsNullOrWhiteSpace(sessionId))
-            {
-                sessionId = context.GetAuthSessionIdFromHeader();
-                
-            }
-            if (!string.IsNullOrWhiteSpace(sessionId))
-            {
-                context.User = await _identityProviderClient.GetClaimsPrincipalAsync(sessionId);
-            }
-
-            var bearerTokenReceived = !string.IsNullOrWhiteSpace(sessionId);
-            
-            
-            if (bearerTokenReceived && (context.User?.Identity == null || string.IsNullOrWhiteSpace(context.User.Identity.Name)))
-            {
-                if (HandleUnauthorizedRequest(context))
-                {
-                    return;
-                }
-            }
-
-            if (_triggerAuthentication)
-            {
-                context.Response.OnStarting(state =>
-                {
-                    if (context.Response.StatusCode != (int)HttpStatusCode.Unauthorized || bearerTokenReceived)
-                        return Task.FromResult(false);
-                    return Task.FromResult(RequestRedirectedToLogin(context));
-                }, context.Response);
-            }
-            
-            if (RequestRedirectedToLogin(context))
-                return;
-            
-            await _next.Invoke(context);
-        }
+        
         
         private static IEnumerable<MediaTypeWithQualityHeaderValue> GetMediaTypes(string headerValues)
         {

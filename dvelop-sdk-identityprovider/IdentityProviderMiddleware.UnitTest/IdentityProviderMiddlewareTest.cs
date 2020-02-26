@@ -99,7 +99,6 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             await TestMiddleWare(requestMethod,requestHeader,requestUri,expectedStatus,expectedResponseHeader,allowExternalValidation);
         }
 
-        
         private static IEnumerable<object[]> GetTestNoAuthSessionIdAndGetRequestAndAcceptHeaderIsData()
         {
             yield return new object[]{"", true};
@@ -166,7 +165,6 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
                     new IdentityProviderOptions
                     {
                         BaseAddress = new Uri(DEFAULT_SYSTEM_BASE_URI),
-                        TriggerAuthentication = true,
                         AllowExternalValidation = allowExternalValidation,
                         TenantInformationCallback = () => new TenantInformation{ TenantId = "0", SystemBaseUri = "https://localhost"},
                         HttpClient = client
@@ -175,11 +173,12 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             
             context.Response.StatusCode.Should().Be(expectedStatus);
             
+            
+            nextMiddleware.HasBeenInvoked.Should().BeFalse("next middleware should not have been invoked if signature is wrong");
             foreach (var (key, value) in expectedResponseHeader)
             {
                 context.Response.Headers[key].ToString().Should().BeEquivalentTo(value);
             }
-            nextMiddleware.HasBeenInvoked.Should().BeFalse("next middleware should not have been invoked if signature is wrong");
         }
         
         //Used by Tests to create a readable TestName
@@ -191,20 +190,21 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
 
         private class MiddlewareMock 
         {
+            private readonly RequestDelegate _next;
             public bool HasBeenInvoked { get; private set; }
-
-            // ReSharper disable once UnusedParameter.Local
-            public MiddlewareMock(RequestDelegate next) 
+            
+            public MiddlewareMock(RequestDelegate next)
             {
+                _next = next;
             }
 
             public async Task InvokeAsync(HttpContext context)
             {
                 HasBeenInvoked = true;
                 context.Response.Body = new MemoryStream();
-                context.Response.StatusCode = 200;
-                context.Response.Headers.Add("x-dv-test", "value");
-                await Task.FromResult(0);
+                context.Response.StatusCode = 401;
+                
+                await _next(context);
             }
         }
         

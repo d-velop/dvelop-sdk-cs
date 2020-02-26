@@ -23,7 +23,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\dvelop-sdk-base\BaseDtos\BaseDtos.csproj" />
-    <ProjectReference Include="..\dvelop-sdk-config\ConfigAppDtos\ConfigAppDtos.csproj" />
+    <ProjectReference Include="..\dvelop-sdk-config\ConfigDtos\ConfigDtos.csproj" />
+    <ProjectReference Include="..\dvelop-sdk-home\HomeDtos\HomeDtos.csproj" />
+    <ProjectReference Include="..\dvelop-sdk-identityprovider\IdentityProviderClient\IdentityProviderClient.csproj" />
+    <ProjectReference Include="..\dvelop-sdk-identityprovider\IdentityProviderDtos\IdentityProviderDtos.csproj" />
+    <ProjectReference Include="..\dvelop-sdk-identityprovider\IdentityProviderMiddleware\IdentityProviderMiddleware.csproj" />
     <ProjectReference Include="..\dvelop-sdk-tenant\TenantMiddleware\TenantMiddleware.csproj" />
   </ItemGroup>
 
