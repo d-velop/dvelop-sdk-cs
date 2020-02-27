@@ -23,19 +23,25 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
         public async Task Invoke(HttpContext context)
         {
             var sessionId = context.GetAuthSessionId();
-           
-            if (!string.IsNullOrWhiteSpace(sessionId))
+
+            var bearerTokenReceived = string.IsNullOrWhiteSpace(sessionId);
+            if (!bearerTokenReceived)
             {
                 context.User = await _identityProviderClient.GetClaimsPrincipalAsync(sessionId);
             }
-            
-            if (RequestRedirectedToLogin(context))
-                return;
+            context.Response.OnStarting(state =>
+            {
+                if (context.Response.StatusCode != (int) HttpStatusCode.Unauthorized)
+                {
+                    return Task.FromResult(false);
+                }
+                return Task.FromResult(RequestRedirectedToLogin(context, bearerTokenReceived));
+            }, context.Response);
             
             await _next.Invoke(context);
         }
         
-        private bool RequestRedirectedToLogin(HttpContext context)
+        private bool RequestRedirectedToLogin(HttpContext context, bool bearerTokenReceived)
         {
             if(context == null) { throw new ArgumentNullException(nameof(context));}
             
@@ -62,7 +68,7 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
             {
                 logonUri += "?" + querystring;
             }
-
+            
             var redirectLocation = _identityProviderClient.GetLoginUri(logonUri).ToString();
             context.Response.Redirect(redirectLocation);
             return true;

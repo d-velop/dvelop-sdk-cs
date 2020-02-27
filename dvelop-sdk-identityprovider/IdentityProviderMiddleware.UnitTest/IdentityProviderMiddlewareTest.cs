@@ -174,7 +174,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             context.Response.StatusCode.Should().Be(expectedStatus);
             
             
-            nextMiddleware.HasBeenInvoked.Should().BeFalse("next middleware should not have been invoked if signature is wrong");
+            nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should not have been invoked if signature is wrong");
             foreach (var (key, value) in expectedResponseHeader)
             {
                 context.Response.Headers[key].ToString().Should().BeEquivalentTo(value);
