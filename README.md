@@ -5,13 +5,16 @@ the C# programming language.
 
 The project has alpha status. **So for now expect things to change.** 
 
+
+
 ## Usage
 
 Include the the d.velop cloud sdk as dependencies in your .NET Core 2.1 project file (`myproject.csproj`) and restore them with `dotnet restore` via commandline or from within your IDE.
 
 ```xml
 <ItemGroup>
-    <PackageReference Include="Dvelop.Sdk." Version="0.0.1.28-prerelease" />
+    <PackageReference Include="Dvelop.Sdk.TenantMiddleware" Version="0.0.1.43" />
+    <PackageReference Include="Dvelop.Sdk.IdentityProvider.Middleware" Version="0.0.1.43" />
 </ItemGroup>
 ```
 
@@ -19,7 +22,7 @@ or the all-in-one dependency:
 
 ```xml
 <ItemGroup>
-    <PackageReference Include="Dvelop.Sdk" Version="0.0.1.28-prerelease" />
+    <PackageReference Include="Dvelop.Sdk" Version="0.0.1.43" />
 </ItemGroup>
 ```
 
@@ -46,3 +49,5 @@ Thanks to the following projects for inspiration
 * [Starting an Open Source Project](https://opensource.guide/starting-a-project/)
 * [README template](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
 * [CONTRIBUTING template](https://github.com/nayafia/contributing-template/blob/master/CONTRIBUTING-template.md)
+
+[![Build Status](https://travis-ci.com/d-velop/dvelop-sdk-cs.svg?branch=master)](https://travis-ci.com/d-velop/dvelop-sdk-cs)
