@@ -5,5 +5,6 @@
     <Company>d.velop AG</Company>
     <Copyright>Copyright (c) 2019</Copyright>
     <PackageProjectUrl>https://github.com/d-velop/dvelop-sdk-cs</PackageProjectUrl>
+    <VersionPrefix>0.0.1</VersionPrefix>
   </PropertyGroup>
 </Project>
