@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using Dvelop.Sdk.IdentityProvider.Dto;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Dvelop.Sdk.IdentityProvider.Client
@@ -38,10 +39,12 @@ namespace Dvelop.Sdk.IdentityProvider.Client
 
         private readonly Func<TenantInformation> _tenantInformationCallback;
         private readonly bool _allowExternalValidation;
+        private readonly ILogger<IdentityProviderClient> _log;
 
-        public IdentityProviderClient(HttpClient httpClient, Func<TenantInformation> tenantInformationCallback,
+        public IdentityProviderClient(ILoggerFactory factory, HttpClient httpClient, Func<TenantInformation> tenantInformationCallback,
             bool allowExternalValidation = false)
         {
+            _log = factory.CreateLogger<IdentityProviderClient>();
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             _tenantInformationCallback = tenantInformationCallback ?? throw new ArgumentNullException(nameof(tenantInformationCallback));
             _allowExternalValidation = allowExternalValidation;
@@ -132,7 +135,6 @@ namespace Dvelop.Sdk.IdentityProvider.Client
             {
                 validateUri += IDP_QUERY_EXTERNAL;
             }
-
             var response = await _httpClient.SendAsync(
                 new HttpRequestMessage(HttpMethod.Get, validateUri)
                 {
@@ -143,7 +145,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
                     }
                 }
             );
-
+            _log.LogDebug($"GET {validateUri} -> {response.StatusCode}");
             if (response.StatusCode == HttpStatusCode.Unauthorized) return null;
 
             if (response.StatusCode != HttpStatusCode.OK ||
@@ -153,10 +155,11 @@ namespace Dvelop.Sdk.IdentityProvider.Client
             var userDto = JsonConvert.DeserializeObject<UserDto>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
             var principal = UserDtoToClaimsPrincipal(authSessionId, userDto, tenantId);
             var maxAge = response.Headers.CacheControl.MaxAge;
+            _log.LogWarning($"No Cache Header present");
             if (maxAge == null) return null;
-            _sessionStore.SetPrincipal(authSessionId + "-" + tenantId,
-                DateTime.Now.AddSeconds(maxAge.Value.TotalSeconds), principal);
-
+            var expire = DateTime.Now.AddSeconds(maxAge.Value.TotalSeconds);
+            _sessionStore.SetPrincipal(authSessionId + "-" + tenantId,expire, principal);
+            _log.LogDebug($"Added {tenantId}/{authSessionId} for {expire} to Memory Store");
             return principal;
         }
     }

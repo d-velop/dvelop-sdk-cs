@@ -6,6 +6,8 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Dvelop.Sdk.IdentityProvider.Client;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Dvelop.Sdk.IdentityProvider.Middleware
 {
@@ -14,10 +16,10 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
         private readonly IdentityProviderClient _identityProviderClient;
         private readonly RequestDelegate _next;
 
-        public IdentityProviderMiddleware(RequestDelegate next, IdentityProviderOptions options)
+        public IdentityProviderMiddleware(RequestDelegate next, IdentityProviderOptions options, ILoggerFactory factory)
         {
             _next = next;
-            _identityProviderClient = new IdentityProviderClient( options.HttpClient, options.TenantInformationCallback, options.AllowExternalValidation);
+            _identityProviderClient = new IdentityProviderClient(factory, options.HttpClient, options.TenantInformationCallback, options.AllowExternalValidation);
         }
         
         public async Task Invoke(HttpContext context)
@@ -35,13 +37,13 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
                 {
                     return Task.FromResult(false);
                 }
-                return Task.FromResult(RequestRedirectedToLogin(context, bearerTokenReceived));
+                return Task.FromResult(RequestRedirectedToLogin(context));
             }, context.Response);
             
             await _next.Invoke(context);
         }
         
-        private bool RequestRedirectedToLogin(HttpContext context, bool bearerTokenReceived)
+        private bool RequestRedirectedToLogin(HttpContext context)
         {
             if(context == null) { throw new ArgumentNullException(nameof(context));}
             
