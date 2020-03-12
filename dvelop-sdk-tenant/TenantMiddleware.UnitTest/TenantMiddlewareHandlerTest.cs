@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Dvelop.Sdk.TenantMiddleware.UnitTest
@@ -13,7 +14,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         public void TenantMiddlewareOptionsIsNull_ShouldThrowException()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Action useMiddleware = () => new TenantMiddlewareHandler(null);
+            Action useMiddleware = () => new TenantMiddlewareHandler(NullLoggerFactory.Instance, null);
             useMiddleware.ShouldThrow<ArgumentNullException>().WithMessage("*tenantMiddlewareOptions*");
         }
 
@@ -21,7 +22,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         public void OnTenantIdentifiedCallbackIsNull_ShouldThrowException()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Action useMiddleware = () => new TenantMiddlewareHandler(new TenantMiddlewareOptions { OnTenantIdentified = null });
+            Action useMiddleware = () => new TenantMiddlewareHandler(NullLoggerFactory.Instance, new TenantMiddlewareOptions { OnTenantIdentified = null });
             useMiddleware.ShouldThrow<ArgumentNullException>().WithMessage("*OnTenantIdentified*");
         }
 
@@ -29,7 +30,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         public void DefaultSystemBaseUriIsNoValidUri_ShouldThrowException()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Action useMiddleware = () => new TenantMiddlewareHandler(new TenantMiddlewareOptions
+            Action useMiddleware = () => new TenantMiddlewareHandler(NullLoggerFactory.Instance, new TenantMiddlewareOptions
             {
                 OnTenantIdentified = (a, b) => { },
                 DefaultSystemBaseUri = "http:/"

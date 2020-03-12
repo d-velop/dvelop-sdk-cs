@@ -3,14 +3,16 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Dvelop.Sdk.TenantMiddleware
 {
     public class TenantMiddlewareHandler : DelegatingHandler
     {
         private readonly TenantMiddlewareOptions _tenantMiddlewareOptions;
+        private ILogger<TenantMiddleware> _log;
 
-        public TenantMiddlewareHandler(TenantMiddlewareOptions tenantMiddlewareOptions)
+        public TenantMiddlewareHandler(ILoggerFactory factory,TenantMiddlewareOptions tenantMiddlewareOptions)
         {
             if (tenantMiddlewareOptions == null) throw new ArgumentNullException(nameof(tenantMiddlewareOptions));
             if (tenantMiddlewareOptions.OnTenantIdentified == null)
@@ -18,7 +20,7 @@ namespace Dvelop.Sdk.TenantMiddleware
             if (tenantMiddlewareOptions.DefaultSystemBaseUri != null &&
                 !Uri.IsWellFormedUriString(tenantMiddlewareOptions.DefaultSystemBaseUri, UriKind.RelativeOrAbsolute))
                 throw new ArgumentException("Is no valid URI", nameof(tenantMiddlewareOptions.DefaultSystemBaseUri));
-
+            _log = factory.CreateLogger<TenantMiddleware>();
             _tenantMiddlewareOptions = tenantMiddlewareOptions;
         }
 
@@ -34,7 +36,7 @@ namespace Dvelop.Sdk.TenantMiddleware
                 ? request.Headers.GetValues(TenantMiddleware.SIGNATURE_HEADER).First()
                 : null;
 
-            var status = TenantMiddleware.Invoke(_tenantMiddlewareOptions, systemBaseUriFromHeader, tenantIdFromHeader, base64Signature);
+            var status = TenantMiddleware.Invoke(_log, _tenantMiddlewareOptions, systemBaseUriFromHeader, tenantIdFromHeader, base64Signature);
             if (status != 0)
             {
                 var tsc = new TaskCompletionSource<HttpResponseMessage>();

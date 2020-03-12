@@ -34,11 +34,5 @@ namespace Dvelop.Sdk.TenantMiddleware
         /// Ist diese Option gesetzt, so wird die TenantId aus dem HttpHeader verwendet, auch wenn die Signatur falsch ist (nur zu Testzwecken)
         /// </summary>
         public bool IgnoreSignature { get; set; }
-
-        /// <summary>
-        /// Wird dieser Callback angegeben, so werden Logereignisse über diesen Callback ausgegeben
-        /// </summary>
-        public Action<TenantMiddlewareLogLevel, string> LogCallback { get; set; }
-
     }
 }

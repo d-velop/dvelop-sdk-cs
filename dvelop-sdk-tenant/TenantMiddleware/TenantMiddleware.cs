@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Dvelop.Sdk.TenantMiddleware
 {
@@ -12,6 +13,7 @@ namespace Dvelop.Sdk.TenantMiddleware
     {
         private readonly  TenantMiddlewareOptions _tenantMiddlewareOptions;
         private readonly RequestDelegate _next;
+        private ILogger<TenantMiddleware> _log;
 
         // ReSharper disable once InconsistentNaming
         internal const string SYSTEM_BASE_URI_HEADER = "x-dv-baseuri";
@@ -20,7 +22,7 @@ namespace Dvelop.Sdk.TenantMiddleware
         // ReSharper disable once InconsistentNaming
         internal const string SIGNATURE_HEADER = "x-dv-sig-1";
 
-        public TenantMiddleware(RequestDelegate next, TenantMiddlewareOptions tenantMiddlewareOptions) 
+        public TenantMiddleware(RequestDelegate next, ILoggerFactory factory, TenantMiddlewareOptions tenantMiddlewareOptions) 
         {
             if (tenantMiddlewareOptions == null) throw new ArgumentNullException(nameof(tenantMiddlewareOptions));
             if (tenantMiddlewareOptions.OnTenantIdentified == null)
@@ -30,6 +32,7 @@ namespace Dvelop.Sdk.TenantMiddleware
                 throw new ArgumentException("Is no valid URI", nameof(tenantMiddlewareOptions.DefaultSystemBaseUri));
 
             _tenantMiddlewareOptions = tenantMiddlewareOptions;
+            _log = factory.CreateLogger<TenantMiddleware>();
             _next = next;
         }
 
@@ -39,7 +42,7 @@ namespace Dvelop.Sdk.TenantMiddleware
             var tenantIdFromHeader = context.Request.Headers[TENANT_ID_HEADER];
             var base64Signature = context.Request.Headers[SIGNATURE_HEADER];
 
-            var status = Invoke(_tenantMiddlewareOptions, systemBaseUriFromHeader, tenantIdFromHeader, base64Signature);
+            var status = Invoke(_log, _tenantMiddlewareOptions, systemBaseUriFromHeader, tenantIdFromHeader, base64Signature);
             if (status != 0)
             {
                 context.Response.StatusCode = (int)status;
@@ -49,63 +52,58 @@ namespace Dvelop.Sdk.TenantMiddleware
             await _next(context);
         }
 
-        internal static HttpStatusCode Invoke(TenantMiddlewareOptions tenantMiddlewareOptions, string systemBaseUriFromHeader,
+        internal static HttpStatusCode Invoke(ILogger<TenantMiddleware> log, TenantMiddlewareOptions tenantMiddlewareOptions, string systemBaseUriFromHeader,
             string tenantIdFromHeader, string base64Signature)
         {
-            tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Debug, $"TenantMiddleware invoke started with {systemBaseUriFromHeader}, {tenantIdFromHeader}, {base64Signature}");
+            log.LogDebug($"TenantMiddleware invoke started with {systemBaseUriFromHeader}, {tenantIdFromHeader}, {base64Signature}");
             if (systemBaseUriFromHeader != null || tenantIdFromHeader != null)
             {
                 if (base64Signature == null)
                 {
-                    tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Debug, "Signature is missing in request header");
+                    log.LogDebug( "Signature is missing in request header");
                     return HttpStatusCode.Forbidden;
                 }
                 if (tenantMiddlewareOptions.SignatureSecretKey == null)
                 {
-                    tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Error, "SignatureSecretKey is missing in tenantMiddlewareOptions");
+                    log.LogError( "SignatureSecretKey is missing in tenantMiddlewareOptions");
                     return HttpStatusCode.InternalServerError;
                 }
 
                 if (tenantMiddlewareOptions.IgnoreSignature)
                 {
-                    tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Error, "Signature is ignored, don't use this in production environment!");
+                    log.LogError( "Signature is ignored, don't use this in production environment!");
                 }
                 else
                 {
                     var encoding = new ASCIIEncoding();
                     var data = systemBaseUriFromHeader + tenantIdFromHeader;
-                    tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Debug, $"Signature will be calculated using '{data}'");
+                    log.LogDebug( $"Signature will be calculated using '{data}'");
                     var messageBytes = encoding.GetBytes(data);
                     try
                     {
                         var signature = Convert.FromBase64String(base64Signature);
                         if (!SignatureIsValid(messageBytes, signature, tenantMiddlewareOptions.SignatureSecretKey))
                         {
-                            tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Debug,
-                                "Signature does not match");
+                            log.LogDebug("Signature does not match");
                             return HttpStatusCode.Forbidden;
                         }
-                        tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Debug,
-                            "Signature matches!");
+                        log.LogDebug("Signature matches!");
                     }
                     catch (FormatException)
                     {
-                        tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Error,
-                            "Signature is in wrong format");
+                        log.LogError("Signature is in wrong format");
                         return HttpStatusCode.Forbidden;
                     }
                     catch (Exception e)
                     {
-                        tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Error,
-                            $"Exception while checking signature. Exception={e.Message}");
+                        log.LogError($"Exception while checking signature. Exception={e.Message}");
                         return HttpStatusCode.Forbidden;
                     }
                 }
             }
             tenantMiddlewareOptions.OnTenantIdentified(tenantIdFromHeader ?? tenantMiddlewareOptions.DefaultTenantId,
                 systemBaseUriFromHeader ?? tenantMiddlewareOptions.DefaultSystemBaseUri);
-            tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Debug,
-                "Tenant identified!");
+            log.LogDebug("Tenant identified!");
             return 0;
         }
 
