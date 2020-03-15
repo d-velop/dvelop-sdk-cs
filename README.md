@@ -5,8 +5,6 @@ the C# programming language.
 
 The project has alpha status. **So for now expect things to change.** 
 
-
-
 ## Usage
 
 Include the the d.velop cloud sdk as dependencies in your .NET Core 2.1 project file (`myproject.csproj`) and restore them with `dotnet restore` via commandline or from within your IDE.
@@ -37,6 +35,7 @@ and the process for submitting pull requests to us.
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see 
 the [releases on this repository](https://github.com/d-velop/dvelop-sdk-cs/releases). 
+
 
 ## License
 

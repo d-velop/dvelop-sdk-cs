@@ -17,7 +17,6 @@ if [[ ${TRAVIS_PULL_REQUEST} == 'false' ]]; then
 
 echo "build"
 
-
     if [[ ! -z ${TRAVIS_TAG} ]]; then
         echo "pack release"
 		    dotnet build -c Release
