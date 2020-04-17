@@ -26,9 +26,9 @@ or the all-in-one dependency:
 </ItemGroup>
 ```
 
-The most recent version can be instzalled from [nuget.org](https://www.nuget.org/packages/Dvelop.Sdk)
+The most recent version can be installed from [nuget.org](https://www.nuget.org/packages/Dvelop.Sdk)
 
-A running Application, which uses this SDK can be found at [github.com](https://github.com/d-velop/dvelop-app-template-cs)
+A running Application, which uses this SDK can be found at [github.com/d-velop/dvelop-app-template-cs](https://github.com/d-velop/dvelop-app-template-cs)
 
 ## Contributing
 
