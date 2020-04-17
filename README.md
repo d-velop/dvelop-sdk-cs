@@ -13,8 +13,8 @@ Include the the d.velop cloud sdk as dependencies in your .NET Core 2.1 project 
 
 ```xml
 <ItemGroup>
-    <PackageReference Include="Dvelop.Sdk.TenantMiddleware" Version="0.0.1.43" />
-    <PackageReference Include="Dvelop.Sdk.IdentityProvider.Middleware" Version="0.0.1.43" />
+    <PackageReference Include="Dvelop.Sdk.TenantMiddleware" Version="0.0.2.51" />
+    <PackageReference Include="Dvelop.Sdk.IdentityProvider.Middleware" Version="0.0.2.51" />
 </ItemGroup>
 ```
 
@@ -22,11 +22,13 @@ or the all-in-one dependency:
 
 ```xml
 <ItemGroup>
-    <PackageReference Include="Dvelop.Sdk" Version="0.0.1.43" />
+    <PackageReference Include="Dvelop.Sdk" Version="0.0.2.51" />
 </ItemGroup>
 ```
 
-More info on usage of sdk classes and the sources itself will come soon.
+The most recent version can be instzalled from [nuget.org](https://www.nuget.org/packages/Dvelop.Sdk)
+
+A running Application, which uses this SDK can be found at [github.com](https://github.com/d-velop/dvelop-app-template-cs)
 
 ## Contributing
 
