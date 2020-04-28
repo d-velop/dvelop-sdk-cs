@@ -39,7 +39,7 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
             if (auth.Count == 0)  return null;
             var authValues = auth[0].Split(' ');
             if (authValues.Length < 2) return null;
-            return authValues[0].Equals("Bearer", StringComparison.OrdinalIgnoreCase) ? authValues[1] : null;
+            return authValues[0].Equals("Bearer", StringComparison.OrdinalIgnoreCase) && authValues[1].Contains("&") ? authValues[1] : null;
         }
     }
 }

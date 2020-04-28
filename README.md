@@ -35,6 +35,16 @@ A running Application, which uses this SDK can be found at [github.com/d-velop/d
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct,
 and the process for submitting pull requests to us.
 
+## Build local
+
+You can build a version of this library with following command:
+
+```bash
+dotnet pack -o dist --version-suffix alpha
+``` 
+
+You will need to have an installed and configured dotnet core SDK
+
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see 
