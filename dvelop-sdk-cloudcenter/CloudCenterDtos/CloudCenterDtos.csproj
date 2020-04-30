@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
-        <RootNamespace>Dvelop.SDK.CloudCenter.Dto</RootNamespace>
+        <RootNamespace>Dvelop.Sdk.CloudCenter.Dto</RootNamespace>
         <AssemblyName>Dvelop.Sdk.CloudCenter.Dto</AssemblyName>
     </PropertyGroup>
 
