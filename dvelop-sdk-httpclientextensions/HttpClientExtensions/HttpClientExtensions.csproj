@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <IsPackable>true</IsPackable>
+        <RootNamespace>Dvelop.Sdk.HttpClientExtensions</RootNamespace>
+        <AssemblyName>Dvelop.Sdk.HttpClientExtensions</AssemblyName>
+        <OutputType>Library</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+        <PackageReference Include="MSTest.TestFramework" Version="2.1.1" />
+        <PackageReference Include="coverlet.collector" Version="1.2.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\dvelop-sdk-signing\SigningAlgorithms\SigningAlgorithms.csproj" />
+    </ItemGroup>
+
+</Project>
