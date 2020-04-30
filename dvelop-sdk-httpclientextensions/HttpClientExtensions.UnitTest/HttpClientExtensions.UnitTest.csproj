@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+        <IsPackable>false</IsPackable>
+        <AssemblyName>Dvelop.Sdk.HttpClientExtensions.UnitTest</AssemblyName>
+        <RootNamespace>Dvelop.Sdk.HttpClientExtensions.UnitTest</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+        <PackageReference Include="MSTest.TestAdapter" Version="2.1.1" />
+        <PackageReference Include="MSTest.TestFramework" Version="2.1.1" />
+        <PackageReference Include="coverlet.collector" Version="1.2.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Dvelop.Sdk.SigningAlgorithms, Version=0.0.2.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\dvelop-sdk-signing\SigningAlgorithms.UnitTest\bin\Debug\netcoreapp2.1\Dvelop.SDK.SigningAlgorithms.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\HttpClientExtensions\HttpClientExtensions.csproj" />
+    </ItemGroup>
+
+</Project>
