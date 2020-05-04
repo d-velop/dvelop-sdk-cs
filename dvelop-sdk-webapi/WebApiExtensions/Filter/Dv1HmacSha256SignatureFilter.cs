@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Dvelop.Sdk.WebApiExtensions.Extensions;
 using Microsoft.AspNetCore.Http;
@@ -39,7 +40,6 @@ namespace Dvelop.Sdk.WebApiExtensions.Filter
             }
             
             var signatureHash = await httpContextRequest.CalculateDv1HmacSha256Signature( _secret );
-            
             if (signatureHash == null)
             {
                 _log.LogInformation("Cloud Event Signature calculation failed.");
@@ -56,12 +56,39 @@ namespace Dvelop.Sdk.WebApiExtensions.Filter
             }
 
             authorization = authorization.Split(' ')[1];
-
             if (signatureHash != authorization)
             {
-                _log.LogInformation($"Cloud Event Signature verification failed. {signatureHash}!){authorization}");
+                _log.LogInformation($"Cloud Event Signature verification failed (Malformed Bearer Token).");
                 context.Result = new ForbidResult();
             }
+            
+            authorization = authorization.Split(' ')[1];
+            if (signatureHash != authorization)
+            {
+                _log.LogInformation($"Cloud Event Signature verification failed. {signatureHash}!={authorization}");
+                context.Result = new ForbidResult();
+            }
+
+            var timestamp = httpContextRequest.Headers["x-dv-signature-timestamp"].FirstOrDefault();
+            var now = DateTimeOffset.UtcNow;
+            if (DateTimeOffset.TryParse(timestamp, out var timeOffset))
+            {
+                if (timeOffset > now.Add(TimeSpan.FromMinutes(5)) || timeOffset < now.Subtract(TimeSpan.FromMinutes(5)))
+                {
+                    _log.LogInformation($"Cloud Event Signature verification failed (Timestamp out of valid range: {timeOffset} not in {now} +/- 5min)");
+                    context.Result = new ForbidResult();
+                }
+                else
+                {
+                    _log.LogInformation($"Cloud Event Signature verification failed (Timestamp in valid range: {timeOffset} -> {now} +/- 5min)");
+                }
+            }
+            else
+            {
+                _log.LogInformation($"Cloud Event Signature verification failed (No timestamp provided)");
+                context.Result = new ForbidResult();
+            }
+            
             _log.LogInformation("Cloud Event Signature verification ended.");
         }
     }
