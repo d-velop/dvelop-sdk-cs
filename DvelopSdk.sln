@@ -42,27 +42,33 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityProviderMiddleware"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityProviderMiddleware.UnitTest", "dvelop-sdk-identityprovider\IdentityProviderMiddleware.UnitTest\IdentityProviderMiddleware.UnitTest.csproj", "{CE1AAD0D-7893-4180-ACB6-017880225D42}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudCenterDtos", "dvelop-sdk-cloudcenter\CloudCenterDtos\CloudCenterDtos.csproj", "{37584BC8-4E87-4CF6-8835-A0F1652ED5A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudCenterDtos", "dvelop-sdk-cloudcenter\CloudCenterDtos\CloudCenterDtos.csproj", "{37584BC8-4E87-4CF6-8835-A0F1652ED5A4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dvelop-sdk-cloudcenter", "dvelop-sdk-cloudcenter", "{6DC7D1A5-930C-4845-A438-036C6E34D5F0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dvelop-sdk-signing", "dvelop-sdk-signing", "{7711478E-8FB4-4D04-92BF-2B8793182418}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SigningAlgorithms", "dvelop-sdk-signing\SigningAlgorithms\SigningAlgorithms.csproj", "{C4BD4C67-FD27-4EBF-9CC8-8F57BF9F8093}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SigningAlgorithms", "dvelop-sdk-signing\SigningAlgorithms\SigningAlgorithms.csproj", "{C4BD4C67-FD27-4EBF-9CC8-8F57BF9F8093}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SigningAlgorithms.UnitTest", "dvelop-sdk-signing\SigningAlgorithms.UnitTest\SigningAlgorithms.UnitTest.csproj", "{97C9A704-9406-457D-9B36-F153082F80A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SigningAlgorithms.UnitTest", "dvelop-sdk-signing\SigningAlgorithms.UnitTest\SigningAlgorithms.UnitTest.csproj", "{97C9A704-9406-457D-9B36-F153082F80A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiExtensions", "dvelop-sdk-webapi\WebApiExtensions\WebApiExtensions.csproj", "{05D66A40-3623-43A8-8E15-E2925A05BA35}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApiExtensions", "dvelop-sdk-webapi\WebApiExtensions\WebApiExtensions.csproj", "{05D66A40-3623-43A8-8E15-E2925A05BA35}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dvelop-sdk-webapi", "dvelop-sdk-webapi", "{367824B2-45D8-4A8E-A252-966C9570CAD1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiExtensions.UnitTest", "dvelop-sdk-webapi\WebApiExtensions.UnitTest\WebApiExtensions.UnitTest.csproj", "{5BB555EE-94D2-4A7D-BFCF-28F8275EF3C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApiExtensions.UnitTest", "dvelop-sdk-webapi\WebApiExtensions.UnitTest\WebApiExtensions.UnitTest.csproj", "{5BB555EE-94D2-4A7D-BFCF-28F8275EF3C4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C4BD4C67-FD27-4EBF-9CC8-8F57BF9F8093} = {C4BD4C67-FD27-4EBF-9CC8-8F57BF9F8093}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpClientExtensions", "dvelop-sdk-httpclientextensions\HttpClientExtensions\HttpClientExtensions.csproj", "{D08E3179-5021-421E-AA65-42CB35B0DAA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpClientExtensions", "dvelop-sdk-httpclientextensions\HttpClientExtensions\HttpClientExtensions.csproj", "{D08E3179-5021-421E-AA65-42CB35B0DAA4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dvelop-sdk-httpclientextensions", "dvelop-sdk-httpclientextensions", "{E68460C3-D2C3-496B-B265-083BD281D563}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpClientExtensions.UnitTest", "dvelop-sdk-httpclientextensions\HttpClientExtensions.UnitTest\HttpClientExtensions.UnitTest.csproj", "{A90561D6-662B-4D0A-A2C2-C58CD1B07AE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpClientExtensions.UnitTest", "dvelop-sdk-httpclientextensions\HttpClientExtensions.UnitTest\HttpClientExtensions.UnitTest.csproj", "{A90561D6-662B-4D0A-A2C2-C58CD1B07AE7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C4BD4C67-FD27-4EBF-9CC8-8F57BF9F8093} = {C4BD4C67-FD27-4EBF-9CC8-8F57BF9F8093}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
