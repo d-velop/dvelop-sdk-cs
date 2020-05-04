@@ -16,12 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="Dvelop.Sdk.SigningAlgorithms, Version=0.0.2.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\..\dvelop-sdk-signing\SigningAlgorithms.UnitTest\bin\Debug\netcoreapp2.1\Dvelop.SDK.SigningAlgorithms.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\HttpClientExtensions\HttpClientExtensions.csproj" />
     </ItemGroup>
 
