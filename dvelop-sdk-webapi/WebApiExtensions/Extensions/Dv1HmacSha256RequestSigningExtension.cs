@@ -30,7 +30,7 @@ namespace Dvelop.Sdk.WebApiExtensions.Extensions
             // See: https://github.com/aws/aws-lambda-dotnet/issues/656
             var requestFeature = request.HttpContext.Features.Get<IHttpRequestFeature>();
             
-            var uri =new Uri( requestFeature.RawTarget, UriKind.RelativeOrAbsolute);
+            var uri =new Uri(requestFeature.RawTarget, UriKind.RelativeOrAbsolute);
             
             var headers = signatureHeaders.Split(',');
             Array.Sort(headers, string.Compare);
@@ -39,9 +39,9 @@ namespace Dvelop.Sdk.WebApiExtensions.Extensions
             var normalizedHeaders = string.Join("\n", enumerable.ToArray());
 
             var httpVerb = request.Method;
-            var resourcePath = uri.AbsolutePath;
+            var resourcePath = uri.IsAbsoluteUri?uri.AbsolutePath:uri.OriginalString;
             
-            var queryString = request.QueryString.Value.TrimStart('?');
+            var queryString = request.QueryString.HasValue?request.QueryString.Value.TrimStart('?'):string.Empty;
             
             var payload = HmacSha256Algorithm.Sha256(body);
 
