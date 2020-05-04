@@ -8,6 +8,8 @@
         <AssemblyName>Dvelop.Sdk.WebApiExtensions.UnitTest</AssemblyName>
 
         <RootNamespace>Dvelop.Sdk.WebApiExtensions.UnitTest</RootNamespace>
+
+        <OutputType>Library</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
