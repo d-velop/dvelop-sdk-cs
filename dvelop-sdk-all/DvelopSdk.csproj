@@ -25,11 +25,13 @@
     <ProjectReference Include="..\dvelop-sdk-cloudcenter\CloudCenterDtos\CloudCenterDtos.csproj" />
     <ProjectReference Include="..\dvelop-sdk-config\ConfigDtos\ConfigDtos.csproj" />
     <ProjectReference Include="..\dvelop-sdk-home\HomeDtos\HomeDtos.csproj" />
+    <ProjectReference Include="..\dvelop-sdk-httpclientextensions\HttpClientExtensions\HttpClientExtensions.csproj" />
     <ProjectReference Include="..\dvelop-sdk-identityprovider\IdentityProviderClient\IdentityProviderClient.csproj" />
     <ProjectReference Include="..\dvelop-sdk-identityprovider\IdentityProviderDtos\IdentityProviderDtos.csproj" />
     <ProjectReference Include="..\dvelop-sdk-identityprovider\IdentityProviderMiddleware\IdentityProviderMiddleware.csproj" />
     <ProjectReference Include="..\dvelop-sdk-signing\SigningAlgorithms\SigningAlgorithms.csproj" />
     <ProjectReference Include="..\dvelop-sdk-tenant\TenantMiddleware\TenantMiddleware.csproj" />
+    <ProjectReference Include="..\dvelop-sdk-webapi\WebApiExtensions\WebApiExtensions.csproj" />
   </ItemGroup>
 
 </Project>
