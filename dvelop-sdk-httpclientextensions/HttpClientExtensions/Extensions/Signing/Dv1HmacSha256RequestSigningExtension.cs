@@ -33,7 +33,11 @@ namespace Dvelop.Sdk.HttpClientExtensions.Extensions.Signing
             var path = request.RequestUri.AbsolutePath;
             var query = request.RequestUri.Query.TrimStart('?');
             var headers = $"x-dv-signature-algorithm:DV1-HMAC-SHA256\nx-dv-signature-headers:x-dv-signature-algorithm,x-dv-signature-headers,x-dv-signature-timestamp\nx-dv-signature-timestamp:{request.Headers.GetValues("x-dv-signature-timestamp").FirstOrDefault()}\n";
-            var body = await request.Content.ReadAsStringAsync();
+            var body = string.Empty;
+            if (request.Content != null)
+            {
+                body = await request.Content.ReadAsStringAsync()??string.Empty;
+            }
             return $"{verb}\n{path}\n{query}\n{headers}\n{HmacSha256Algorithm.Sha256(body)}";
         }
     }
