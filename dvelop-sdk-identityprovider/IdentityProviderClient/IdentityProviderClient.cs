@@ -4,14 +4,16 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using Dvelop.Sdk.IdentityProvider.Dto;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Dvelop.Sdk.IdentityProvider.Client
 {
-    public class IdentityProviderClient
+    public class IdentityProviderClient : IIdentityProviderClient
     {
         // ReSharper disable once InconsistentNaming
         private const string COOKIENAME = "AuthSessionId";
@@ -20,7 +22,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
         private const string PROVIDERNAME = "d.velop.IdentityProvider";
         
         // ReSharper disable once InconsistentNaming
-        private const string IDPBASE = "identityprovider";
+        public const string APPNAME = "identityprovider";
 
         // ReSharper disable once InconsistentNaming
         private const string IDP_VALIDATE = "/validate";
@@ -30,7 +32,8 @@ namespace Dvelop.Sdk.IdentityProvider.Client
 
         // ReSharper disable once InconsistentNaming
         private const string IDP_LOGIN = "/login?redirect={0}";
-
+        
+        private const string IDP_APPSESSION = "/appsession";
         
         //TODO: evaluate https://docs.microsoft.com/de-de/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests
         private readonly HttpClient _httpClient;
@@ -39,6 +42,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
         private readonly Func<TenantInformation> _tenantInformationCallback;
         private readonly bool _allowExternalValidation;
 
+        [Obsolete("Use the constructor with IHttpClientFactory instead")]
         public IdentityProviderClient(HttpClient httpClient, Func<TenantInformation> tenantInformationCallback,
             bool allowExternalValidation = false)
         {
@@ -47,6 +51,14 @@ namespace Dvelop.Sdk.IdentityProvider.Client
             _allowExternalValidation = allowExternalValidation;
         }
 
+        public IdentityProviderClient(IHttpClientFactory clientFactory, Func<TenantInformation> tenantInformationCallback,
+            bool allowExternalValidation = false)
+        {
+            _httpClient = clientFactory.CreateClient(APPNAME);
+            _tenantInformationCallback = tenantInformationCallback ?? throw new ArgumentNullException(nameof(tenantInformationCallback));
+            _allowExternalValidation = allowExternalValidation;
+        }
+        
         public static string CookieName => COOKIENAME;
         public bool IsExternalValidationAllowed()
         {
@@ -69,7 +81,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
             var tenantInformation = _tenantInformationCallback();
             var systemBaseUri = tenantInformation.SystemBaseUri;
             
-            var loginUri = systemBaseUri + IDPBASE + IDP_LOGIN;
+            var loginUri = systemBaseUri + APPNAME + IDP_LOGIN;
 
             var response = await _httpClient.SendAsync(
                 new HttpRequestMessage(HttpMethod.Get, loginUri)
@@ -89,10 +101,38 @@ namespace Dvelop.Sdk.IdentityProvider.Client
                 JsonConvert.DeserializeObject<AuthSessionInfoDto>(await response.Content.ReadAsStringAsync());
             return authSessionInfoDto;
         }
+        
+        public async Task<bool> RequestAppSession(AppSessionRequestDto requestDto)
+        {
+            var tenantInformation = _tenantInformationCallback();
+            var systemBaseUri = tenantInformation.SystemBaseUri;
+            
+            var loginUri = systemBaseUri + APPNAME + IDP_APPSESSION;
+
+            var response = await _httpClient.SendAsync(
+                new HttpRequestMessage(HttpMethod.Post, loginUri)
+                {
+                    Headers =
+                    {
+                        {"Accept", "application/json"},
+                        {"Origin", systemBaseUri.TrimEnd('/')}
+                    },
+                    Content = new StringContent( JsonConvert.SerializeObject(requestDto, new JsonSerializerSettings
+                    {
+                        ContractResolver = new DefaultContractResolver
+                        {
+                            NamingStrategy = new LowercaseNamingStrategy()
+                        }
+                    }), Encoding.UTF8, "application/json" )
+                }
+            );
+  
+            return response.IsSuccessStatusCode;
+        }
 
         public Uri GetLoginUri(string redirect)
         {
-            return new Uri("/" + IDPBASE + string.Format(IDP_LOGIN, HttpUtility.UrlEncode(redirect)), UriKind.Relative);
+            return new Uri("/" + APPNAME + string.Format(IDP_LOGIN, HttpUtility.UrlEncode(redirect)), UriKind.Relative);
         }
 
 
@@ -127,7 +167,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
         private async Task<ClaimsPrincipal> CreatePrincipalAsync(string authSessionId, string tenantId,
             string systemBaseUri)
         {
-            var validateUri = systemBaseUri + IDPBASE + IDP_VALIDATE;
+            var validateUri = systemBaseUri + APPNAME + IDP_VALIDATE;
             if (_allowExternalValidation)
             {
                 validateUri += IDP_QUERY_EXTERNAL;
