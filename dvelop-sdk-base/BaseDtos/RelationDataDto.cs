@@ -2,6 +2,11 @@
 {
     public class RelationDataDto
     {
+        public RelationDataDto()
+        {
+            Templated = false;
+        }
+        
         public RelationDataDto(string href, bool templated = false)
         {
             Href = href;
