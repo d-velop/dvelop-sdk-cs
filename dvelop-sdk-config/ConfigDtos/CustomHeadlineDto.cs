@@ -7,10 +7,12 @@ namespace Dvelop.Sdk.Config.Dto
         public string Caption { get; set; }
         public string Description { get; set; }
         public List<MenuItemDto> MenuItems { get; set; }
+        public List<CategoryDto> Categories { get; set; }
 
         public CustomHeadlineDto()
         {
             MenuItems = new List<MenuItemDto>();
+            Categories = new List<CategoryDto>();
         }
     }
 }
