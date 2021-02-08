@@ -6,17 +6,12 @@ namespace Dvelop.Sdk.IdentityProvider.Client
 {
     public class IdentityProviderSessionStore
     {
-        #region Fields
-
         private readonly ConcurrentDictionary<string, IdentityProviderSessionItem> _sessionCache =
             new ConcurrentDictionary<string, IdentityProviderSessionItem>();
 
         private int _cleanupCounter = 0;
         private readonly object _cleanupLock=new object();
-        #endregion
-
-        #region Public Methods
-
+        
         public ClaimsPrincipal GetPrincipal(string cookie)
         {
             CleanUp();
@@ -42,11 +37,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
             };
             _sessionCache[id] = sessionItem;
         }
-
-        #endregion
-
-        #region Private Methods
-
+        
         private void CleanUp()
         {
             _cleanupCounter++;
@@ -77,7 +68,5 @@ namespace Dvelop.Sdk.IdentityProvider.Client
         {
             return cookie;
         }
-
-        #endregion
     }
 }
