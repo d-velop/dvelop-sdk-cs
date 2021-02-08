@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Linq;
 using System.Security.Claims;
 
 namespace Dvelop.Sdk.IdentityProvider.Client
@@ -76,8 +75,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
 
         private static string IdFromCookie(string cookie)
         {
-            var elements = cookie.Split('&');
-            return elements.Any() ? elements[0] : null;
+            return cookie;
         }
 
         #endregion
