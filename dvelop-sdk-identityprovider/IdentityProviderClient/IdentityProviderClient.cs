@@ -155,7 +155,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
             var maxAge = response.Headers.CacheControl.MaxAge;
             if (maxAge == null) return null;
             _sessionStore.SetPrincipal(authSessionId + "-" + tenantId,
-                DateTime.Now.AddSeconds(maxAge.Value.TotalSeconds), principal);
+                DateTimeOffset.Now.AddSeconds(maxAge.Value.TotalSeconds), principal);
 
             return principal;
         }
