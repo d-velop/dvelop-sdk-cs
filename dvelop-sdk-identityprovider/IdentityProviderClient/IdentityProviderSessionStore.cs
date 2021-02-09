@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 
 using System.Security.Claims;
-using Microsoft.Extensions.Internal;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Dvelop.Sdk.IdentityProvider.Client
 {

@@ -1,7 +1,7 @@
 using System;
 using System.Security.Claims;
 using Dvelop.Sdk.IdentityProvider.Client;
-using Microsoft.Extensions.Internal;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
