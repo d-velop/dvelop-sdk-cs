@@ -1,11 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using Dvelop.Sdk.IdentityProvider.Client;
 
-namespace Dvelop.Sdk.IdentityProvider.Middleware
+namespace Dvelop.Sdk.IdentityProvider.Client
 {
-    public class IdentityProviderOptions
+    public class IdentityProviderClientOptions
     {
         public Func<TenantInformation> TenantInformationCallback { get; set; }
         public bool AllowExternalValidation { get; set; } = false;
@@ -15,6 +14,6 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
         public List<string> AllowedImpersonatedApps { get; set; } = new List<string>();
         public Action<IdentityProviderClientLogLevel, string> LogCallBack { get; set; }
         public HttpClient HttpClient { get; set; } = new HttpClient();
-        public Uri BaseAddress { get; set; } = new Uri("http://localhost");
+        public Uri SystemBaseUri { get; set; }
     }
 }
