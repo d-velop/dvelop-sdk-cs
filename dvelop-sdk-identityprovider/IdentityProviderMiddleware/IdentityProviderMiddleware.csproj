@@ -5,7 +5,15 @@
     <AssemblyName>Dvelop.Sdk.IdentityProvider.Middleware</AssemblyName>
     <RootNamespace>Dvelop.Sdk.IdentityProvider.Middleware</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <ProjectReference Include="..\IdentityProviderClient\IdentityProviderClient.csproj" />

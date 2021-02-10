@@ -6,8 +6,8 @@ namespace Dvelop.Sdk.TenantMiddleware
     public enum TenantMiddlewareLogLevel
     {
         Debug=1,
-        Info,
-        Error
+        Info=2,
+        Error=3
     }
 
     public class TenantMiddlewareOptions

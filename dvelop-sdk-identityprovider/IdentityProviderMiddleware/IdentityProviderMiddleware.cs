@@ -14,10 +14,23 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
         private readonly IdentityProviderClient _identityProviderClient;
         private readonly RequestDelegate _next;
 
-        public IdentityProviderMiddleware(RequestDelegate next, IdentityProviderOptions options)
+        public IdentityProviderMiddleware(RequestDelegate next, IdentityProviderOptions clientOptions)
         {
             _next = next;
-            _identityProviderClient = new IdentityProviderClient( options.HttpClient, options.TenantInformationCallback, options.AllowExternalValidation);
+            var co = new IdentityProviderClientOptions
+            {
+                HttpClient = clientOptions.HttpClient,
+                AllowAppSessions = clientOptions.AllowAppSessions,
+                AllowedImpersonatedApps = clientOptions.AllowedImpersonatedApps,
+                AllowExternalValidation = clientOptions.AllowExternalValidation,
+                AllowImpersonatedUsers = clientOptions.AllowImpersonatedUsers,
+                LogCallBack = clientOptions.LogCallBack,
+                SystemBaseUri = clientOptions.BaseAddress,
+                TenantInformationCallback = clientOptions.TenantInformationCallback,
+                UseMinimizedOnlyIdValidateDetailLevel = clientOptions.UseMinimizedOnlyIdValidateDetailLevel
+            };
+            
+            _identityProviderClient = new IdentityProviderClient( co );
         }
         
         public async Task Invoke(HttpContext context)
