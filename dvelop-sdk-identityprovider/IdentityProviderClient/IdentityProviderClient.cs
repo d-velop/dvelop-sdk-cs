@@ -4,10 +4,12 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using Dvelop.Sdk.IdentityProvider.Dto;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Dvelop.Sdk.IdentityProvider.Client
 {
@@ -137,7 +139,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
             var tenantInformation = _tenantInformationCallback();
             var systemBaseUri = tenantInformation.SystemBaseUri;
             
-            var loginUri = systemBaseUri + APPNAME + IDP_APPSESSION;
+            var loginUri = systemBaseUri + IDPBASE + IDP_APPSESSION;
 
             var response = await _httpClient.SendAsync(
                 new HttpRequestMessage(HttpMethod.Post, loginUri)
