@@ -158,8 +158,9 @@ namespace Dvelop.Sdk.IdentityProvider.Client
                     }), Encoding.UTF8, "application/json" )
                 }
             );
-  
-            return response.IsSuccessStatusCode;
+            var success = response.IsSuccessStatusCode;
+            _logCallback?.Invoke(IdentityProviderClientLogLevel.Debug,$"Request for Appsession Creation successful {success}");
+            return success;
         }
 
         public Uri GetLoginUri(string redirect)
