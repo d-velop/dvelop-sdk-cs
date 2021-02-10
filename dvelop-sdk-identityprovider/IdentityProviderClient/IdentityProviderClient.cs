@@ -101,7 +101,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
 
         public async Task<AuthSessionInfoDto> GetAuthSessionIdFromApiKey(string apiKey)
         {
-            string systemBaseUri = _defaultSystemBaseUri;
+            var systemBaseUri = _defaultSystemBaseUri;
             if (_tenantInformationCallback != null)
             {
                 var ti = _tenantInformationCallback();
@@ -169,7 +169,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
 
         private async Task<ClaimsPrincipal> CreatePrincipalAsync(string authSessionId, string tenantId, string systemBaseUri)
         {
-            string validateUri = systemBaseUri + IDPBASE + IDP_VALIDATE;
+            var validateUri = systemBaseUri + IDPBASE + IDP_VALIDATE;
             if (_allowExternalValidation)
             {
                 validateUri += IDP_QUERY_EXTERNAL;
