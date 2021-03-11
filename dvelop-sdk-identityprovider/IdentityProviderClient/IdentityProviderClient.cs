@@ -92,7 +92,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
             if (result == null)
             {
                 _logCallback?.Invoke(IdentityProviderClientLogLevel.Debug, "Principal for authSessionId not found in cache");
-                return await CreatePrincipalAsync(authSessionId, tenantId, systemBaseUri);
+                return await CreatePrincipalAsync(authSessionId, tenantId, systemBaseUri).ConfigureAwait(false);
             }
             _logCallback?.Invoke(IdentityProviderClientLogLevel.Debug, "Principal for authSessionId found in cache");
             return result;
@@ -118,7 +118,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
                         {"Accept", "application/json"},
                     }
                 }
-            );
+            ).ConfigureAwait(false);
 
             if (response.StatusCode != HttpStatusCode.OK ||
                 !response.Content.Headers.ContentType.MediaType.StartsWith("application/json",
@@ -127,7 +127,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
                 _logCallback?.Invoke(IdentityProviderClientLogLevel.Debug, "Unable to create AuthSessionId from API_KEY");
                 return null;
             }
-            var authSessionInfoDto = JsonConvert.DeserializeObject<AuthSessionInfoDto>(await response.Content.ReadAsStringAsync());
+            var authSessionInfoDto = JsonConvert.DeserializeObject<AuthSessionInfoDto>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
             _logCallback?.Invoke(IdentityProviderClientLogLevel.Debug, "Successfully to created AuthSessionId from API_KEY");
             return authSessionInfoDto;
         }
@@ -199,7 +199,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
                         {"Authorization", $"Bearer {authSessionId}"},
                         {"Accept", "application/json"},
                     }
-                });
+                }).ConfigureAwait(false);
             }
             catch (TaskCanceledException)
             {
@@ -227,7 +227,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
                 return new ClaimsPrincipal();
             }
 
-            var userDto = JsonConvert.DeserializeObject<UserDto>(await response.Content.ReadAsStringAsync());
+            var userDto = JsonConvert.DeserializeObject<UserDto>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
 
             if (userDto == null)
             {
@@ -244,8 +244,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
             //Überprüfen ob Impersonated-Session
             if (!_allowImpersonatedUsers || _allowedImpersonatedApps!=null && _allowedImpersonatedApps.Any())
             {
-                IEnumerable<string> values;
-                if (response.Headers.TryGetValues("x-dv-impersonated", out values))
+                if (response.Headers.TryGetValues("x-dv-impersonated", out var values))
                 {
                     if (values.Any())
                     {
