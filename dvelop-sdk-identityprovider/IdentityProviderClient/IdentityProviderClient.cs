@@ -120,7 +120,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
                         {"Accept", "application/json"},
                     }
                 }
-            );
+            ).ConfigureAwait(false);
 
             if (response.StatusCode != HttpStatusCode.OK ||
                 !response.Content.Headers.ContentType.MediaType.StartsWith("application/json",
@@ -157,7 +157,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
                         }
                     }), Encoding.UTF8, "application/json" )
                 }
-            );
+            ).ConfigureAwait(false);
             var success = response.IsSuccessStatusCode;
             _logCallback?.Invoke(IdentityProviderClientLogLevel.Debug,$"Request for Appsession Creation successful {success}");
             return success;
@@ -230,7 +230,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
                         {"Authorization", $"Bearer {authSessionId}"},
                         {"Accept", "application/json"},
                     }
-                });
+                }).ConfigureAwait(false);
             }
             catch (TaskCanceledException)
             {
