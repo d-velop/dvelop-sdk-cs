@@ -192,8 +192,8 @@ namespace Dvelop.Sdk.IdentityProvider.Client
             HttpResponseMessage response;
             try
             {
-                var maxRetryTimeInSeconds = Math.Min(_httpClient.Timeout.TotalSeconds, 120);
-                var expireTime = DateTime.Now.AddSeconds(maxRetryTimeInSeconds);
+                var maxRetryTimeInSeconds = Math.Min(_httpClient.Timeout.TotalMilliseconds, 120_000);
+                var expireTime = DateTime.Now.AddMilliseconds(maxRetryTimeInSeconds);
                 var retry = 1;
                 do
                 {
@@ -212,7 +212,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
                     }
                     if (response.StatusCode >= HttpStatusCode.InternalServerError)
                     {
-                        await Task.Delay(retry++ * 1000);
+                        await Task.Delay(retry++ * 500).ConfigureAwait(false);
                     }
                 } while (response.StatusCode >= HttpStatusCode.InternalServerError);
 

@@ -64,9 +64,8 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
         {
             var now = DateTimeOffset.UtcNow;
             _clock.SetupSequence(c => c.UtcNow)
-                .Returns(now)                   // SET 
-                .Returns(now.AddMinutes(59))    // GET 1
-                .Returns(now.AddMinutes(61));   // GET 2
+                .Returns(now)
+                .Returns(now.AddMinutes(61));   
             
             const string user1 = "a&1";
             var claimsPrincipal = new ClaimsPrincipal();
@@ -85,8 +84,6 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             var now = DateTimeOffset.UtcNow;
             _clock.SetupSequence(c => c.UtcNow)
                 .Returns(now).Returns(now)      // SET 
-                .Returns(now.AddMinutes(59))    // GET a&1
-                .Returns(now.AddMinutes(59))    // GET b&1
                 .Returns(now.AddMinutes(61))    // GET a&1
                 .Returns(now.AddMinutes(61));   // GET b&1
             
