@@ -192,14 +192,30 @@ namespace Dvelop.Sdk.IdentityProvider.Client
             HttpResponseMessage response;
             try
             {
-                response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, validateUri)
+                var maxRetryTimeInSeconds = Math.Min(_httpClient.Timeout.TotalSeconds, 120);
+                var expireTime = DateTime.Now.AddSeconds(maxRetryTimeInSeconds);
+                var retry = 1;
+                do
                 {
-                    Headers =
+                    response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, validateUri)
                     {
-                        {"Authorization", $"Bearer {authSessionId}"},
-                        {"Accept", "application/json"},
+                        Headers =
+                        {
+                            {"Authorization", $"Bearer {authSessionId}"},
+                            {"Accept", "application/json"},
+                        }
+                    }).ConfigureAwait(false);
+                    // Retry if server-side Errors occurs
+                    if (response.StatusCode >= HttpStatusCode.InternalServerError && DateTime.Compare(DateTime.Now, expireTime) > 0)
+                    {
+                        throw new TaskCanceledException("Retry Timeout reached");   
                     }
-                }).ConfigureAwait(false);
+                    if (response.StatusCode >= HttpStatusCode.InternalServerError)
+                    {
+                        await Task.Delay(retry++ * 1000);
+                    }
+                } while (response.StatusCode >= HttpStatusCode.InternalServerError);
+
             }
             catch (TaskCanceledException)
             {

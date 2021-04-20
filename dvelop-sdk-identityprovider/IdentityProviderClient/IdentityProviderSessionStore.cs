@@ -31,7 +31,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
 
         public ClaimsPrincipal GetPrincipal(string cookie)
         {
-            CleanUp();
+            //CleanUp();
             var id = IdFromCookie(cookie);
             if (!_sessionCache.TryGetValue(id, out var sessionItem)) return null;
             if (sessionItem.Expire.CompareTo(_clock.UtcNow) < 0)
