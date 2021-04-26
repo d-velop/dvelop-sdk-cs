@@ -46,7 +46,7 @@ namespace Dvelop.Sdk.TenantMiddleware
                 return;
             }
 
-            await _next(context);
+            await _next(context).ConfigureAwait(false);
         }
 
         internal static HttpStatusCode Invoke(TenantMiddlewareOptions tenantMiddlewareOptions, string systemBaseUriFromHeader,
