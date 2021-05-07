@@ -10,6 +10,7 @@ namespace Dvelop.Sdk.HttpClientExtensions.Extensions.W3cTracing
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
+            
             if (Activity.Current != null && request?.Headers != null && !request.Headers.Contains("traceparent"))
             {
                 request.Headers.Add("traceparent", Activity.Current.Id);
