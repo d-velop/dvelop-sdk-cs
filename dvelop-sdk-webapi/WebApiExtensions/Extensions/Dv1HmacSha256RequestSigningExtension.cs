@@ -13,10 +13,8 @@ namespace Dvelop.Sdk.WebApiExtensions.Extensions
     {
         public static async Task<string> CalculateDv1HmacSha256Signature(this HttpRequest request, string appSecret)
         {
-            // This enables replay of the request body, needed to get the body to the controller
-            request.EnableBuffering();
             var reader = new StreamReader(request.Body, Encoding.UTF8, false, 1024*128, true);
-            var body = await reader.ReadToEndAsync();
+            var body = await reader.ReadToEndAsync().ConfigureAwait(false);
             
             // Never forget to rewind the stream
             request.Body.Seek(0, SeekOrigin.Begin);
