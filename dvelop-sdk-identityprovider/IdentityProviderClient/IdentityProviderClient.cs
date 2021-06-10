@@ -94,7 +94,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
             if (result == null)
             {
                 _logCallback?.Invoke(IdentityProviderClientLogLevel.Debug, "Principal for authSessionId not found in cache");
-                return await CreatePrincipalAsync(authSessionId, tenantId, systemBaseUri);
+                return await CreatePrincipalAsync(authSessionId, tenantId, systemBaseUri).ConfigureAwait(false);
             }
             _logCallback?.Invoke(IdentityProviderClientLogLevel.Debug, "Principal for authSessionId found in cache");
             return result;
@@ -129,7 +129,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
                 _logCallback?.Invoke(IdentityProviderClientLogLevel.Debug, "Unable to create AuthSessionId from API_KEY");
                 return null;
             }
-            var authSessionInfoDto = JsonConvert.DeserializeObject<AuthSessionInfoDto>(await response.Content.ReadAsStringAsync());
+            var authSessionInfoDto = JsonConvert.DeserializeObject<AuthSessionInfoDto>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
             _logCallback?.Invoke(IdentityProviderClientLogLevel.Debug, "Successfully to created AuthSessionId from API_KEY");
             return authSessionInfoDto;
         }
@@ -223,14 +223,30 @@ namespace Dvelop.Sdk.IdentityProvider.Client
             HttpResponseMessage response;
             try
             {
-                response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, validateUri)
+                var maxRetryTimeInSeconds = Math.Min(_httpClient.Timeout.TotalMilliseconds, 120_000);
+                var expireTime = DateTime.Now.AddMilliseconds(maxRetryTimeInSeconds);
+                var retry = 1;
+                do
                 {
-                    Headers =
+                    response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, validateUri)
                     {
-                        {"Authorization", $"Bearer {authSessionId}"},
-                        {"Accept", "application/json"},
+                        Headers =
+                        {
+                            {"Authorization", $"Bearer {authSessionId}"},
+                            {"Accept", "application/json"},
+                        }
+                    }).ConfigureAwait(false);
+                    // Retry if server-side Errors occurs
+                    if (response.StatusCode >= HttpStatusCode.InternalServerError && DateTime.Compare(DateTime.Now, expireTime) > 0)
+                    {
+                        throw new TaskCanceledException("Retry Timeout reached");   
                     }
-                }).ConfigureAwait(false);
+                    if (response.StatusCode >= HttpStatusCode.InternalServerError)
+                    {
+                        await Task.Delay(retry++ * 500).ConfigureAwait(false);
+                    }
+                } while (response.StatusCode >= HttpStatusCode.InternalServerError);
+
             }
             catch (TaskCanceledException)
             {
@@ -258,7 +274,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
                 return new ClaimsPrincipal();
             }
 
-            var userDto = JsonConvert.DeserializeObject<UserDto>(await response.Content.ReadAsStringAsync());
+            var userDto = JsonConvert.DeserializeObject<UserDto>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
 
             if (userDto == null)
             {
@@ -275,8 +291,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
             //Überprüfen ob Impersonated-Session
             if (!_allowImpersonatedUsers || _allowedImpersonatedApps!=null && _allowedImpersonatedApps.Any())
             {
-                IEnumerable<string> values;
-                if (response.Headers.TryGetValues("x-dv-impersonated", out values))
+                if (response.Headers.TryGetValues("x-dv-impersonated", out var values))
                 {
                     if (values.Any())
                     {
