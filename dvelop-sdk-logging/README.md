@@ -111,9 +111,9 @@ Now you can log a statement with additional information:
 
 logger.Log(LogLevel.Debug, "Fetching batches from database", new DatabaseLogAttributeState
 {
-    Name = "INB_IMPORT_PROCESS",
+    Name = "MY_PROCESS",
     Operation = "SELECT",
-    Statement = "SELECT * FROM INB_IMPORT_PROCESS",
+    Statement = "SELECT * FROM MY_TABLE",
     TimeUsed = "252000000"
 })
 ```
@@ -126,7 +126,7 @@ This will create a json log statement like the following:
     "body": "Fetching batches from database",
     "res": {
         "svc": {
-            "name": "inbounddmsconnector",
+            "name": "myapptoyourappconnector",
             "ver": "1.3.0.0",
             "inst": "62a6e5d08a6ce29a6a935fe11dd33199"
         }
@@ -134,8 +134,8 @@ This will create a json log statement like the following:
     "attr": {
         "timeUsed": "252000000",
         "db": {
-            "name": "INB_IMPORT_PROCESS",
-            "statement": "SELECT * FROM INB_IMPORT_PROCESS",
+            "name": "MY_PROCESS",
+            "statement": "SELECT * FROM MY_TABLE",
             "operation": "SELECT"
         }
     },
