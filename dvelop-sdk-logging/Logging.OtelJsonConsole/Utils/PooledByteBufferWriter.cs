@@ -7,7 +7,12 @@ using System.Threading.Tasks;
 
 namespace Dvelop.Sdk.Logging.OtelJsonConsole.Utils
 {
-    //siehe https://github.com/dotnet/corefx/blob/master/src/System.Text.Json/src/System/Text/Json/Serialization/PooledByteBufferWriter.cs
+    
+    // Licensed to the .NET Foundation under one or more agreements.
+    // The .NET Foundation licenses this file to you under the MIT license.
+    // See the LICENSE file in the project root for more information.
+    // License: https://github.com/dotnet/corefx/blob/master/LICENSE.TXT
+    // original code: https://github.com/dotnet/corefx/blob/master/src/System.Text.Json/src/System/Text/Json/Serialization/PooledByteBufferWriter.cs
     internal sealed class PooledByteBufferWriter : IBufferWriter<byte>, IDisposable
     {
         private byte[] _rentedBuffer;

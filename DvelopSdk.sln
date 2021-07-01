@@ -47,6 +47,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dvelop-sdk-cloudcenter", "dvelop-sdk-cloudcenter", "{6DC7D1A5-930C-4845-A438-036C6E34D5F0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dvelop-sdk-signing", "dvelop-sdk-signing", "{7711478E-8FB4-4D04-92BF-2B8793182418}"
+ProjectSection(SolutionItems) = preProject
+	dvelop-sdk-logging\ReadMe.md = dvelop-sdk-logging\README.md
+EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SigningAlgorithms", "dvelop-sdk-signing\SigningAlgorithms\SigningAlgorithms.csproj", "{C4BD4C67-FD27-4EBF-9CC8-8F57BF9F8093}"
 EndProject
