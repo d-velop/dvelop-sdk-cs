@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Dvelop.Sdk.IdentityProvider.Client;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace Dvelop.Sdk.IdentityProvider.Middleware
 {
@@ -40,7 +41,7 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
             var bearerTokenReceived = string.IsNullOrWhiteSpace(sessionId);
             if (!bearerTokenReceived)
             {
-                context.User = await _identityProviderClient.GetClaimsPrincipalAsync(sessionId);
+                context.User = await _identityProviderClient.GetClaimsPrincipalAsync(sessionId).ConfigureAwait(false);
             }
             context.Response.OnStarting(state =>
             {
@@ -51,7 +52,7 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
                 return Task.FromResult(RequestRedirectedToLogin(context, bearerTokenReceived));
             }, context.Response);
             
-            await _next.Invoke(context);
+            await _next.Invoke(context).ConfigureAwait(false);
         }
         
         private bool RequestRedirectedToLogin(HttpContext context, bool bearerTokenReceived)
@@ -68,22 +69,10 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
                 return true;
             }
             
-            var querystring=string.Empty;
-            foreach (var query in context.Request.Query)
-            {
-                if (!string.IsNullOrWhiteSpace(querystring))
-                    querystring += "&";
-                querystring += query.Key + "=" + query.Value;
-            }
-            string logonUri = context.Request.PathBase + context.Request.Path;
+            var encodedUrl = context.Request.GetEncodedPathAndQuery();
+            context.Response.Redirect(_identityProviderClient.GetLoginUri(encodedUrl).ToString());
 
-            if (!string.IsNullOrWhiteSpace(querystring))
-            {
-                logonUri += "?" + querystring;
-            }
             
-            var redirectLocation = _identityProviderClient.GetLoginUri(logonUri).ToString();
-            context.Response.Redirect(redirectLocation);
             return true;
         }
 
