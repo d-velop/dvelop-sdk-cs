@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Web;
 using Dvelop.Sdk.IdentityProvider.Client;
 using Dvelop.Sdk.IdentityProvider.Middleware;
 using FluentAssertions;
@@ -40,14 +41,27 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
 
         private static IEnumerable<object[]> GetTestNoAuthSessionIdData()
         {
+            
+            yield return new object[] { "IDP-1740_path",
+                "GET", new Dictionary<string, string>{{"Accept","text/html"}}, "/hüme", 302, new Dictionary<string, string>
+                {
+                    {"Location","/identityprovider/login?redirect=%2fh%25C3%25BCme"}
+                }, false};
+            
+            yield return new object[] { "IDP-1740_query",
+                "GET", new Dictionary<string, string>{{"Accept","text/html"}}, "/bla?path=%2Fh%C3%BCme", 302, new Dictionary<string, string>
+                {
+                    {"Location","/identityprovider/login?redirect=%2Fbla%3Fpath%3D%252Fh%25C3%25BCme"}
+                }, false};
+            
             yield return new object[] { "GetRequestAndHtmlAccepted_Should_RedirectToIdp",
-                "GET", new Dictionary<string, string>{{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2fa%2fb%253Fq1%3dx%26q2%3d1"}}, false};
+                "GET", new Dictionary<string, string>{{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, false};
             yield return new object[] { "AndHeadRequestAndHtmlAccepted_Should_RedirectToIdp",
-                "HEAD", new Dictionary<string, string>{{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2fa%2fb%253Fq1%3dx%26q2%3d1" }}, false};
+                "HEAD", new Dictionary<string, string>{{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1" }}, false};
             yield return new object[] { "BasicAuthorizationAndGetRequestAndHtmlAccepted_Should_RedirectsToIdp",
-                "GET", new Dictionary<string, string>{{"Accept","text/html"},{"Authorization", "Basic adabdk"}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2fa%2fb%253Fq1%3dx%26q2%3d1"}}, false};
+                "GET", new Dictionary<string, string>{{"Accept","text/html"},{"Authorization", "Basic adabdk"}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, false};
             yield return new object[] { "OtherCookieAndGetRequestAndHtmlAccepted_Should_RedirectsToIdp", 
-                "GET", new Dictionary<string, string>{{"Cookie","AnyCookie=adabdk"},{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2fa%2fb%253Fq1%3dx%26q2%3d1"}}, false};
+                "GET", new Dictionary<string, string>{{"Cookie","AnyCookie=adabdk"},{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, false};
             yield return new object[] { "PostRequestAndHtmlAccepted_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
                 "POST", new Dictionary<string, string>{{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"WWW-Authenticate","Bearer" }}, false};
             yield return new object[] { "PutRequestAndHtmlAccepted_ReturnsStatus401AndWWW-AuthenticateBearerHeader", 
@@ -56,6 +70,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
                 "DELETE", new Dictionary<string, string>{{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"WWW-Authenticate","Bearer" }}, false};
             yield return new object[] { "PatchRequestAndHtmlAccepted_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
                 "PATCH", new Dictionary<string, string>{{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"WWW-Authenticate","Bearer" }}, false};
+              
         }
         
         [DynamicData(nameof(GetTestNoAuthSessionIdData), DynamicDataSourceType.Method ,DynamicDataDisplayName = "DisplayName")]
@@ -63,7 +78,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
         public async Task TestNoAuthSessionId(string testName, string requestMethod, Dictionary<string,string> requestHeader, string requestUri, int expectedStatus,  Dictionary<string,string> expectedResponseHeader,bool allowExternalValidation)
         {
             Console.WriteLine(testName);
-            await TestMiddleWare(requestMethod,requestHeader,requestUri,expectedStatus,expectedResponseHeader,allowExternalValidation);
+            await TestMiddleWare(requestMethod,requestHeader,requestUri,expectedStatus,expectedResponseHeader,allowExternalValidation).ConfigureAwait(false);
         }
 
         private static IEnumerable<object[]> GetTestInvalidAuthSessionIdData()
@@ -71,9 +86,9 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             const string invalidToken = "200e7388-1834-434b-be79-3745181e1457";
             
             yield return new object[] { "GetRequestAndHtmlAccepted_Middleware_RedirectsToIdp", 
-                "GET", new Dictionary<string, string>{{"Accept", "text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2fa%2fb%253Fq1%3dx%26q2%3d1"}}, false};
+                "GET", new Dictionary<string, string>{{"Accept", "text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, false};
             yield return new object[] { "HeadRequestAndHtmlAccepted_Middleware_RedirectsToIdp",
-                "HEAD", new Dictionary<string, string>{{"Accept", "text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 302,new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2fa%2fb%253Fq1%3dx%26q2%3d1"}}, false};
+                "HEAD", new Dictionary<string, string>{{"Accept", "text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 302,new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, false};
             yield return new object[] { "GetRequestAndHtmlNotAccepted_Middleware_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
                 "GET", new Dictionary<string, string>{{"Accept", "application/json"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"Www-Authenticate","Bearer" }}, false};
             yield return new object[] { "PostRequestAndHtmlAccepted_Middleware_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
@@ -85,7 +100,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             yield return new object[] { "PatchRequestAndHtmlAccepted_Middleware_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
                 "PATCH", new Dictionary<string, string>{{"Accept","text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1",401, new Dictionary<string, string>{{"Www-Authenticate","Bearer" }}, false};
             yield return new object[] { "GetRequestAndHtmlAcceptedAndExternalValidation_Middleware_RedirectsToIdp",
-                "GET", new Dictionary<string, string>{{"Accept","text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2fa%2fb%253Fq1%3dx%26q2%3d1"}}, true};
+                "GET", new Dictionary<string, string>{{"Accept","text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, true};
         }
 
         [DynamicData(nameof(GetTestInvalidAuthSessionIdData), DynamicDataSourceType.Method, DynamicDataDisplayName = "DisplayName")]
@@ -95,7 +110,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             Dictionary<string, string> expectedResponseHeader, bool allowExternalValidation)
         {
             Console.WriteLine(testName);
-            await TestMiddleWare(requestMethod,requestHeader,requestUri,expectedStatus,expectedResponseHeader,allowExternalValidation);
+            await TestMiddleWare(requestMethod,requestHeader,requestUri,expectedStatus,expectedResponseHeader,allowExternalValidation).ConfigureAwait(false);
         }
 
         private static IEnumerable<object[]> GetTestNoAuthSessionIdAndGetRequestAndAcceptHeaderIsData()
@@ -126,16 +141,31 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
         {
             Console.WriteLine(acceptHeader);
             var requestHeader = new Dictionary<string, string>{{"Accept", acceptHeader}};
-            await TestMiddleWare("GET",requestHeader,"/a/b?q1=x&q2=1",redirectExpected?302:401,new Dictionary<string, string>(),false );
+            await TestMiddleWare("GET",requestHeader,"/a/b?q1=x&q2=1",redirectExpected?302:401,new Dictionary<string, string>(),false ).ConfigureAwait(false);
         }
         
         
         private async Task TestMiddleWare(string requestMethod, Dictionary<string,string> requestHeader, string requestUri, int expectedStatus,  Dictionary<string,string> expectedResponseHeader,bool allowExternalValidation)
         {
-           
+            var uri = new Uri(requestUri, UriKind.RelativeOrAbsolute);
+            if (!uri.IsAbsoluteUri)
+            {
+                uri =new Uri(new Uri("http://localhost/", UriKind.Absolute), uri);
+            }
+          
+            
             var context = new DefaultHttpContext();
             context.Request.Method = requestMethod;
-            context.Request.Path = requestUri;
+            context.Request.Path = uri.AbsolutePath;
+
+            var y = HttpUtility.ParseQueryString(uri.Query);
+            foreach (var s in y.AllKeys)
+            {
+                context.Request.QueryString = context.Request.QueryString.Add(s, y[s]);
+            }
+
+            
+            //TODO: Path und Query splitten und einbauen
 
             foreach (var (key, value) in requestHeader)
             {
@@ -156,7 +186,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             async Task Next(HttpContext ctx)
             {
                 Console.WriteLine(ctx.Response.Headers.Count);
-                await feature.InvokeCallBack();
+                await feature.InvokeCallBack().ConfigureAwait(false);
             }
 
             var nextMiddleware = new MiddlewareMock(Next);
@@ -168,7 +198,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
                         TenantInformationCallback = () => new TenantInformation{ TenantId = "0", SystemBaseUri = "https://localhost"},
                         HttpClient = client
                     })
-                .Invoke(context);
+                .Invoke(context).ConfigureAwait(false);
             
             context.Response.StatusCode.Should().Be(expectedStatus);
             
@@ -203,7 +233,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
                 context.Response.Body = new MemoryStream();
                 context.Response.StatusCode = 401;
                 
-                await _next(context);
+                await _next(context).ConfigureAwait(false);
             }
         }
         
