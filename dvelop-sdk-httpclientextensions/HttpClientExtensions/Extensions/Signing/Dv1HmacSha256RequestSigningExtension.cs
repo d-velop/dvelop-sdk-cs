@@ -22,7 +22,7 @@ namespace Dvelop.Sdk.HttpClientExtensions.Extensions.Signing
             {
                 request.Headers.Add("x-dv-signature-timestamp", DateTime.UtcNow.ToString("O"));
             }
-            var checksumFromRequest = await CreateChecksumFromRequest(request);
+            var checksumFromRequest = await CreateChecksumFromRequest(request).ConfigureAwait(false);
             var checksum = HmacSha256Algorithm.HmacSha256(Convert.FromBase64String(secret), HmacSha256Algorithm.Sha256(checksumFromRequest));
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", checksum);
         }
@@ -36,7 +36,7 @@ namespace Dvelop.Sdk.HttpClientExtensions.Extensions.Signing
             var body = string.Empty;
             if (request.Content != null)
             {
-                body = await request.Content.ReadAsStringAsync()??string.Empty;
+                body = await request.Content.ReadAsStringAsync().ConfigureAwait(false)??string.Empty;
             }
             return $"{verb}\n{path}\n{query}\n{headers}\n{HmacSha256Algorithm.Sha256(body)}";
         }

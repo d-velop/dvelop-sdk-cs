@@ -76,7 +76,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                         SignatureSecretKey = _signatureKey,
                         OnTenantIdentified = (tenantId, systemBaseUri) => { systemBaseUriSetByMiddleware = systemBaseUri; }
                     })
-                .InvokeAsync(context);
+                .InvokeAsync(context).ConfigureAwait(false);
 
             systemBaseUriSetByMiddleware.Should().Be(systemBaseUriFromHeader);
             nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
@@ -96,7 +96,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                         DefaultSystemBaseUri = DefaultSystemBaseUri,
                         OnTenantIdentified = (tenantId, systemBaseUri) => { systemBaseUriSetByMiddleware = systemBaseUri; }
                     })
-                .InvokeAsync(context);
+                .InvokeAsync(context).ConfigureAwait(false);
 
             systemBaseUriSetByMiddleware.Should().Be(DefaultSystemBaseUri);
             nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
@@ -119,7 +119,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                         SignatureSecretKey = _signatureKey,
                         OnTenantIdentified = (tenantId, systemBaseUri) => { systemBaseUriSetByMiddleware = systemBaseUri; }
                     })
-                .InvokeAsync(context);
+                .InvokeAsync(context).ConfigureAwait(false);
 
             systemBaseUriSetByMiddleware.Should().Be(systemBaseUriFromHeader);
             nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
@@ -138,7 +138,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                         DefaultSystemBaseUri = null,
                         OnTenantIdentified = (tenantId, systemBaseUri) => { systemBaseUriSetByMiddleware = systemBaseUri; }
                     })
-                .InvokeAsync(context);
+                .InvokeAsync(context).ConfigureAwait(false);
 
             systemBaseUriSetByMiddleware.Should().BeNull();
             nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
@@ -162,7 +162,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                         SignatureSecretKey = _signatureKey,
                         OnTenantIdentified = (tenantId, systemBaseUri) => { tenantIdSetByMiddleware = tenantId; }
                     })
-                .InvokeAsync(context);
+                .InvokeAsync(context).ConfigureAwait(false);
 
             tenantIdSetByMiddleware.Should().Be(tenantIdFromHeader);
             nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
@@ -182,7 +182,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                         DefaultTenantId = DefaultTenantId,
                         OnTenantIdentified = (tenantId, systemBaseUri) => { tenantIdSetByMiddleware = tenantId; }
                     })
-                .InvokeAsync(context);
+                .InvokeAsync(context).ConfigureAwait(false);
 
             tenantIdSetByMiddleware.Should().Be(DefaultTenantId);
             nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
@@ -206,7 +206,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                         SignatureSecretKey = _signatureKey,
                         OnTenantIdentified = (tenantId, systemBaseUri) => { tenantIdSetByMiddleware = tenantId; }
                     })
-                .InvokeAsync(context);
+                .InvokeAsync(context).ConfigureAwait(false);
 
             tenantIdSetByMiddleware.Should().Be(tenantIdFromHeader);
             nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
@@ -225,7 +225,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                         DefaultTenantId = null,
                         OnTenantIdentified = (tenantId, systemBaseUri) => { tenantIdSetByMiddleware = tenantId; }
                     })
-                .InvokeAsync(context);
+                .InvokeAsync(context).ConfigureAwait(false);
 
             tenantIdSetByMiddleware.Should().BeNull();
             nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
@@ -262,7 +262,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                             systemBaseUriSetByMiddleware = systemBaseUri;
                         }
                     })
-                .InvokeAsync(context);
+                .InvokeAsync(context).ConfigureAwait(false);
 
             tenantIdSetByMiddleware.Should().Be(tenantIdFromHeader);
             systemBaseUriSetByMiddleware.Should().Be(systemBaseUriFromHeader);
@@ -295,7 +295,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                             systemBaseUriSetByMiddleware = systemBaseUri;
                         }
                     })
-                .InvokeAsync(context);
+                .InvokeAsync(context).ConfigureAwait(false);
 
             tenantIdSetByMiddleware.Should().Be(tenantIdFromHeader);
             systemBaseUriSetByMiddleware.Should().Be(DefaultSystemBaseUri);
@@ -327,7 +327,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                             systemBaseUriSetByMiddleware = systemBaseUri;
                         }
                     })
-                .InvokeAsync(context);
+                .InvokeAsync(context).ConfigureAwait(false);
 
             tenantIdSetByMiddleware.Should().Be(DefaultTenantId);
             systemBaseUriSetByMiddleware.Should().Be(systemBaseUriFromHeader);
@@ -353,7 +353,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                             systemBaseUriSetByMiddleware = systemBaseUri;
                         }
                     })
-                .InvokeAsync(context);
+                .InvokeAsync(context).ConfigureAwait(false);
 
             tenantIdSetByMiddleware.Should().Be(DefaultTenantId);
             systemBaseUriSetByMiddleware.Should().Be(DefaultSystemBaseUri);
@@ -380,7 +380,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                             systemBaseUriSetByMiddleware = systemBaseUri;
                         }
                     })
-                .InvokeAsync(context);
+                .InvokeAsync(context).ConfigureAwait(false);
 
             tenantIdSetByMiddleware.Should().Be(DefaultTenantId);
             systemBaseUriSetByMiddleware.Should().Be(DefaultSystemBaseUri);
@@ -409,7 +409,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                         SignatureSecretKey = _signatureKey,
                         OnTenantIdentified = (tenantId, systemBaseUri) => { onTenantIdentifiedHasBeenInvoked = true; }
                     })
-                .InvokeAsync(context);
+                .InvokeAsync(context).ConfigureAwait(false);
 
             context.Response.StatusCode.Should().Be(403);
             onTenantIdentifiedHasBeenInvoked.Should().BeFalse("onTenantIdentified should not have been invoked if signature is wrong");
@@ -436,7 +436,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                         SignatureSecretKey = _signatureKey,
                         OnTenantIdentified = (tenantId, systemBaseUri) => { onTenantIdentifiedHasBeenInvoked = true; }
                     })
-                .InvokeAsync(context);
+                .InvokeAsync(context).ConfigureAwait(false);
 
             context.Response.StatusCode.Should().Be(403);
             onTenantIdentifiedHasBeenInvoked.Should().BeFalse("onTenantIdentified should not have been invoked if signature is wrong");
@@ -463,7 +463,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                         SignatureSecretKey = _signatureKey,
                         OnTenantIdentified = (tenantId, systemBaseUri) => { onTenantIdentifiedHasBeenInvoked = true; }
                     })
-                .InvokeAsync(context);
+                .InvokeAsync(context).ConfigureAwait(false);
 
             context.Response.StatusCode.Should().Be(403);
             onTenantIdentifiedHasBeenInvoked.Should().BeFalse("onTenantIdentified should not have been invoked if signature is wrong");
@@ -498,7 +498,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                         SignatureSecretKey = _signatureKey,
                         OnTenantIdentified = (tenantId, systemBaseUri) => { onTenantIdentifiedHasBeenInvoked = true; }
                     })
-                .InvokeAsync(context);
+                .InvokeAsync(context).ConfigureAwait(false);
 
             context.Response.StatusCode.Should().Be(200);
             onTenantIdentifiedHasBeenInvoked.Should().BeTrue("onTenantIdentified should not have been invoked if wrong signature is ignored");
@@ -527,7 +527,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                         SignatureSecretKey = _signatureKey,
                         OnTenantIdentified = (tenantId, systemBaseUri) => { onTenantIdentifiedHasBeenInvoked = true; }
                     })
-                .InvokeAsync(context);
+                .InvokeAsync(context).ConfigureAwait(false);
 
             context.Response.StatusCode.Should().Be(403);
             onTenantIdentifiedHasBeenInvoked.Should().BeFalse("onTenantIdentified should not have been invoked if signature is wrong");
@@ -566,7 +566,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                         SignatureSecretKey = _signatureKey,
                         OnTenantIdentified = (tenantId, systemBaseUri) => { onTenantIdentifiedHasBeenInvoked = true; }
                     })
-                .InvokeAsync(context);
+                .InvokeAsync(context).ConfigureAwait(false);
 
             context.Response.StatusCode.Should().Be(403);
             onTenantIdentifiedHasBeenInvoked.Should().BeFalse("onTenantIdentified should not have been invoked if signature is wrong");
@@ -593,7 +593,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                         SignatureSecretKey = _signatureKey,
                         OnTenantIdentified = (tenantId, systemBaseUri) => { onTenantIdentifiedHasBeenInvoked = true; }
                     })
-                .InvokeAsync(context);
+                .InvokeAsync(context).ConfigureAwait(false);
 
             context.Response.StatusCode.Should().Be(403);
             onTenantIdentifiedHasBeenInvoked.Should().BeFalse("onTenantIdentified should not have been invoked if signature is wrong");
@@ -624,7 +624,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                         DefaultSystemBaseUri = DefaultSystemBaseUri,
                         OnTenantIdentified = (tenantId, systemBaseUri) => { onTenantIdentifiedHasBeenInvoked = true; }
                     })
-                .InvokeAsync(context);
+                .InvokeAsync(context).ConfigureAwait(false);
 
             context.Response.StatusCode.Should().Be(500);
             onTenantIdentifiedHasBeenInvoked.Should().BeFalse("onTenantIdentified should not have been invoked if signature is wrong");
@@ -653,7 +653,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
             public async Task InvokeAsync(HttpContext context)
             {
                 HasBeenInvoked = true;
-                await Task.FromResult(0);
+                await Task.FromResult(0).ConfigureAwait(false);
             }
         }
     }

@@ -25,7 +25,7 @@ namespace Dvelop.Sdk.HttpClientExtensions.UnitTest.Extensions.Signing
                     {"x-dv-signature-timestamp","2019-08-09T08:49:42Z"}
                 }
             };
-            await x.SignWithDv1HmacSha256("Rg9iJXX0Jkun9u4Rp6no8HTNEdHlfX9aZYbFJ9b6YdQ=");
+            await x.SignWithDv1HmacSha256("Rg9iJXX0Jkun9u4Rp6no8HTNEdHlfX9aZYbFJ9b6YdQ=").ConfigureAwait(false);
             Assert.AreEqual("02783453441665bf27aa465cbbac9b98507ae94c54b6be2b1882fe9a05ec104c", x.Headers.Authorization.Parameter);
         }
 
@@ -39,7 +39,7 @@ namespace Dvelop.Sdk.HttpClientExtensions.UnitTest.Extensions.Signing
                 RequestUri = new Uri("https://developer.d-velop.cloud/myapp/dvelop-cloud-lifecycle-event")
             };
             
-            await x.SignWithDv1HmacSha256("Rg9iJXX0Jkun9u4Rp6no8HTNEdHlfX9aZYbFJ9b6YdQ=");
+            await x.SignWithDv1HmacSha256("Rg9iJXX0Jkun9u4Rp6no8HTNEdHlfX9aZYbFJ9b6YdQ=").ConfigureAwait(false);
             
             Assert.IsNotNull(x.Headers.GetValues("x-dv-signature-algorithm").FirstOrDefault());
             Assert.AreEqual("DV1-HMAC-SHA256",x.Headers.GetValues("x-dv-signature-algorithm").FirstOrDefault());
@@ -64,7 +64,7 @@ namespace Dvelop.Sdk.HttpClientExtensions.UnitTest.Extensions.Signing
                 RequestUri = new Uri("https://developer.d-velop.cloud/myapp/dvelop-cloud-lifecycle-event")
             };
             
-            await x.SignWithDv1HmacSha256(secret);
+            await x.SignWithDv1HmacSha256(secret).ConfigureAwait(false);
         }
         
         [TestMethod]
@@ -78,7 +78,7 @@ namespace Dvelop.Sdk.HttpClientExtensions.UnitTest.Extensions.Signing
                 RequestUri = new Uri("https://developer.d-velop.cloud/myapp/dvelop-cloud-lifecycle-event")
             };
             
-            await x.SignWithDv1HmacSha256("not base 64");
+            await x.SignWithDv1HmacSha256("not base 64").ConfigureAwait(false);
         }
     }
 }
