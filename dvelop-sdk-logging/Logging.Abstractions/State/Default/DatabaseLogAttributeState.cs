@@ -6,21 +6,16 @@ namespace Dvelop.Sdk.Logging.Abstractions.State.Default
 {
     public class DatabaseLogAttributeState : CustomLogAttributeState
     {
-        public double TimeUsed { get; set; }
         public string Name { get; set; }
         public string Statement { get; set; }
         public string Operation { get; set; }
+        public long Duration { get; set; }
 
         public override IEnumerable<CustomLogAttribute> Attributes
         {
             get
             {
                 var attributes = new List<CustomLogAttribute>();
-
-                if (TimeUsed > 0)
-                {
-                    attributes.Add(new CustomLogAttributeProperty("timeUsed", TimeUsed.ToString(CultureInfo.InvariantCulture)));
-                }
 
                 var databaseAttributes = new List<CustomLogAttribute>();
 
@@ -35,6 +30,10 @@ namespace Dvelop.Sdk.Logging.Abstractions.State.Default
                 if (!string.IsNullOrWhiteSpace(Operation))
                 {
                     databaseAttributes.Add(new CustomLogAttributeProperty("operation", Operation));
+                }
+                if (Duration > 0)
+                {
+                    databaseAttributes.Add(new CustomLogAttributeProperty("duration", Duration.ToString()));
                 }
 
                 attributes.Add(new CustomLogAttributeObject("db", databaseAttributes));
