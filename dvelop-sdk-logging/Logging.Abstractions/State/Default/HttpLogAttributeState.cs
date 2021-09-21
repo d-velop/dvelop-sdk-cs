@@ -15,18 +15,14 @@ namespace Dvelop.Sdk.Logging.Abstractions.State.Default
         public string Route { get; set; }
         public string UserAgent { get; set; }
         public string ClientIp { get; set; }
-        public double TimeUsed { get; set; }
+        public long ServerDuration { get; set; }
+        public long ClientDuration { get; set; }
 
         public override IEnumerable<CustomLogAttribute> Attributes
         {
             get
             {
                 var attributes = new List<CustomLogAttribute>();
-
-                if (TimeUsed > 0)
-                {
-                    attributes.Add(new CustomLogAttributeProperty("timeUsed", TimeUsed.ToString(CultureInfo.InvariantCulture)));
-                }
 
                 var httpAttributes = new List<CustomLogAttribute>();
 
@@ -65,6 +61,24 @@ namespace Dvelop.Sdk.Logging.Abstractions.State.Default
                 if (!string.IsNullOrWhiteSpace(ClientIp))
                 {
                     httpAttributes.Add(new CustomLogAttributeProperty("clientIP", ClientIp));
+                }
+
+                if (ServerDuration > 0)
+                {
+                    var server = new List<CustomLogAttribute>
+                    {
+                        new CustomLogAttributeProperty("duration", ServerDuration.ToString())
+                    };
+                    httpAttributes.Add(new CustomLogAttributeObject("server", server));
+                }
+
+                if (ClientDuration > 0)
+                {
+                    var client = new List<CustomLogAttribute>
+                    {
+                        new CustomLogAttributeProperty("duration", ClientDuration.ToString())
+                    };
+                    httpAttributes.Add(new CustomLogAttributeObject("client", client));
                 }
 
                 attributes.Add(new CustomLogAttributeObject("http", httpAttributes));
