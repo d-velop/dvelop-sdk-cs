@@ -57,7 +57,7 @@ namespace Dvelop.Sdk.Logging.OtelJsonConsole
                     WriteBody(writer, message);
 
                     var scopeInfo = GetScopeInformation(writer, scopeProvider);
-                    
+
                     WriteTenant(writer, scopeInfo.TenantLogScope?.TenantId);
                     WriteTracing(writer, scopeInfo.TracingLogScope?.Trace, scopeInfo.TracingLogScope?.Span);
 
@@ -84,6 +84,7 @@ namespace Dvelop.Sdk.Logging.OtelJsonConsole
 
             writer.WriteStartObject("attr");
             WriteCustomAttributes(writer, scopeInfo.CustomAttributes);
+            WriteScopes(writer, scopeInfo.Scopes);
             WriteException(writer, exception);
             WriteState(writer, logEntry.State);
             writer.WriteEndObject();
@@ -205,29 +206,39 @@ namespace Dvelop.Sdk.Logging.OtelJsonConsole
             writer.WriteEndObject();
         }
 
-        private void WriteCustomAttributes(Utf8JsonWriter writer, IList<object> customAttributes)
+        private void WriteCustomAttributes(Utf8JsonWriter writer, IList<ICustomAttributesLogScope> customAttributes)
         {
             if (!customAttributes?.Any() ?? true)
             {
                 return;
             }
 
-            foreach (var customAttribute in customAttributes)
+            foreach (ICustomAttributesLogScope customAttribute in customAttributes)
             {
-                if (customAttribute is IEnumerable<KeyValuePair<string, object>> scopeItems)
+                writer.WriteStartObject(customAttribute.Name);
+                foreach (KeyValuePair<string, object> item in customAttribute.Items)
                 {
-                    writer.WriteStartObject(customAttribute.ToString());
-                    foreach (KeyValuePair<string, object> item in scopeItems)
-                    {
-                        writer.WriteItem(item);
-                    }
-                    writer.WriteEndObject();
+                    writer.WriteItem(item);
                 }
-                else
-                {
-                    writer.WriteStringValue(Utf8JsonWriterUtils.ToInvariantString(customAttribute));
-                }
+                writer.WriteEndObject();
             }
+        }
+
+        private void WriteScopes(Utf8JsonWriter writer, IList<object> scopes)
+        {
+            if (!scopes?.Any() ?? true)
+            {
+                return;
+            }
+
+            writer.WriteStartArray("scopes");
+
+            foreach (object scope in scopes)
+            {
+                writer.WriteStringValue(Utf8JsonWriterUtils.ToInvariantString(scope));
+            }
+
+            writer.WriteEndArray();
         }
 
         private void WriteState<TState>(Utf8JsonWriter writer, TState logEntryState)
@@ -247,30 +258,32 @@ namespace Dvelop.Sdk.Logging.OtelJsonConsole
         {
             var scopeInfo = new ScopeInfo
             {
-                CustomAttributes = new List<object>(),
+                CustomAttributes = new List<ICustomAttributesLogScope>(),
+                Scopes = new List<object>(),
                 Visible = true
             };
 
             scopeProvider?.ForEachScope((scope, state) =>
             {
-                if (scope is TenantLogScope requestScope)
+                switch (scope)
                 {
-                    scopeInfo.TenantLogScope = requestScope;
-                }
-
-                if (scope is TracingLogScope tracingLogScope)
-                {
-                    scopeInfo.TracingLogScope = tracingLogScope;
-                }
-
-                if (scope is InvisibilityLogScope)
-                {
-                    scopeInfo.Visible = false;
+                    case TenantLogScope requestScope:
+                        scopeInfo.TenantLogScope = requestScope;
+                        break;
+                    case TracingLogScope tracingLogScope:
+                        scopeInfo.TracingLogScope = tracingLogScope;
+                        break;
+                    case InvisibilityLogScope _:
+                        scopeInfo.Visible = false;
+                        break;
+                    case ICustomAttributesLogScope customAttributesScope:
+                        scopeInfo.CustomAttributes.Add(customAttributesScope);
+                        break;
                 }
 
                 if (_formatterOptions.IncludeScopes)
                 {
-                    scopeInfo.CustomAttributes.Add(scope);
+                    scopeInfo.Scopes.Add(scope);
                 }
             }, writer);
 
@@ -279,7 +292,7 @@ namespace Dvelop.Sdk.Logging.OtelJsonConsole
 
         private bool ShouldWriteAttributesSection<TState>(ScopeInfo scopeInfo, Exception exception, TState state)
         {
-            var customAttributesFromScopeExists = scopeInfo.CustomAttributes?.Any() ?? false;
+            var customAttributesFromScopeExists = (scopeInfo.CustomAttributes?.Any() ?? false) || (scopeInfo.Scopes?.Any() ?? false);
             var exceptionExists = exception != null;
             var stateExists = state is CustomLogAttributeState;
 
