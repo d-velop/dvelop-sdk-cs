@@ -195,14 +195,11 @@ namespace Dvelop.Sdk.Logging.OtelJsonConsole
             {
                 exceptionWithStacktrace = exceptionWithStacktrace.Replace(Environment.NewLine, " ");
             }
-            writer.WriteStartObject("attr");
 
             writer.WriteStartObject("exception");
             writer.WriteString("type", typeof(Exception).ToString());
             writer.WriteString("message", exception.Message);
             writer.WriteString("stacktrace", exceptionWithStacktrace);
-            writer.WriteEndObject();
-
             writer.WriteEndObject();
         }
 
