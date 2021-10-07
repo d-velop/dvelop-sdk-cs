@@ -197,7 +197,7 @@ namespace Dvelop.Sdk.Logging.OtelJsonConsole
             }
 
             writer.WriteStartObject("exception");
-            writer.WriteString("type", typeof(Exception).ToString());
+            writer.WriteString("type", exception.GetType().ToString());
             writer.WriteString("message", exception.Message);
             writer.WriteString("stacktrace", exceptionWithStacktrace);
             writer.WriteEndObject();
