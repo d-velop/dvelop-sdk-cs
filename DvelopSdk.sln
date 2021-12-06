@@ -47,9 +47,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dvelop-sdk-cloudcenter", "dvelop-sdk-cloudcenter", "{6DC7D1A5-930C-4845-A438-036C6E34D5F0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dvelop-sdk-signing", "dvelop-sdk-signing", "{7711478E-8FB4-4D04-92BF-2B8793182418}"
-ProjectSection(SolutionItems) = preProject
-	dvelop-sdk-logging\ReadMe.md = dvelop-sdk-logging\README.md
-EndProjectSection
+	ProjectSection(SolutionItems) = preProject
+		dvelop-sdk-logging\ReadMe.md = dvelop-sdk-logging\ReadMe.md
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SigningAlgorithms", "dvelop-sdk-signing\SigningAlgorithms\SigningAlgorithms.csproj", "{C4BD4C67-FD27-4EBF-9CC8-8F57BF9F8093}"
 EndProject
@@ -75,9 +75,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpClientExtensions.UnitTe
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dvelop-sdk-logging", "dvelop-sdk-logging", "{2D132120-C170-4A76-9F1E-0933D731FF14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging.Abstractions", "dvelop-sdk-logging\Logging.Abstractions\Logging.Abstractions.csproj", "{515ACCA1-CD62-4664-90F8-E79E82CD2E4F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logging.Abstractions", "dvelop-sdk-logging\Logging.Abstractions\Logging.Abstractions.csproj", "{515ACCA1-CD62-4664-90F8-E79E82CD2E4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging.OtelJsonConsole", "dvelop-sdk-logging\Logging.OtelJsonConsole\Logging.OtelJsonConsole.csproj", "{0D10264B-EE91-4CE0-B50F-B3115C5DEB79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logging.OtelJsonConsole", "dvelop-sdk-logging\Logging.OtelJsonConsole\Logging.OtelJsonConsole.csproj", "{0D10264B-EE91-4CE0-B50F-B3115C5DEB79}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dvelop-sdk-dash", "dvelop-sdk-dash", "{B13E82B5-0C1F-48D6-83E5-5430F84154BA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DashboardDtos", "dvelop-sdk-dash\DashboardDtos\DashboardDtos.csproj", "{5EEA5C21-2CE7-42C3-8FB7-188571CAA8C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -161,6 +165,10 @@ Global
 		{0D10264B-EE91-4CE0-B50F-B3115C5DEB79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D10264B-EE91-4CE0-B50F-B3115C5DEB79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D10264B-EE91-4CE0-B50F-B3115C5DEB79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EEA5C21-2CE7-42C3-8FB7-188571CAA8C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EEA5C21-2CE7-42C3-8FB7-188571CAA8C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EEA5C21-2CE7-42C3-8FB7-188571CAA8C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EEA5C21-2CE7-42C3-8FB7-188571CAA8C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -185,6 +193,7 @@ Global
 		{A90561D6-662B-4D0A-A2C2-C58CD1B07AE7} = {E68460C3-D2C3-496B-B265-083BD281D563}
 		{515ACCA1-CD62-4664-90F8-E79E82CD2E4F} = {2D132120-C170-4A76-9F1E-0933D731FF14}
 		{0D10264B-EE91-4CE0-B50F-B3115C5DEB79} = {2D132120-C170-4A76-9F1E-0933D731FF14}
+		{5EEA5C21-2CE7-42C3-8FB7-188571CAA8C6} = {B13E82B5-0C1F-48D6-83E5-5430F84154BA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DE71353A-0FC5-4E2E-9DB1-4E09961F1201}

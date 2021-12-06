@@ -4,10 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using Dvelop.Sdk.IdentityProvider.Dto;
-using Microsoft.AspNetCore.Http.Extensions;
 using Newtonsoft.Json;
 
 namespace Dvelop.Sdk.IdentityProvider.Client
@@ -34,7 +34,9 @@ namespace Dvelop.Sdk.IdentityProvider.Client
 
         // ReSharper disable once InconsistentNaming
         private const string IDP_QUERY_NO_ID_DETAIL_LEVEL = "detaillevel=2";
-        
+
+        private const string IDP_REQUEST_SESSION_TOKEN = "/appsession";
+
         //TODO: evaluate https://docs.microsoft.com/de-de/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests
         private readonly HttpClient _httpClient;
         private readonly IdentityProviderSessionStore _sessionStore = new IdentityProviderSessionStore();
@@ -133,11 +135,38 @@ namespace Dvelop.Sdk.IdentityProvider.Client
             return authSessionInfoDto;
         }
 
+        public async Task QueryAppSessionToken(SessionTokenRequestDto requestDto)
+        {
+            var systemBaseUri = _defaultSystemBaseUri;
+            if (_tenantInformationCallback != null)
+            {
+                var ti = _tenantInformationCallback();
+                systemBaseUri = ti.SystemBaseUri;
+            }
+            var sessionTokenUri = systemBaseUri + IDPBASE + IDP_REQUEST_SESSION_TOKEN;
+
+            var response = await _httpClient.SendAsync(
+                new HttpRequestMessage(HttpMethod.Post, sessionTokenUri)
+                {
+                    Headers =
+                    {
+                        {"Accept", "application/json"}
+                    },
+                    Content = new StringContent(JsonConvert.SerializeObject(requestDto), Encoding.UTF8, "application/json")
+                }
+            ).ConfigureAwait(false);
+
+            _logCallback?.Invoke(IdentityProviderClientLogLevel.Debug, 
+                $"Requesting session token for '{requestDto?.Appname}' on '{systemBaseUri}' with id '{requestDto?.Requestid}' " +
+                $"returned {response.ReasonPhrase} ({response.StatusCode})");
+
+            response.EnsureSuccessStatusCode();
+        }
+
         public Uri GetLoginUri(string redirect)
         {
             return new Uri("/" + IDPBASE + string.Format(IDP_LOGIN, HttpUtility.UrlEncode(redirect)), UriKind.Relative);
         }
-
 
         private ClaimsPrincipal UserDtoToClaimsPrincipal(string authSessionId,UserDto userDto,string tenantId)
         {
