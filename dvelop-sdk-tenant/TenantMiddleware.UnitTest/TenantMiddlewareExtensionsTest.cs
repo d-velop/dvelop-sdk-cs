@@ -18,14 +18,14 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         public void TenantMiddlewareOptionsIsNull_ShouldThrowException()
         {
             Action useMiddleware = () => new AppBuilderStub().UseTenantMiddleware(null);
-            useMiddleware.ShouldThrow<ArgumentNullException>().WithMessage("*tenantMiddlewareOptions*");
+            useMiddleware.Should().Throw<ArgumentNullException>().WithMessage("*tenantMiddlewareOptions*");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddlewareExtensions))]
         public void OnTenantIdentifiedCallbackIsNull_ShouldThrowException()
         {
             Action useMiddleware = () => new AppBuilderStub().UseTenantMiddleware(new TenantMiddlewareOptions { OnTenantIdentified = null });
-            useMiddleware.ShouldThrow<ArgumentNullException>().WithMessage("*OnTenantIdentified*");
+            useMiddleware.Should().Throw<ArgumentNullException>().WithMessage("*OnTenantIdentified*");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddlewareExtensions))]
@@ -37,7 +37,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     OnTenantIdentified = (a, b) => { },
                     DefaultSystemBaseUri = "http:/"
                 });
-            useMiddleware.ShouldThrow<ArgumentException>().WithMessage("*DefaultSystemBaseUri*");
+            useMiddleware.Should().Throw<ArgumentException>().WithMessage("*DefaultSystemBaseUri*");
         }
     }
 

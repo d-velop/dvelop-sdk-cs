@@ -14,7 +14,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         {
             // ReSharper disable once ObjectCreationAsStatement
             Action useMiddleware = () => new TenantMiddlewareHandler(null);
-            useMiddleware.ShouldThrow<ArgumentNullException>().WithMessage("*tenantMiddlewareOptions*");
+            useMiddleware.Should().Throw<ArgumentNullException>().WithMessage("*tenantMiddlewareOptions*");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddlewareHandler))]
@@ -22,7 +22,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         {
             // ReSharper disable once ObjectCreationAsStatement
             Action useMiddleware = () => new TenantMiddlewareHandler(new TenantMiddlewareOptions { OnTenantIdentified = null });
-            useMiddleware.ShouldThrow<ArgumentNullException>().WithMessage("*OnTenantIdentified*");
+            useMiddleware.Should().Throw<ArgumentNullException>().WithMessage("*OnTenantIdentified*");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddlewareHandler))]
@@ -34,7 +34,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                 OnTenantIdentified = (a, b) => { },
                 DefaultSystemBaseUri = "http:/"
             });
-            useMiddleware.ShouldThrow<ArgumentException>().WithMessage("*DefaultSystemBaseUri*");
+            useMiddleware.Should().Throw<ArgumentException>().WithMessage("*DefaultSystemBaseUri*");
         }
     }
 }
