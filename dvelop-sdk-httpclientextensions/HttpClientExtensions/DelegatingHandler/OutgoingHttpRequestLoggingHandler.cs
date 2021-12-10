@@ -19,20 +19,20 @@ namespace Dvelop.Sdk.HttpClientExtensions.DelegatingHandler
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-                var x = new OutgoingHttpRequestLogScope
+                var requestLogScope = new OutgoingHttpRequestLogScope
                 {
                     Method = request.Method?.ToString(),
                     Target = request.RequestUri?.PathAndQuery,
                 };
            
-                _logger.LogWithState(LogLevel.Debug, $"Start HTTP {x.Method} call to {x.Target}",x);
+                _logger.LogWithState(LogLevel.Debug, $"Start HTTP {requestLogScope.Method} call to {requestLogScope.Target}",requestLogScope);
                 var sw = Stopwatch.StartNew();
                 var response = await base.SendAsync(request, cancellationToken);
                 var elapsed = sw.ElapsedMilliseconds;
                 
-                x.StatusCode = (int)response.StatusCode;
-                x.Elapsed = elapsed;
-                _logger.LogWithState(LogLevel.Debug ,$"Finished HTTP {x.Method} call to {x.Target} with status {(int)response.StatusCode} in ", x);
+                requestLogScope.StatusCode = (int)response.StatusCode;
+                requestLogScope.ClientDuration = elapsed;
+                _logger.LogWithState(LogLevel.Debug ,$"Finished HTTP {requestLogScope.Method} call to {requestLogScope.Target} with status {(int)response.StatusCode} in {requestLogScope.ClientDuration}", requestLogScope);
                 return response;    
             }
         }

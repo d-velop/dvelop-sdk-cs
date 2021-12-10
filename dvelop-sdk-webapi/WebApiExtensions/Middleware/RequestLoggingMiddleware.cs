@@ -36,12 +36,12 @@ namespace Dvelop.Sdk.WebApiExtensions.Middleware
                     UserAgent = httpRequest?.Headers[HeaderNames.UserAgent]
                 };
                 var sw = Stopwatch.StartNew();
-                _logger.LogWithState( LogLevel.Debug, $"Start {logScope.Method} to {logScope.Target}", logScope );
-                var elapsed = sw.ElapsedMilliseconds;
-                logScope.Elapsed = elapsed;
-                logScope.Status = context.Response?.StatusCode;
+                _logger.LogWithState( LogLevel.Debug, $"Start incoming {logScope.Method} to {logScope.Target}", logScope );
                 await _next(context);
-                _logger.LogWithState( LogLevel.Debug, $"Finished {logScope.Method} to {logScope.Target} with {logScope.Status} in {logScope.Elapsed}", logScope );
+                var elapsed = sw.ElapsedMilliseconds;
+                logScope.ServerDuration = elapsed;
+                logScope.Status = context.Response?.StatusCode;
+                _logger.LogWithState( LogLevel.Debug, $"Finished incoming {logScope.Method} to {logScope.Target} with {logScope.Status} in {logScope.ServerDuration}", logScope );
             }
         }
     }

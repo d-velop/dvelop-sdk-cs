@@ -10,7 +10,7 @@ namespace Dvelop.Sdk.Logging.Abstractions.Scope
         public string Target { get; set; }
         public string UserAgent { get; set; }
         public int? Status { get; set; }
-        public long? Elapsed { get; set; }
+        public long? ServerDuration { get; set; }
 
         public override IEnumerable<CustomLogAttribute> Attributes
         {
@@ -38,9 +38,11 @@ namespace Dvelop.Sdk.Logging.Abstractions.Scope
                     httpAttributes.Add(new CustomLogAttributeProperty("status", Status));
                 }
 
-                if (Elapsed != 0)
+                if (ServerDuration != 0)
                 {
-                    httpAttributes.Add(new CustomLogAttributeProperty("elapsed", Elapsed));
+                    httpAttributes.Add(new CustomLogAttributeObject("server", new List<CustomLogAttribute>{
+                        new CustomLogAttributeProperty("duration", ServerDuration)
+                    }));
                 }
 
                 httpAttributes.Add(new CustomLogAttributeProperty("direction", "inbound"));
