@@ -44,5 +44,7 @@ namespace Dvelop.Sdk.Logging.Abstractions.Scope
                 return attributes;
             }
         }
+
+        
     }
 }

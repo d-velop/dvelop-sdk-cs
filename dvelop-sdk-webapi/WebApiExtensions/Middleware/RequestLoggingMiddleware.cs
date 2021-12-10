@@ -4,6 +4,7 @@ using Dvelop.Sdk.BaseInterfaces;
 using Dvelop.Sdk.Logging.Abstractions.Extension;
 using Dvelop.Sdk.Logging.Abstractions.Scope;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 
@@ -37,11 +38,12 @@ namespace Dvelop.Sdk.WebApiExtensions.Middleware
                 };
                 var sw = Stopwatch.StartNew();
                 _logger.LogWithState( LogLevel.Debug, $"Start incoming {logScope.Method} to {logScope.Target}", logScope );
+                
                 await _next(context);
                 var elapsed = sw.ElapsedMilliseconds;
                 logScope.ServerDuration = elapsed;
                 logScope.Status = context.Response?.StatusCode;
-                _logger.LogWithState( LogLevel.Debug, $"Finished incoming {logScope.Method} to {logScope.Target} with {logScope.Status} in {logScope.ServerDuration}", logScope );
+                _logger.LogWithState( LogLevel.Debug, $"Finished incoming {logScope.Method} to {logScope.Target} with status code {logScope.Status} in {logScope.ServerDuration}ms", logScope );
             }
         }
     }

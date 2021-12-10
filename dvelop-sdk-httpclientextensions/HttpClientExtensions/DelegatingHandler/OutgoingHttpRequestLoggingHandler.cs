@@ -25,14 +25,14 @@ namespace Dvelop.Sdk.HttpClientExtensions.DelegatingHandler
                     Target = request.RequestUri?.PathAndQuery,
                 };
            
-                _logger.LogWithState(LogLevel.Debug, $"Start HTTP {requestLogScope.Method} call to {requestLogScope.Target}",requestLogScope);
+                _logger.LogWithState(LogLevel.Debug, $"Start outgoing {requestLogScope.Method} request to {requestLogScope.Target}",requestLogScope);
                 var sw = Stopwatch.StartNew();
                 var response = await base.SendAsync(request, cancellationToken);
                 var elapsed = sw.ElapsedMilliseconds;
                 
                 requestLogScope.StatusCode = (int)response.StatusCode;
                 requestLogScope.ClientDuration = elapsed;
-                _logger.LogWithState(LogLevel.Debug ,$"Finished HTTP {requestLogScope.Method} call to {requestLogScope.Target} with status {(int)response.StatusCode} in {requestLogScope.ClientDuration}", requestLogScope);
+                _logger.LogWithState(LogLevel.Debug ,$"Finished outgoing {requestLogScope.Method} request to {requestLogScope.Target} with status code {(int)response.StatusCode} in {requestLogScope.ClientDuration}ms", requestLogScope);
                 return response;    
             }
         }
