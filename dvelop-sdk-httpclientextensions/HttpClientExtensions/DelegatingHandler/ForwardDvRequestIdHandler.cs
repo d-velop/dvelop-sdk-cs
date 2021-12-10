@@ -19,11 +19,20 @@ namespace Dvelop.Sdk.HttpClientExtensions.DelegatingHandler
         
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            if (!string.IsNullOrEmpty(_requestContext.DvRequestId) && request?.Headers != null && request.Headers.Contains(REQUEST_ID_HEADER))
+            if (request?.Headers == null || !request.Headers.Contains(REQUEST_ID_HEADER))
             {
-                request?.Headers?.Add(REQUEST_ID_HEADER, _requestContext.DvRequestId);
+                return base.SendAsync(request, cancellationToken);
             }
             
+            if (!string.IsNullOrEmpty(_requestContext.DvRequestId))
+            {
+                request?.Headers?.Add(REQUEST_ID_HEADER, _requestContext.DvRequestId);
+            } 
+            else if(!string.IsNullOrEmpty(_requestContext.W3CTraceId))
+            {
+                request?.Headers?.Add(REQUEST_ID_HEADER, _requestContext.W3CTraceId);
+            }
+
             return base.SendAsync(request, cancellationToken);
         }
     }

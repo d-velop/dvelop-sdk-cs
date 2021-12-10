@@ -18,6 +18,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\dvelop-sdk-base\BaseInterfaces\BaseInterfaces.csproj" />
+      <ProjectReference Include="..\..\dvelop-sdk-logging\Logging.Abstractions\Logging.Abstractions.csproj" />
       <ProjectReference Include="..\..\dvelop-sdk-signing\SigningAlgorithms\SigningAlgorithms.csproj" />
     </ItemGroup>
 
