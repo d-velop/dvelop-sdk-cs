@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="5.0.0" />
   </ItemGroup>
 
 
@@ -21,6 +22,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\dvelop-sdk-base\BaseInterfaces\BaseInterfaces.csproj" />
+      <ProjectReference Include="..\..\dvelop-sdk-logging\Logging.Abstractions\Logging.Abstractions.csproj" />
       <ProjectReference Include="..\..\dvelop-sdk-signing\SigningAlgorithms\SigningAlgorithms.csproj" />
     </ItemGroup>
 

@@ -83,6 +83,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dvelop-sdk-dash", "dvelop-s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DashboardDtos", "dvelop-sdk-dash\DashboardDtos\DashboardDtos.csproj", "{5EEA5C21-2CE7-42C3-8FB7-188571CAA8C6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseInterfaces", "dvelop-sdk-base\BaseInterfaces\BaseInterfaces.csproj", "{42CCC667-46E9-49C9-9C04-5FEE20A97831}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -169,6 +171,10 @@ Global
 		{5EEA5C21-2CE7-42C3-8FB7-188571CAA8C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5EEA5C21-2CE7-42C3-8FB7-188571CAA8C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5EEA5C21-2CE7-42C3-8FB7-188571CAA8C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42CCC667-46E9-49C9-9C04-5FEE20A97831}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42CCC667-46E9-49C9-9C04-5FEE20A97831}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42CCC667-46E9-49C9-9C04-5FEE20A97831}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42CCC667-46E9-49C9-9C04-5FEE20A97831}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -194,6 +200,7 @@ Global
 		{515ACCA1-CD62-4664-90F8-E79E82CD2E4F} = {2D132120-C170-4A76-9F1E-0933D731FF14}
 		{0D10264B-EE91-4CE0-B50F-B3115C5DEB79} = {2D132120-C170-4A76-9F1E-0933D731FF14}
 		{5EEA5C21-2CE7-42C3-8FB7-188571CAA8C6} = {B13E82B5-0C1F-48D6-83E5-5430F84154BA}
+		{42CCC667-46E9-49C9-9C04-5FEE20A97831} = {F992A8F0-E3DA-4ABF-9817-7663F66852EB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DE71353A-0FC5-4E2E-9DB1-4E09961F1201}
