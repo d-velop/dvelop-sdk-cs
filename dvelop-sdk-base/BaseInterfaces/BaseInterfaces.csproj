@@ -3,6 +3,7 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <RootNamespace>Dvelop.Sdk.BaseInterfaces</RootNamespace>
+        <AssemblyName>Dvelop.Sdk.BaseInterfaces</AssemblyName>
     </PropertyGroup>
 
 </Project>
