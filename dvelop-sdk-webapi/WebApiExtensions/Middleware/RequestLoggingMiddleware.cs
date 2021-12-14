@@ -30,7 +30,7 @@ namespace Dvelop.Sdk.WebApiExtensions.Middleware
             using (_logger.BeginScope(new TenantLogScope(_tenantRepository?.TenantId)))
             {
                 var httpRequest = context.Request;
-                var logScope = new IncomingHttpRequestLogScope
+                var logScope = new IncomingHttpRequestLogState
                 {
                     Method = httpRequest?.Method,
                     Target = httpRequest?.Path,

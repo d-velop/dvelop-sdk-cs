@@ -4,7 +4,7 @@ using Dvelop.Sdk.Logging.Abstractions.State.Attribute;
 
 namespace Dvelop.Sdk.Logging.Abstractions.Scope
 {
-    public class IncomingHttpRequestLogScope : CustomLogAttributeState
+    public class IncomingHttpRequestLogState : CustomLogAttributeState
     {
         public string Method { get; set; }
         public string Target { get; set; }
