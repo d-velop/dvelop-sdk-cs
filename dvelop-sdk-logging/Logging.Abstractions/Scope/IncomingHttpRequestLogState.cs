@@ -33,15 +33,15 @@ namespace Dvelop.Sdk.Logging.Abstractions.Scope
                     httpAttributes.Add(new CustomLogAttributeProperty("userAgent", UserAgent));
                 }
 
-                if (Status != 0)
+                if (Status.HasValue)
                 {
-                    httpAttributes.Add(new CustomLogAttributeProperty("status", Status));
+                    httpAttributes.Add(new CustomLogAttributeProperty("status", Status.Value));
                 }
 
-                if (ServerDuration != 0)
+                if (ServerDuration.HasValue)
                 {
                     httpAttributes.Add(new CustomLogAttributeObject("server", new List<CustomLogAttribute>{
-                        new CustomLogAttributeProperty("duration", ServerDuration)
+                        new CustomLogAttributeProperty("duration", ServerDuration.Value)
                     }));
                 }
 

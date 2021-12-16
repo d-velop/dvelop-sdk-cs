@@ -30,20 +30,20 @@ namespace Dvelop.Sdk.WebApiExtensions.Middleware
             using (_logger.BeginScope(new TenantLogScope(_tenantRepository?.TenantId)))
             {
                 var httpRequest = context.Request;
-                var logScope = new IncomingHttpRequestLogState
+                var logState = new IncomingHttpRequestLogState
                 {
                     Method = httpRequest?.Method,
                     Target = httpRequest?.Path,
                     UserAgent = httpRequest?.Headers[HeaderNames.UserAgent]
                 };
                 var sw = Stopwatch.StartNew();
-                _logger.LogWithState( LogLevel.Debug, $"Start incoming {logScope.Method} to {logScope.Target}", logScope );
+                _logger.LogWithState( LogLevel.Debug, $"Start incoming {logState.Method} to {logState.Target}", logState );
                 
                 await _next(context);
                 var elapsed = sw.ElapsedMilliseconds;
-                logScope.ServerDuration = elapsed;
-                logScope.Status = context.Response?.StatusCode;
-                _logger.LogWithState( LogLevel.Debug, $"Finished incoming {logScope.Method} to {logScope.Target} with status code {logScope.Status} in {logScope.ServerDuration}ms", logScope );
+                logState.ServerDuration = elapsed;
+                logState.Status = context.Response?.StatusCode;
+                _logger.LogWithState( LogLevel.Debug, $"Finished incoming {logState.Method} to {logState.Target} with status code {logState.Status} in {logState.ServerDuration}ms", logState );
             }
         }
     }

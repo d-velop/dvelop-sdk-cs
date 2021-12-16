@@ -8,8 +8,8 @@ namespace Dvelop.Sdk.Logging.Abstractions.Scope
     {
         public string Method { get; set; }
         public string Target { get; set; }
-        public int StatusCode { get; set; }
-        public long ClientDuration { get; set; }
+        public int? StatusCode { get; set; }
+        public long? ClientDuration { get; set; }
 
         public override IEnumerable<CustomLogAttribute> Attributes
         {
@@ -27,15 +27,15 @@ namespace Dvelop.Sdk.Logging.Abstractions.Scope
                     httpAttributes.Add(new CustomLogAttributeProperty("target", Target));
                 }
 
-                if (StatusCode != 0)
+                if (StatusCode.HasValue)
                 {
-                    httpAttributes.Add(new CustomLogAttributeProperty("statusCode", StatusCode));
+                    httpAttributes.Add(new CustomLogAttributeProperty("statusCode", StatusCode.Value));
                 }
 
-                if (ClientDuration != 0)
+                if (ClientDuration.HasValue)
                 {
                     httpAttributes.Add(new CustomLogAttributeObject("client", new List<CustomLogAttribute>{
-                        new CustomLogAttributeProperty("duration", ClientDuration)
+                        new CustomLogAttributeProperty("duration", ClientDuration.Value)
                     }));
                 }
 
