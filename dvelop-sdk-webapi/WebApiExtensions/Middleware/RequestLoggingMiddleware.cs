@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Dvelop.Sdk.BaseInterfaces;
 using Dvelop.Sdk.Logging.Abstractions.Extension;
 using Dvelop.Sdk.Logging.Abstractions.Scope;
+using Dvelop.Sdk.Logging.Abstractions.State;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dvelop.Sdk.Logging.Abstractions.Extension;
 using Dvelop.Sdk.Logging.Abstractions.Scope;
+using Dvelop.Sdk.Logging.Abstractions.State;
 using Microsoft.Extensions.Logging;
 
 namespace Dvelop.Sdk.HttpClientExtensions.DelegatingHandler
