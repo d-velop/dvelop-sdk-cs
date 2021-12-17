@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dvelop.Sdk.Logging.Abstractions.Extension;
 using Dvelop.Sdk.Logging.Abstractions.Scope;
+using Dvelop.Sdk.Logging.Abstractions.State;
 using Microsoft.Extensions.Logging;
 
 namespace Dvelop.Sdk.HttpClientExtensions.DelegatingHandler
@@ -19,7 +20,7 @@ namespace Dvelop.Sdk.HttpClientExtensions.DelegatingHandler
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-                var requestLogScope = new OutgoingHttpRequestLogScope
+                var requestLogScope = new OutgoingHttpRequestLogState
                 {
                     Method = request.Method?.ToString(),
                     Target = request.RequestUri?.PathAndQuery,

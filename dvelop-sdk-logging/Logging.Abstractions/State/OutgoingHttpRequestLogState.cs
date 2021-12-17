@@ -1,16 +1,14 @@
 ﻿using System.Collections.Generic;
-using Dvelop.Sdk.Logging.Abstractions.State;
 using Dvelop.Sdk.Logging.Abstractions.State.Attribute;
 
-namespace Dvelop.Sdk.Logging.Abstractions.Scope
+namespace Dvelop.Sdk.Logging.Abstractions.State
 {
-    public class IncomingHttpRequestLogScope : CustomLogAttributeState
+    public class OutgoingHttpRequestLogState : CustomLogAttributeState
     {
         public string Method { get; set; }
         public string Target { get; set; }
-        public string UserAgent { get; set; }
-        public int? Status { get; set; }
-        public long? ServerDuration { get; set; }
+        public int? StatusCode { get; set; }
+        public long? ClientDuration { get; set; }
 
         public override IEnumerable<CustomLogAttribute> Attributes
         {
@@ -27,28 +25,25 @@ namespace Dvelop.Sdk.Logging.Abstractions.Scope
                 {
                     httpAttributes.Add(new CustomLogAttributeProperty("target", Target));
                 }
-                
-                if (!string.IsNullOrEmpty(UserAgent))
+
+                if (StatusCode.HasValue)
                 {
-                    httpAttributes.Add(new CustomLogAttributeProperty("userAgent", UserAgent));
+                    httpAttributes.Add(new CustomLogAttributeProperty("statusCode", StatusCode.Value));
                 }
 
-                if (Status != 0)
+                if (ClientDuration.HasValue)
                 {
-                    httpAttributes.Add(new CustomLogAttributeProperty("status", Status));
-                }
-
-                if (ServerDuration != 0)
-                {
-                    httpAttributes.Add(new CustomLogAttributeObject("server", new List<CustomLogAttribute>{
-                        new CustomLogAttributeProperty("duration", ServerDuration)
+                    httpAttributes.Add(new CustomLogAttributeObject("client", new List<CustomLogAttribute>{
+                        new CustomLogAttributeProperty("duration", ClientDuration.Value)
                     }));
                 }
 
-                httpAttributes.Add(new CustomLogAttributeProperty("direction", "inbound"));
+                httpAttributes.Add(new CustomLogAttributeProperty("direction", "outbound"));
                 attributes.Add(new CustomLogAttributeObject("http", httpAttributes));
                 return attributes;
             }
         }
+
+        
     }
 }

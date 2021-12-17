@@ -33,17 +33,19 @@ namespace Dvelop.Sdk.Logging.OtelJsonConsole
 
         public OtelJsonConsoleFormatter(IOptionsMonitor<OtelJsonConsoleFormatterOptions> options) : this(options, null)
         {
+            
         }
-
+        
+ 
         public override void Write<TState>(in LogEntry<TState> logEntry, IExternalScopeProvider scopeProvider, TextWriter textWriter)
         {
-            string message = logEntry.Formatter(logEntry.State, logEntry.Exception);
+            var message = logEntry.Formatter(logEntry.State, logEntry.Exception);
             if (logEntry.Exception == null && message == null)
             {
                 return;
             }
 
-            Exception exception = logEntry.Exception;
+            var exception = logEntry.Exception;
             const int defaultBufferSize = 1024;
             using (var output = new PooledByteBufferWriter(defaultBufferSize))
             {
@@ -57,11 +59,11 @@ namespace Dvelop.Sdk.Logging.OtelJsonConsole
                     WriteBody(writer, message);
 
                     var scopeInfo = GetScopeInformation(writer, scopeProvider);
-
+                  
                     WriteTenant(writer, scopeInfo.TenantLogScope?.TenantId);
                     WriteTracing(writer, scopeInfo.TracingLogScope?.Trace, scopeInfo.TracingLogScope?.Span);
 
-                    WriteResource(writer);
+                    WriteResource(writer, logEntry);
                     WriteAttributes(writer, scopeInfo, exception, logEntry);
                     WriteVisibility(writer, scopeInfo.Visible);
 
@@ -77,12 +79,13 @@ namespace Dvelop.Sdk.Logging.OtelJsonConsole
 
         private void WriteAttributes<TState>(Utf8JsonWriter writer, ScopeInfo scopeInfo, Exception exception, LogEntry<TState> logEntry)
         {
-            if (!ShouldWriteAttributesSection(scopeInfo, exception, logEntry.State))
+            if (!ShouldWriteAttributesSection(scopeInfo, exception, logEntry.State) && !string.IsNullOrEmpty(logEntry.Category))
             {
                 return;
             }
 
             writer.WriteStartObject("attr");
+            writer.WriteString( "logcategory", logEntry.Category );
             WriteCustomAttributes(writer, scopeInfo.CustomAttributes);
             WriteScopes(writer, scopeInfo.Scopes);
             WriteException(writer, exception);
@@ -95,7 +98,7 @@ namespace Dvelop.Sdk.Logging.OtelJsonConsole
             var timestampFormat = _formatterOptions.TimestampFormat;
             if (timestampFormat != null)
             {
-                DateTimeOffset dateTimeOffset = _formatterOptions.UseUtcTimestamp ? DateTimeOffset.UtcNow : DateTimeOffset.Now;
+                var dateTimeOffset = _formatterOptions.UseUtcTimestamp ? DateTimeOffset.UtcNow : DateTimeOffset.Now;
                 writer.WriteString("time", dateTimeOffset.ToString(timestampFormat));
             }
         }
@@ -141,7 +144,7 @@ namespace Dvelop.Sdk.Logging.OtelJsonConsole
             writer.WriteString("span", spanId);
         }
 
-        private void WriteResource(Utf8JsonWriter writer)
+        private void WriteResource<TState>(Utf8JsonWriter writer, LogEntry<TState> logEntry)
         {
             var resource = _resourceDescriptor?.GetResourceInfo();
 
@@ -210,10 +213,10 @@ namespace Dvelop.Sdk.Logging.OtelJsonConsole
                 return;
             }
 
-            foreach (ICustomAttributesLogScope customAttribute in customAttributes)
+            foreach (var customAttribute in customAttributes)
             {
                 writer.WriteStartObject(customAttribute.Name);
-                foreach (KeyValuePair<string, object> item in customAttribute.Items)
+                foreach (var item in customAttribute.Items)
                 {
                     writer.WriteItem(item);
                 }
@@ -230,7 +233,7 @@ namespace Dvelop.Sdk.Logging.OtelJsonConsole
 
             writer.WriteStartArray("scopes");
 
-            foreach (object scope in scopes)
+            foreach (var scope in scopes)
             {
                 writer.WriteStringValue(Utf8JsonWriterUtils.ToInvariantString(scope));
             }
@@ -277,7 +280,7 @@ namespace Dvelop.Sdk.Logging.OtelJsonConsole
                         scopeInfo.CustomAttributes.Add(customAttributesScope);
                         break;
                 }
-
+                
                 if (_formatterOptions.IncludeScopes)
                 {
                     scopeInfo.Scopes.Add(scope);
