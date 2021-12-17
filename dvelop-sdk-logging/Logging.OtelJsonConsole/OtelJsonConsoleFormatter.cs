@@ -59,13 +59,7 @@ namespace Dvelop.Sdk.Logging.OtelJsonConsole
                     WriteBody(writer, message);
 
                     var scopeInfo = GetScopeInformation(writer, scopeProvider);
-                    if(!string.IsNullOrEmpty(logEntry.Category)){
-                        scopeInfo.CustomAttributes.Add(new CustomAttributesLogScope("logger", new Dictionary<string, object>
-                        {
-                            {"category", logEntry.Category}
-                        }));
-                    }
-                    
+                  
                     WriteTenant(writer, scopeInfo.TenantLogScope?.TenantId);
                     WriteTracing(writer, scopeInfo.TracingLogScope?.Trace, scopeInfo.TracingLogScope?.Span);
 
@@ -85,12 +79,13 @@ namespace Dvelop.Sdk.Logging.OtelJsonConsole
 
         private void WriteAttributes<TState>(Utf8JsonWriter writer, ScopeInfo scopeInfo, Exception exception, LogEntry<TState> logEntry)
         {
-            if (!ShouldWriteAttributesSection(scopeInfo, exception, logEntry.State))
+            if (!ShouldWriteAttributesSection(scopeInfo, exception, logEntry.State) && !string.IsNullOrEmpty(logEntry.Category))
             {
                 return;
             }
 
             writer.WriteStartObject("attr");
+            writer.WriteString( "logcategory", logEntry.Category );
             WriteCustomAttributes(writer, scopeInfo.CustomAttributes);
             WriteScopes(writer, scopeInfo.Scopes);
             WriteException(writer, exception);
@@ -159,14 +154,6 @@ namespace Dvelop.Sdk.Logging.OtelJsonConsole
             }
 
             writer.WriteStartObject("res");
-            
-            if (!string.IsNullOrEmpty(logEntry.Category))
-            {
-                writer.WriteStartObject("source");
-                writer.WriteString("category", logEntry.Category);
-                
-                writer.WriteEndObject();
-            }
 
             if (resource.Service != null)
             {
