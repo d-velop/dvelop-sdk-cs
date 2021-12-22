@@ -79,7 +79,7 @@ namespace Dvelop.Sdk.Logging.OtelJsonConsole
 
         private void WriteAttributes<TState>(Utf8JsonWriter writer, ScopeInfo scopeInfo, Exception exception, LogEntry<TState> logEntry)
         {
-            if (!ShouldWriteAttributesSection(scopeInfo, exception, logEntry.State) && !string.IsNullOrEmpty(logEntry.Category))
+            if (!ShouldWriteAttributesSection(scopeInfo, exception, logEntry.State) && string.IsNullOrEmpty(logEntry.Category))
             {
                 return;
             }
