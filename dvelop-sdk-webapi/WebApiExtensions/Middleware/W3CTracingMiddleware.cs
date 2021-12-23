@@ -1,16 +1,20 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
+using Dvelop.Sdk.Logging.Abstractions.Scope;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Dvelop.Sdk.WebApiExtensions.Middleware
 {
     public class W3CTracingMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<W3CTracingMiddleware> _logger;
 
-        public W3CTracingMiddleware(RequestDelegate next)
+        public W3CTracingMiddleware(RequestDelegate next, ILogger<W3CTracingMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
@@ -28,7 +32,11 @@ namespace Dvelop.Sdk.WebApiExtensions.Middleware
                 Activity.Current = activity;
             }
 
-            await _next(context).ConfigureAwait(false);
+            using (_logger.BeginScope(new TracingLogScope(Activity.Current?.TraceId.ToString(),
+                       Activity.Current?.SpanId.ToString())))
+            {
+                await _next(context).ConfigureAwait(false);    
+            }
         }
     }
 }

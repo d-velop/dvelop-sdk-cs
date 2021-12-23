@@ -16,19 +16,18 @@ namespace Dvelop.Sdk.WebApiExtensions.Middleware
         private readonly ILogger<RequestLoggingMiddleware> _logger;
  
         private readonly RequestDelegate _next;
-        private readonly ITenantContext _tenantRepository;
+        private readonly ITenantContext _tenantContext;
 
-        public RequestLoggingMiddleware(RequestDelegate next, ITenantContext tenantRepository, ILogger<RequestLoggingMiddleware> logger)
+        public RequestLoggingMiddleware(RequestDelegate next, ITenantContext tenantContext, ILogger<RequestLoggingMiddleware> logger)
         {
             _logger = logger;
             _next = next;
-            _tenantRepository = tenantRepository;
+            _tenantContext = tenantContext;
         }
  
         public async Task InvokeAsync(HttpContext context)
         {
-            using (_logger.BeginScope(new TracingLogScope(Activity.Current?.TraceId.ToString(), Activity.Current?.SpanId.ToString())))
-            using (_logger.BeginScope(new TenantLogScope(_tenantRepository?.TenantId)))
+            using (_logger.BeginScope(new TenantLogScope(_tenantContext?.TenantId)))
             {
                 var httpRequest = context.Request;
                 var logState = new IncomingHttpRequestLogState
