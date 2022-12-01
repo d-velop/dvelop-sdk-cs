@@ -1,9 +1,9 @@
 # d.velop cloud SDK for .NET core
 
-This is the official SDK to build Apps for [d.velop cloud](https://www.d-velop.de/cloud/) using 
+This is the official SDK to build Apps for [d.velop cloud](https://www.d-velop.de/cloud/) using
 the C# programming language.
 
-The project has alpha status. **So for now expect things to change.** 
+The project has alpha status. **So for now expect things to change.**
 
 
 
@@ -41,14 +41,14 @@ You can build a version of this library with following command:
 
 ```bash
 dotnet pack -o dist --version-suffix alpha
-``` 
+```
 
 You will need to have an installed and configured dotnet core SDK
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see 
-the [releases on this repository](https://github.com/d-velop/dvelop-sdk-cs/releases). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see
+the [releases on this repository](https://github.com/d-velop/dvelop-sdk-cs/releases).
 
 ## License
 
@@ -60,6 +60,6 @@ Thanks to the following projects for inspiration
 
 * [Starting an Open Source Project](https://opensource.guide/starting-a-project/)
 * [README template](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
-* [CONTRIBUTING template](https://github.com/nayafia/contributing-template/blob/master/CONTRIBUTING-template.md)
+* [CONTRIBUTING template](https://github.com/nayafia/contributing-template/blob/main/CONTRIBUTING-template.md)
 
-[![Build Status](https://travis-ci.com/d-velop/dvelop-sdk-cs.svg?branch=master)](https://travis-ci.com/d-velop/dvelop-sdk-cs)
+[![Build Status](https://travis-ci.com/d-velop/dvelop-sdk-cs.svg?branch=main)](https://travis-ci.com/d-velop/dvelop-sdk-cs)

@@ -27,7 +27,7 @@ echo "build"
     else
         echo "pack prerelease"
         dotnet build -c Debug
-		if [[ ${TRAVIS_BRANCH} == 'master' ]]; then 
+		if [[ ${TRAVIS_BRANCH} == 'main' ]]; then
             dotnet pack -c Debug /p:Version=${VERSION}.${TRAVIS_BUILD_NUMBER}-prerelease /p:InformationalVersion="$VERSION+$TRAVIS_BRANCH/$TRAVIS_COMMIT"
             echo "push"
             find . -name "*.$VERSION.$TRAVIS_BUILD_NUMBER-prerelease.nupkg" | xargs -i dotnet nuget push {} -s https://api.nuget.org/v3/index.json -k ${NUGET_API_KEY}
