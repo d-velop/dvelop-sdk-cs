@@ -74,5 +74,15 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             
             _fakeHttpMessageHandler.Verify( h => h.Send(It.IsAny<HttpRequestMessage>()) ,Times.Exactly(2));
         }
+
+        [TestMethod]
+        public async Task InvalidSessionId()
+        {
+            var claimsUser = await _unit.GetClaimsPrincipalAsync("\"a&1").ConfigureAwait(false);
+            Assert.IsNull(claimsUser);
+
+            var authSessionInfo = await _unit.GetAuthSessionIdFromApiKey("\"a&1").ConfigureAwait(false);
+            Assert.IsNull(authSessionInfo);
+        }
     }
 }

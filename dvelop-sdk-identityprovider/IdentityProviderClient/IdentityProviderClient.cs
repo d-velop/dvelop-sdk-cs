@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -112,16 +112,26 @@ namespace Dvelop.Sdk.IdentityProvider.Client
             }
             var loginUri = systemBaseUri + IDPBASE + IDP_LOGIN;
             
-            var response = await _httpClient.SendAsync(
-                new HttpRequestMessage(HttpMethod.Get, loginUri)
-                {
-                    Headers =
+            HttpResponseMessage response;
+            try
+            {
+                response = await _httpClient.SendAsync(
+                    new HttpRequestMessage(HttpMethod.Get, loginUri)
                     {
-                        {"Authorization", $"Bearer {apiKey}"},
-                        {"Accept", "application/json"},
+                        Headers =
+                        {
+                            { "Authorization", $"Bearer {apiKey}" },
+                            { "Accept", "application/json" },
+                        }
                     }
-                }
-            ).ConfigureAwait(false);
+                ).ConfigureAwait(false);
+            }
+            catch (FormatException)
+            {
+                _logCallback?.Invoke(IdentityProviderClientLogLevel.Warning,
+                    "Probably an syntactically invalid auth sessionId was provided");
+                return null;
+            }
 
             if (response.StatusCode != HttpStatusCode.OK ||
                 !response.Content.Headers.ContentType.MediaType.StartsWith("application/json",
@@ -257,6 +267,12 @@ namespace Dvelop.Sdk.IdentityProvider.Client
                 if (ae.InnerException!=null && ae.InnerException.GetType()==typeof(TaskCanceledException))
                     _logCallback?.Invoke(IdentityProviderClientLogLevel.Warning, "Probably a timeout occurred while validating the session");
                 throw;
+            }
+            catch (FormatException)
+            {
+                _logCallback?.Invoke(IdentityProviderClientLogLevel.Warning,
+                    "Probably an syntactically invalid auth sessionId was provided");
+                return null;
             }
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)
