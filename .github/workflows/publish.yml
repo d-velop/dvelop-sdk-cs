@@ -5,9 +5,10 @@ name: "Publish to nuget.org"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: 
+      - "main"
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   build:
