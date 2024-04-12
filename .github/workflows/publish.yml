@@ -31,5 +31,5 @@ jobs:
         run: |
           dotnet pack -c Debug /p:Version=${{ env.VERSION }}.${{ github.run_number }}-prerelease /p:InformationalVersion="${{ env.VERSION }}+${{github.ref_name}}/${{github.sha}}"
           pwd
-          find . -name "*.${{ env.VERSION }}.${{ github.run_number }}.*" 
-          dotnet nuget push "**/*.${{ env.VERSION }}.${{ github.run_number }}.nupkg" -s https://api.nuget.org/v3/index.json -k ${HELLO_WORLD} --skip-duplicate
+          find . -name "**/*.nupkg" 
+          dotnet nuget push "**/*.${{ env.VERSION }}.${{ github.run_number }}-prerelease.nupkg" -s https://api.nuget.org/v3/index.json -k ${HELLO_WORLD} --skip-duplicate
