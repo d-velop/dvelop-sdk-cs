@@ -25,10 +25,10 @@ jobs:
         name: Publish Release NuGet
         run: |
           dotnet pack -c Release /p:Version=${{ env.VERSION }}.${{ github.run_number }} /p:InformationalVersion="${{ env.VERSION }}+${{github.ref_name}}/${{github.sha}}"
-          #dotnet nuget push ./bin/Release/*.nupkg --api-key ${{ secrets.NUGET_PUSH }} --source https://api.nuget.org/v3/index.json 
+          #find . -name "*.${{ env.VERSION }}.${{ github.run_number }}" | xargs -i dotnet nuget push {} -s https://api.nuget.org/v3/index.json -k ${HELLO_WORLD} 
       - if: ${{ !startsWith(github.event.ref, 'refs/tags/v') }}
         name: Publish Prerelease NuGet
         run: |
           dotnet pack -c Debug /p:Version=${{ env.VERSION }}.${{ github.run_number }}-prerelease /p:InformationalVersion="${{ env.VERSION }}+${{github.ref_name}}/${{github.sha}}"
           pwd
-          dotnet nuget push ./bin/Debug/*.nupkg --api-key ${{ secrets.HELLO_WORLD }} --source https://api.nuget.org/v3/index.json 
+          find . -name "*.${{ env.VERSION }}.${{ github.run_number }}" | xargs -i dotnet nuget push {} -s https://api.nuget.org/v3/index.json -k ${HELLO_WORLD} 
