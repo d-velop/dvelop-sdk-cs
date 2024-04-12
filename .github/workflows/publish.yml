@@ -1,0 +1,35 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: Publish to nuget.org
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - uses: ./.github/workflows/build-action
+      - name: Create Version
+        run: export VERSION=$(grep -oPm1 "(?<=<VersionPrefix>)[^<]+" ./Directory.Build.props)
+      - name: Print Version
+        run: echo $VERSION
+      - if: ${{startsWith(github.event.ref, 'refs/tags/v')}}
+        name: Publish Release NuGet
+        run: |
+          dotnet pack -c Release /p:Version=${VERSION}.${{ github.run_number }} /p:InformationalVersion="$VERSION+$GITHUB_REF_NAME/$GITHUB_SHA"
+          #dotnet nuget push ./bin/Release/*.nupkg --api-key ${{ secrets.NUGET_PUSH }} --source https://api.nuget.org/v3/index.json 
+      - if: ${{ !startsWith(github.event.ref, 'refs/tags/v') }}
+        name: Publish Prerelease NuGet
+        run: |
+          dotnet pack -c Debug /p:Version=${VERSION}.${{ github.run_number }}-prerelease /p:InformationalVersion="$VERSION+$GITHUB_REF_NAME/$GITHUB_SHA"
+          #dotnet nuget push ./bin/Release/*.nupkg --api-key ${{ secrets.NUGET_PUSH }} --source https://api.nuget.org/v3/index.json 
