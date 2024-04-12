@@ -31,4 +31,4 @@ jobs:
         run: |
           dotnet pack -c Debug /p:Version=${{ env.VERSION }}.${{ github.run_number }}-prerelease /p:InformationalVersion="${{ env.VERSION }}+${{github.ref_name}}/${{github.sha}}"
           echo ${{ secrets.HELLO_WORLD }}
-          dotnet nuget push ./bin/Release/*.nupkg --api-key ${{ secrets.HELLO_WORLD }} --source https://api.nuget.org/v3/index.json 
+          dotnet nuget push ./bin/Debug/*.nupkg --api-key ${{ secrets.HELLO_WORLD }} --source https://api.nuget.org/v3/index.json 
