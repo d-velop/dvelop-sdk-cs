@@ -18,16 +18,17 @@ jobs:
           dotnet-version: 8.0.x
       - uses: ./.github/workflows/build-action
       - name: Create Version
-        run: export VERSION=$(grep -oPm1 "(?<=<VersionPrefix>)[^<]+" ./Directory.Build.props)
+        run: echo "VERSION=$(grep -oPm1 "(?<=<VersionPrefix>)[^<]+" ./Directory.Build.props)" >> $GITHUB_ENV
       - name: Print Version
-        run: echo $VERSION
+        run: echo ${{ env.VERSION }}
       - if: ${{startsWith(github.event.ref, 'refs/tags/v')}}
         name: Publish Release NuGet
         run: |
-          dotnet pack -c Release /p:Version=${VERSION}.${{ github.run_number }} /p:InformationalVersion="$VERSION+$GITHUB_REF_NAME/$GITHUB_SHA"
+          dotnet pack -c Release /p:Version=${{ env.VERSION }}.${{ github.run_number }} /p:InformationalVersion="${{ env.VERSION }}+${{github.ref_name}}/${{github.sha}}"
           #dotnet nuget push ./bin/Release/*.nupkg --api-key ${{ secrets.NUGET_PUSH }} --source https://api.nuget.org/v3/index.json 
       - if: ${{ !startsWith(github.event.ref, 'refs/tags/v') }}
         name: Publish Prerelease NuGet
         run: |
-          dotnet pack -c Debug /p:Version=${VERSION}.${{ github.run_number }}-prerelease /p:InformationalVersion="$VERSION+$GITHUB_REF_NAME/$GITHUB_SHA"
+          dotnet pack -c Debug /p:Version=${{ env.VERSION }}.${{ github.run_number }}-prerelease /p:InformationalVersion="${{ env.VERSION }}+${{github.ref_name}}/${{github.sha}}"
+          echo ${{ secrets.HELLO_WORLD }}
           #dotnet nuget push ./bin/Release/*.nupkg --api-key ${{ secrets.NUGET_PUSH }} --source https://api.nuget.org/v3/index.json 
