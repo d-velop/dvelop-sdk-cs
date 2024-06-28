@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Dvelop.Sdk.Logging.Abstractions.Scope
 {
@@ -17,6 +18,11 @@ namespace Dvelop.Sdk.Logging.Abstractions.Scope
         {
             Name = name;
             Items = items;
+        }
+
+        public override string ToString()
+        {
+            return $"CustomAttributesLogScope:{Name} => Items: {Items.Select(i=>i.Key + ":" + i.Value)+";"}";
         }
     }
 }

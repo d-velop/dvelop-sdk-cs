@@ -8,5 +8,10 @@
         {
             TenantId = tenantId;
         }
+        
+        public override string ToString()
+        {
+            return $"TenantLogScope:TenantId:{TenantId}";
+        }
     }
 }
