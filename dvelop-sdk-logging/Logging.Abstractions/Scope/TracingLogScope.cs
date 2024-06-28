@@ -10,5 +10,10 @@
             Trace = traceId;
             Span = spanId;
         }
+        
+        public override string ToString()
+        {
+            return $"TenantLogScope:Trace{Trace}:{Span}";
+        }
     }
 }
