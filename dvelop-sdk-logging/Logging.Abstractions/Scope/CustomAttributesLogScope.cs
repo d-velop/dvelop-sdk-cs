@@ -22,7 +22,7 @@ namespace Dvelop.Sdk.Logging.Abstractions.Scope
 
         public override string ToString()
         {
-            return $"CustomAttributesLogScope:{Name} => Items: {Items.Select(i=>i.Key + ":" + i.Value)+";"}";
+            return $"CustomAttributesLogScope:{Name} => Items: {string.Join(", ", Items.Select(i => $"'{i.Key}:{i.Value}'"))}";
         }
     }
 }
