@@ -83,6 +83,38 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
             nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
         }
 
+        [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
+        public async Task WrongSignatureWithValidAdditionalSignatureSecret_ShouldUseHeaderAndInvokeNext()
+        {
+            const string systemBaseUriFromHeader = "https://sample.mydomain.de";
+
+            var context = new DefaultHttpContext();
+            context.Request.Headers.Add(SystemBaseUriHeader, new StringValues(new[] {systemBaseUriFromHeader}));
+            context.Request.Headers.Add(SignatureHeader, new[] {GetBase64SignatureFor(systemBaseUriFromHeader, _signatureKey)});
+
+            var wrongSignatureKey = new byte[]
+            {
+                167, 219, 144, 209, 189, 1, 178, 73, 139, 47, 21, 236, 142, 56, 71, 245, 43, 188, 163, 52, 239, 102, 94, 153, 255, 159, 199, 149, 163,
+                145, 161, 24
+            };
+
+            var systemBaseUriSetByMiddleware = "null";
+            var nextMiddleware = new MiddlewarMock(null);
+            await new TenantMiddleware(nextMiddleware.InvokeAsync,
+                    new TenantMiddlewareOptions
+                    {
+                        DefaultSystemBaseUri = null,
+                        SignatureSecretKey = wrongSignatureKey,
+                        AdditionalSignatureSecretKeys = new [] {
+                            _signatureKey
+                        },
+                        OnTenantIdentified = (tenantId, systemBaseUri) => { systemBaseUriSetByMiddleware = systemBaseUri; }
+                    })
+                .InvokeAsync(context).ConfigureAwait(false);
+
+            systemBaseUriSetByMiddleware.Should().Be(systemBaseUriFromHeader);
+            nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
+        }
         
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
         public async Task NoBaseUriHeaderAndDefaultBaseUri_ShouldUseDefaultBaseUriAndInvokeNext()
