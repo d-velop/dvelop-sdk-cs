@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
@@ -79,7 +81,11 @@ namespace Dvelop.Sdk.TenantMiddleware
                     try
                     {
                         var signature = Convert.FromBase64String(base64Signature);
-                        if (!SignatureIsValid(messageBytes, signature, tenantMiddlewareOptions.SignatureSecretKey))
+                        if (!SignatureIsValid(
+                                messageBytes, 
+                                signature, 
+                                tenantMiddlewareOptions.SignatureSecretKey, 
+                                tenantMiddlewareOptions.AdditionalSignatureSecretKeys))
                         {
                             tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Debug,
                                 "Signature does not match");
@@ -109,13 +115,28 @@ namespace Dvelop.Sdk.TenantMiddleware
             return 0;
         }
 
-        private static bool SignatureIsValid(byte[] message, byte[] signature, byte[] sigKey)
+        private static bool SignatureIsValid(byte[] message, byte[] signature, byte[] sigKey, IList<byte[]> additionalSigKeys)
         {
+            var result = false;
+
             using (var mac = new HMACSHA256(sigKey))
             {
                 var expectedSignature = mac.ComputeHash(message);
-                return AreEqualConstantTime(expectedSignature, signature);
+                result = AreEqualConstantTime(expectedSignature, signature);
             }
+
+            if (!result && additionalSigKeys != null)
+            {
+                result = additionalSigKeys.Any(addSigKey =>
+                {
+                    using (HMACSHA256 hmacshA256 = new HMACSHA256(addSigKey))
+                    {
+                        return AreEqualConstantTime(hmacshA256.ComputeHash(message), signature);
+                    }
+                });
+            }
+
+            return result;
         }
 
         /// <summary>
