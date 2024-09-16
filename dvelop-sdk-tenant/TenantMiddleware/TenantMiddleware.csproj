@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>Dvelop.Sdk.TenantMiddleware</PackageId>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>Dvelop.Sdk.TenantMiddleware</AssemblyName>
     <RootNamespace>Dvelop.Sdk.TenantMiddleware</RootNamespace>
     <Copyright>Copyright (c) 2019</Copyright>

@@ -2,11 +2,11 @@
 
     <PropertyGroup>
         <IsPackable>true</IsPackable>
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <AssemblyName>Dvelop.Sdk.SigningAlgorithms</AssemblyName>
         <RootNamespace>Dvelop.Sdk.SigningAlgorithms</RootNamespace>
-    
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <LangVersion>latestmajor</LangVersion>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>

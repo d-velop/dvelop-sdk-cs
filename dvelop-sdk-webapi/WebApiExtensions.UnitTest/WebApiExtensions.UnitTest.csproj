@@ -10,6 +10,8 @@
         <RootNamespace>Dvelop.Sdk.WebApiExtensions.UnitTest</RootNamespace>
 
         <OutputType>Library</OutputType>
+
+        <LangVersion>latestmajor</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>

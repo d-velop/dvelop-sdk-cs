@@ -6,6 +6,7 @@
         <AssemblyName>Dvelop.Sdk.SigningAlgorithms.UnitTest</AssemblyName>
         <RootNamespace>Dvelop.Sdk.SigningAlgorithms.UnitTest</RootNamespace>
         <OutputType>Library</OutputType>
+        <LangVersion>latestmajor</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>

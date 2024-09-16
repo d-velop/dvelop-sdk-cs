@@ -6,6 +6,7 @@
     <AssemblyName>Dvelop.Sdk.IdentityProviderMiddleware.UnitTest</AssemblyName>
     <RootNamespace>Dvelop.Sdk.IdentityProviderMiddleware.UnitTest</RootNamespace>
     <OutputType>Library</OutputType>
+    <LangVersion>latestmajor</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
