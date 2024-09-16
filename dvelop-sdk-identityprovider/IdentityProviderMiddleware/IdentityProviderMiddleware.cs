@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 
 namespace Dvelop.Sdk.IdentityProvider.Middleware
 {
-    public class IdentityProviderMiddleware 
+    public class IdentityProviderMiddleware
     {
         private readonly IdentityProviderClient _identityProviderClient;
         private readonly RequestDelegate _next;
@@ -31,10 +31,10 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
                 TenantInformationCallback = clientOptions.TenantInformationCallback,
                 UseMinimizedOnlyIdValidateDetailLevel = clientOptions.UseMinimizedOnlyIdValidateDetailLevel
             };
-            
-            _identityProviderClient = new IdentityProviderClient( co );
+
+            _identityProviderClient = new IdentityProviderClient(co);
         }
-        
+
         public async Task Invoke(HttpContext context)
         {
             var sessionId = context.GetAuthSessionId();
@@ -44,14 +44,15 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
             {
                 context.User = await _identityProviderClient.GetClaimsPrincipalAsync(sessionId).ConfigureAwait(false);
             }
-            
-            
-            context.Response.OnStarting(_ => Task.FromResult(context.Response.StatusCode == (int)HttpStatusCode.Unauthorized &&
-                                                             RequestRedirectedToLogin(context)), context.Response);
-            
+
+
+            context.Response.OnStarting(
+                _ => Task.FromResult(context.Response.StatusCode == (int)HttpStatusCode.Unauthorized &&
+                                     RequestRedirectedToLogin(context)), context.Response);
+
             await _next.Invoke(context).ConfigureAwait(false);
         }
-        
+
         private bool RequestRedirectedToLogin(HttpContext context)
         {
             ArgumentNullException.ThrowIfNull(context);
@@ -60,23 +61,23 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
             {
                 return false;
             }
-      
+
             if (HandleUnauthorizedRequest(context))
             {
                 return true;
             }
-            
+
             var endpoint = context.GetEndpoint();
             var anon = endpoint?.Metadata?.GetMetadata<IAllowAnonymous>();
-            
-            if (anon == null)
+
+            if (anon != null)
             {
                 return true;
             }
-            
+
             var encodedUrl = context.Request.GetEncodedPathAndQuery();
             context.Response.Redirect(_identityProviderClient.GetLoginUri(encodedUrl).ToString());
-            
+
             return true;
         }
 
@@ -94,27 +95,25 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
                     mediaTypeWithQualityHeaderValue.MediaType != "")
                 {
                     context.Response.Headers["WWW-Authenticate"] = "Bearer";
-                    context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                     return true;
                 }
             }
 
             if (context.Request.Method == "GET" || context.Request.Method == "HEAD") return false;
             context.Response.Headers["WWW-Authenticate"] = "Bearer";
-            context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
             return true;
-
         }
 
-        
-        
+
         private static IEnumerable<MediaTypeWithQualityHeaderValue> GetMediaTypes(string headerValues)
         {
             if (string.IsNullOrEmpty(headerValues))
             {
                 return new List<MediaTypeWithQualityHeaderValue>();
             }
-            
+
             return headerValues.Split(',')
                 .Select(headerValue =>
                 {
