@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
@@ -45,34 +46,64 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
         private static IEnumerable<object[]> GetTestNoAuthSessionIdData()
         {
             
-            yield return new object[] { "IDP-1740_path",
+            yield return
+            [
+                "IDP-1740_path",
                 "GET", new Dictionary<string, string>{{"Accept","text/html"}}, "/hüme", 302, new Dictionary<string, string>
                 {
                     {"Location","/identityprovider/login?redirect=%2fh%25C3%25BCme"}
-                }, false};
+                }, false
+            ];
             
-            yield return new object[] { "IDP-1740_query",
+            yield return
+            [
+                "IDP-1740_query",
                 "GET", new Dictionary<string, string>{{"Accept","text/html"}}, "/bla?path=%2Fh%C3%BCme", 302, new Dictionary<string, string>
                 {
                     {"Location","/identityprovider/login?redirect=%2Fbla%3Fpath%3D%252Fh%25C3%25BCme"}
-                }, false};
+                }, false
+            ];
             
-            yield return new object[] { "GetRequestAndHtmlAccepted_Should_RedirectToIdp",
-                "GET", new Dictionary<string, string>{{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, false};
-            yield return new object[] { "AndHeadRequestAndHtmlAccepted_Should_RedirectToIdp",
-                "HEAD", new Dictionary<string, string>{{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1" }}, false};
-            yield return new object[] { "BasicAuthorizationAndGetRequestAndHtmlAccepted_Should_RedirectsToIdp",
-                "GET", new Dictionary<string, string>{{"Accept","text/html"},{"Authorization", "Basic adabdk"}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, false};
-            yield return new object[] { "OtherCookieAndGetRequestAndHtmlAccepted_Should_RedirectsToIdp", 
-                "GET", new Dictionary<string, string>{{"Cookie","AnyCookie=adabdk"},{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, false};
-            yield return new object[] { "PostRequestAndHtmlAccepted_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
-                "POST", new Dictionary<string, string>{{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"WWW-Authenticate","Bearer" }}, false};
-            yield return new object[] { "PutRequestAndHtmlAccepted_ReturnsStatus401AndWWW-AuthenticateBearerHeader", 
-                "PUT", new Dictionary<string, string>{{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"WWW-Authenticate","Bearer" }}, false};
-            yield return new object[] { "DeleteRequestAndHtmlAccepted_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
-                "DELETE", new Dictionary<string, string>{{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"WWW-Authenticate","Bearer" }}, false};
-            yield return new object[] { "PatchRequestAndHtmlAccepted_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
-                "PATCH", new Dictionary<string, string>{{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"WWW-Authenticate","Bearer" }}, false};
+            yield return
+            [
+                "GetRequestAndHtmlAccepted_Should_RedirectToIdp",
+                "GET", new Dictionary<string, string>{{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, false
+            ];
+            yield return
+            [
+                "AndHeadRequestAndHtmlAccepted_Should_RedirectToIdp",
+                "HEAD", new Dictionary<string, string>{{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1" }}, false
+            ];
+            yield return
+            [
+                "BasicAuthorizationAndGetRequestAndHtmlAccepted_Should_RedirectsToIdp",
+                "GET", new Dictionary<string, string>{{"Accept","text/html"},{"Authorization", "Basic adabdk"}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, false
+            ];
+            yield return
+            [
+                "OtherCookieAndGetRequestAndHtmlAccepted_Should_RedirectsToIdp", 
+                "GET", new Dictionary<string, string>{{"Cookie","AnyCookie=adabdk"},{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, false
+            ];
+            yield return
+            [
+                "PostRequestAndHtmlAccepted_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
+                "POST", new Dictionary<string, string>{{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"WWW-Authenticate","Bearer" }}, false
+            ];
+            yield return
+            [
+                "PutRequestAndHtmlAccepted_ReturnsStatus401AndWWW-AuthenticateBearerHeader", 
+                "PUT", new Dictionary<string, string>{{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"WWW-Authenticate","Bearer" }}, false
+            ];
+            yield return
+            [
+                "DeleteRequestAndHtmlAccepted_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
+                "DELETE", new Dictionary<string, string>{{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"WWW-Authenticate","Bearer" }}, false
+            ];
+            yield return
+            [
+                "PatchRequestAndHtmlAccepted_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
+                "PATCH", new Dictionary<string, string>{{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"WWW-Authenticate","Bearer" }}, false
+            ];
               
         }
         
@@ -81,29 +112,53 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
         public async Task TestNoAuthSessionId(string testName, string requestMethod, Dictionary<string,string> requestHeader, string requestUri, int expectedStatus,  Dictionary<string,string> expectedResponseHeader,bool allowExternalValidation)
         {
             Console.WriteLine(testName);
-            await TestMiddleWare(requestMethod,requestHeader,requestUri,expectedStatus,expectedResponseHeader,allowExternalValidation).ConfigureAwait(false);
+            await TestMiddleWare(requestMethod,requestHeader,requestUri,false,expectedStatus,expectedResponseHeader,allowExternalValidation).ConfigureAwait(false);
         }
 
         private static IEnumerable<object[]> GetTestInvalidAuthSessionIdData()
         {
             const string invalidToken = "200e7388-1834-434b-be79-3745181e1457";
             
-            yield return new object[] { "GetRequestAndHtmlAccepted_Middleware_RedirectsToIdp", 
-                "GET", new Dictionary<string, string>{{"Accept", "text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, false};
-            yield return new object[] { "HeadRequestAndHtmlAccepted_Middleware_RedirectsToIdp",
-                "HEAD", new Dictionary<string, string>{{"Accept", "text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 302,new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, false};
-            yield return new object[] { "GetRequestAndHtmlNotAccepted_Middleware_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
-                "GET", new Dictionary<string, string>{{"Accept", "application/json"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"Www-Authenticate","Bearer" }}, false};
-            yield return new object[] { "PostRequestAndHtmlAccepted_Middleware_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
-                "POST", new Dictionary<string, string>{{"Accept", "text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"Www-Authenticate","Bearer" }}, false};
-            yield return new object[] { "PutRequestAndHtmlAccepted_Middleware_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
-                "PUT", new Dictionary<string, string>{{"Accept", "text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"Www-Authenticate","Bearer" }}, false};
-            yield return new object[] { "DeleteRequestAndHtmlAccepted_Middleware_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
-                "DELETE", new Dictionary<string, string>{{"Accept","text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 401,new Dictionary<string, string>{{"Www-Authenticate","Bearer" }}, false};
-            yield return new object[] { "PatchRequestAndHtmlAccepted_Middleware_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
-                "PATCH", new Dictionary<string, string>{{"Accept","text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1",401, new Dictionary<string, string>{{"Www-Authenticate","Bearer" }}, false};
-            yield return new object[] { "GetRequestAndHtmlAcceptedAndExternalValidation_Middleware_RedirectsToIdp",
-                "GET", new Dictionary<string, string>{{"Accept","text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, true};
+            yield return
+            [
+                "GetRequestAndHtmlAccepted_Middleware_RedirectsToIdp", 
+                "GET", new Dictionary<string, string>{{"Accept", "text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, false
+            ];
+            yield return
+            [
+                "HeadRequestAndHtmlAccepted_Middleware_RedirectsToIdp",
+                "HEAD", new Dictionary<string, string>{{"Accept", "text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 302,new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, false
+            ];
+            yield return
+            [
+                "GetRequestAndHtmlNotAccepted_Middleware_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
+                "GET", new Dictionary<string, string>{{"Accept", "application/json"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"Www-Authenticate","Bearer" }}, false
+            ];
+            yield return
+            [
+                "PostRequestAndHtmlAccepted_Middleware_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
+                "POST", new Dictionary<string, string>{{"Accept", "text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"Www-Authenticate","Bearer" }}, false
+            ];
+            yield return
+            [
+                "PutRequestAndHtmlAccepted_Middleware_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
+                "PUT", new Dictionary<string, string>{{"Accept", "text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"Www-Authenticate","Bearer" }}, false
+            ];
+            yield return
+            [
+                "DeleteRequestAndHtmlAccepted_Middleware_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
+                "DELETE", new Dictionary<string, string>{{"Accept","text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 401,new Dictionary<string, string>{{"Www-Authenticate","Bearer" }}, false
+            ];
+            yield return
+            [
+                "PatchRequestAndHtmlAccepted_Middleware_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
+                "PATCH", new Dictionary<string, string>{{"Accept","text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1",401, new Dictionary<string, string>{{"Www-Authenticate","Bearer" }}, false
+            ];
+            yield return
+            [
+                "GetRequestAndHtmlAcceptedAndExternalValidation_Middleware_RedirectsToIdp",
+                "GET", new Dictionary<string, string>{{"Accept","text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, true
+            ];
         }
 
         [DynamicData(nameof(GetTestInvalidAuthSessionIdData), DynamicDataSourceType.Method, DynamicDataDisplayName = "DisplayName")]
@@ -113,45 +168,69 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             Dictionary<string, string> expectedResponseHeader, bool allowExternalValidation)
         {
             Console.WriteLine(testName);
-            await TestMiddleWare(requestMethod,requestHeader,requestUri,expectedStatus,expectedResponseHeader,allowExternalValidation).ConfigureAwait(false);
+            await TestMiddleWare(requestMethod,requestHeader,requestUri,false,expectedStatus,expectedResponseHeader,allowExternalValidation).ConfigureAwait(false);
         }
 
         private static IEnumerable<object[]> GetTestNoAuthSessionIdAndGetRequestAndAcceptHeaderIsData()
         {
-            yield return ["", true];
-            yield return ["text/", false];
-            yield return ["text/*", true];
-            yield return ["*/*", true];
-            yield return ["application/json; q=1.0, */*; q=0.8", false]; // GO middleware says true
-            yield return ["text/html", true];
-            yield return ["something/else", false];
-            yield return ["text/html; q=1", true];
-            yield return ["text/html; q=1.0", true];
-            yield return ["text/html; q=0.9", true];
-            yield return ["text/html; q=0", true]; // GO middleware says false
-            yield return ["text/html; q=0.0", true]; // GO middleware says false
-            yield return ["application/json", false];
-            yield return ["application/json; q=1.0, text/html; q=0.9", false]; // GO middleware says true 
-            yield return ["application/json; q=1.0, text/html; q=0", false];
-            yield return ["application/json; q=0.9, text/html; q=1.0", true];
-            yield return ["application/json; q=1.0, text/html; q=0.", false];
-            yield return
-            [
-                "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",                true
-            ];
+            yield return ["", true, true];
+            yield return ["text/", true, false];
+            yield return ["text/*",true,  true];
+            yield return ["*/*", true, true];
+            yield return ["application/json; q=1.0, */*; q=0.8",true,  false]; // GO middleware says true
+            yield return ["text/html", true, true];
+            yield return ["something/else", true, false];
+            yield return ["text/html; q=1", true, true];
+            yield return ["text/html; q=1.0",true,  true];
+            yield return ["text/html; q=0.9",true,  true];
+            yield return ["text/html; q=0",true,  true]; // GO middleware says false
+            yield return ["text/html; q=0.0",true,  true]; // GO middleware says false
+            yield return ["application/json", true, false];
+            yield return ["application/json; q=1.0, text/html; q=0.9",true,  false]; // GO middleware says true 
+            yield return ["application/json; q=1.0, text/html; q=0", true, false];
+            yield return ["application/json; q=0.9, text/html; q=1.0", true, true];
+            yield return ["application/json; q=1.0, text/html; q=0.",true,  false];
+            yield return ["text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3", true, true];
+            
+            
+            yield return ["", false, true];
+            yield return ["text/", false, false];
+            yield return ["text/*", false, true];
+            yield return ["*/*", false, true];
+            yield return ["application/json; q=1.0, */*; q=0.8", false, false]; // GO middleware says true
+            yield return ["text/html", false, true];
+            yield return ["something/else", false, false];
+            yield return ["text/html; q=1", false, true];
+            yield return ["text/html; q=1.0", false, true];
+            yield return ["text/html; q=0.9", false, true];
+            yield return ["text/html; q=0", false, true]; // GO middleware says false
+            yield return ["text/html; q=0.0", false, true]; // GO middleware says false
+            yield return ["application/json", false, false];
+            yield return ["application/json; q=1.0, text/html; q=0.9", false, false]; // GO middleware says true 
+            yield return ["application/json; q=1.0, text/html; q=0", false, false];
+            yield return ["application/json; q=0.9, text/html; q=1.0", false, true];
+            yield return ["application/json; q=1.0, text/html; q=0.", false, false];
+            yield return ["text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3", false, true];
         }
         
         [DynamicData(nameof(GetTestNoAuthSessionIdAndGetRequestAndAcceptHeaderIsData), DynamicDataSourceType.Method, DynamicDataDisplayName = "DisplayName")]
         [DataTestMethod]
-        public async Task GetTestNoAuthSessionIdAndGetRequestAndAcceptHeaderIs(string acceptHeader, bool redirectExpected)
+        public async Task GetTestNoAuthSessionIdAndGetRequestAndAcceptHeaderIs(string acceptHeader,bool anonymousAllowed, bool redirectExpected)
         {
+            
             Console.WriteLine(acceptHeader);
             var requestHeader = new Dictionary<string, string>{{"Accept", acceptHeader}};
-            await TestMiddleWare("GET",requestHeader,"/a/b?q1=x&q2=1",redirectExpected?302:401,new Dictionary<string, string>(),false ).ConfigureAwait(false);
+            await TestMiddleWare("GET",
+                requestHeader,
+                "/a/b?q1=x&q2=1",
+                anonymousAllowed,
+                redirectExpected?302:401,
+                new Dictionary<string, string>(),
+                false ).ConfigureAwait(false);
         }
         
         
-        private async Task TestMiddleWare(string requestMethod, Dictionary<string,string> requestHeader, string requestUri, int expectedStatus,  Dictionary<string,string> expectedResponseHeader,bool allowExternalValidation)
+        private async Task TestMiddleWare(string requestMethod, Dictionary<string,string> requestHeader, string requestUri, bool allowAnonymous, int expectedStatus,  Dictionary<string,string> expectedResponseHeader,bool allowExternalValidation)
         {
             var uri = new Uri(requestUri, UriKind.RelativeOrAbsolute);
             if (!uri.IsAbsoluteUri)
@@ -196,10 +275,11 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             context.Features.Set<IHttpResponseFeature>(feature);
 
             var endpointFeatureMock = new Mock<IEndpointFeature>();
+            
             endpointFeatureMock.SetupGet(endpointFeature => endpointFeature.Endpoint)
                 .Returns(new RouteEndpoint(_ => Task.CompletedTask, 
                     RoutePatternFactory.Parse("/"), 0, 
-                    new EndpointMetadataCollection(new AllowAnonymousAttribute()), "Dummy"));
+                    new EndpointMetadataCollection(allowAnonymous?new AllowAnonymousAttribute():new AuthorizeAttribute()), "Dummy"));
             
             context.Features.Set(endpointFeatureMock.Object);
             
@@ -233,7 +313,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
         //Used by Tests to create a readable TestName
         public static string DisplayName(MethodInfo methodInfo, object[] data)
         {
-            var displayName = $"{data[0]}";
+            var displayName = $"{data[0]} ({string.Join( ", ", data.Skip(1)  )})";
             return string.IsNullOrWhiteSpace(displayName) ? "-" : displayName;
         }
 
