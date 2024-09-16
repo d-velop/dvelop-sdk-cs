@@ -10,8 +10,11 @@ using System.Web;
 using Dvelop.Sdk.IdentityProvider.Client;
 using Dvelop.Sdk.IdentityProvider.Middleware;
 using FluentAssertions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -115,24 +118,27 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
 
         private static IEnumerable<object[]> GetTestNoAuthSessionIdAndGetRequestAndAcceptHeaderIsData()
         {
-            yield return new object[]{"", true};
-            yield return new object[]{"text/", false};
-            yield return new object[]{"text/*", true};
-            yield return new object[]{"*/*", true};
-            yield return new object[]{"application/json; q=1.0, */*; q=0.8", false}; // GO middleware says true
-            yield return new object[]{"text/html", true};
-            yield return new object[]{"something/else", false};
-            yield return new object[]{"text/html; q=1", true};
-            yield return new object[]{"text/html; q=1.0", true};
-            yield return new object[]{"text/html; q=0.9", true};
-            yield return new object[]{"text/html; q=0", true}; // GO middleware says false
-            yield return new object[]{"text/html; q=0.0", true}; // GO middleware says false
-            yield return new object[]{"application/json", false};
-            yield return new object[]{"application/json; q=1.0, text/html; q=0.9", false}; // GO middleware says true 
-            yield return new object[]{"application/json; q=1.0, text/html; q=0", false};
-            yield return new object[]{"application/json; q=0.9, text/html; q=1.0", true};
-            yield return new object[]{"application/json; q=1.0, text/html; q=0.", false};
-            yield return new object[]{"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",                true};
+            yield return ["", true];
+            yield return ["text/", false];
+            yield return ["text/*", true];
+            yield return ["*/*", true];
+            yield return ["application/json; q=1.0, */*; q=0.8", false]; // GO middleware says true
+            yield return ["text/html", true];
+            yield return ["something/else", false];
+            yield return ["text/html; q=1", true];
+            yield return ["text/html; q=1.0", true];
+            yield return ["text/html; q=0.9", true];
+            yield return ["text/html; q=0", true]; // GO middleware says false
+            yield return ["text/html; q=0.0", true]; // GO middleware says false
+            yield return ["application/json", false];
+            yield return ["application/json; q=1.0, text/html; q=0.9", false]; // GO middleware says true 
+            yield return ["application/json; q=1.0, text/html; q=0", false];
+            yield return ["application/json; q=0.9, text/html; q=1.0", true];
+            yield return ["application/json; q=1.0, text/html; q=0.", false];
+            yield return
+            [
+                "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",                true
+            ];
         }
         
         [DynamicData(nameof(GetTestNoAuthSessionIdAndGetRequestAndAcceptHeaderIsData), DynamicDataSourceType.Method, DynamicDataDisplayName = "DisplayName")]
@@ -154,9 +160,15 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             }
           
             
-            var context = new DefaultHttpContext();
-            context.Request.Method = requestMethod;
-            context.Request.Path = uri.AbsolutePath;
+            var context = new DefaultHttpContext
+            {
+                Request =
+                {
+                    Method = requestMethod,
+                    Path = uri.AbsolutePath
+                }
+            };
+
 
             var y = HttpUtility.ParseQueryString(uri.Query);
             foreach (var s in y.AllKeys)
@@ -175,7 +187,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             _fakeMessageHandler.Setup(mh => mh.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage()
             {
                 StatusCode = HttpStatusCode.OK,
-                Content = new StringContent("")
+                Content = new StringContent(""),
             });
             
             var client = new HttpClient(_fakeMessageHandler.Object);
@@ -183,6 +195,14 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             var feature = new MockResponseFeature();
             context.Features.Set<IHttpResponseFeature>(feature);
 
+            var endpointFeatureMock = new Mock<IEndpointFeature>();
+            endpointFeatureMock.SetupGet(endpointFeature => endpointFeature.Endpoint)
+                .Returns(new RouteEndpoint(_ => Task.CompletedTask, 
+                    RoutePatternFactory.Parse("/"), 0, 
+                    new EndpointMetadataCollection(new AllowAnonymousAttribute()), "Dummy"));
+            
+            context.Features.Set(endpointFeatureMock.Object);
+            
             async Task Next(HttpContext ctx)
             {
                 Console.WriteLine(ctx.Response.Headers.Count);
@@ -217,37 +237,34 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             return string.IsNullOrWhiteSpace(displayName) ? "-" : displayName;
         }
 
-        private class MiddlewareMock 
+        [Authorize]
+        private class MiddlewareMock(RequestDelegate next)
         {
-            private readonly RequestDelegate _next;
             public bool HasBeenInvoked { get; private set; }
-            
-            public MiddlewareMock(RequestDelegate next)
-            {
-                _next = next;
-            }
 
             public async Task InvokeAsync(HttpContext context)
             {
-                HasBeenInvoked = true;
-                context.Response.Body = new MemoryStream();
-                context.Response.StatusCode = 401;
-                
-                await _next(context).ConfigureAwait(false);
+                try
+                {
+                    HasBeenInvoked = true;
+                    context.Response.Body = new MemoryStream();
+                    context.Response.StatusCode = 401;
+
+                    await next(context).ConfigureAwait(false);
+                } catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
             }
         }
         
         private class MockResponseFeature : IHttpResponseFeature {
-            public MockResponseFeature()
-            {
-                Headers = new HeaderDictionary();
-            }
-            
             public Stream Body { get; set; }
 
             public bool HasStarted { get; private set; }
 
-            public IHeaderDictionary Headers { get; set; }
+            public IHeaderDictionary Headers { get; set; } = new HeaderDictionary();
 
             public string ReasonPhrase { get; set; }
 

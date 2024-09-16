@@ -45,13 +45,6 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
                 context.User = await _identityProviderClient.GetClaimsPrincipalAsync(sessionId).ConfigureAwait(false);
             }
             
-            var endpoint = context.GetEndpoint();
-            var anon = endpoint?.Metadata.GetMetadata<IAllowAnonymous>();
-            if (anon == null)
-            {
-                await _next.Invoke(context).ConfigureAwait(false);
-                return;
-            }
             
             context.Response.OnStarting(_ => Task.FromResult(context.Response.StatusCode == (int)HttpStatusCode.Unauthorized &&
                                                              RequestRedirectedToLogin(context)), context.Response);
@@ -73,9 +66,16 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
                 return true;
             }
             
+            var endpoint = context.GetEndpoint();
+            var anon = endpoint?.Metadata?.GetMetadata<IAllowAnonymous>();
+            
+            if (anon == null)
+            {
+                return true;
+            }
+            
             var encodedUrl = context.Request.GetEncodedPathAndQuery();
             context.Response.Redirect(_identityProviderClient.GetLoginUri(encodedUrl).ToString());
-
             
             return true;
         }
