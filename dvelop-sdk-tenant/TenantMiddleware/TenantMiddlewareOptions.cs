@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Dvelop.Sdk.TenantMiddleware
 {
@@ -29,6 +30,8 @@ namespace Dvelop.Sdk.TenantMiddleware
         public string DefaultTenantId { get; set; }
 
         public byte[] SignatureSecretKey { get; set; }
+
+        public IList<byte[]> AdditionalSignatureSecretKeys { get; set; }
         
         /// <summary>
         /// Ist diese Option gesetzt, so wird die TenantId aus dem HttpHeader verwendet, auch wenn die Signatur falsch ist (nur zu Testzwecken)
