@@ -169,7 +169,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
 
             foreach (var (key, value) in requestHeader)
             {
-                context.Request.Headers.Add(key, new[] { value });
+                context.Request.Headers[key] = new[] { value };
             }
             
             _fakeMessageHandler.Setup(mh => mh.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage()

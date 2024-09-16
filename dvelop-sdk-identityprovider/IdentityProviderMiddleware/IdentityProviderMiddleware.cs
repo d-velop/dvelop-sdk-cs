@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Dvelop.Sdk.IdentityProvider.Client;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 
@@ -43,23 +44,26 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
             {
                 context.User = await _identityProviderClient.GetClaimsPrincipalAsync(sessionId).ConfigureAwait(false);
             }
-            context.Response.OnStarting(state =>
+            
+            var endpoint = context.GetEndpoint();
+            var anon = endpoint?.Metadata.GetMetadata<IAllowAnonymous>();
+            if (anon == null)
             {
-                if (context.Response.StatusCode != (int) HttpStatusCode.Unauthorized)
-                {
-                    return Task.FromResult(false);
-                }
-                return Task.FromResult(RequestRedirectedToLogin(context, bearerTokenReceived));
-            }, context.Response);
+                await _next.Invoke(context).ConfigureAwait(false);
+                return;
+            }
+            
+            context.Response.OnStarting(_ => Task.FromResult(context.Response.StatusCode == (int)HttpStatusCode.Unauthorized &&
+                                                             RequestRedirectedToLogin(context)), context.Response);
             
             await _next.Invoke(context).ConfigureAwait(false);
         }
         
-        private bool RequestRedirectedToLogin(HttpContext context, bool bearerTokenReceived)
+        private bool RequestRedirectedToLogin(HttpContext context)
         {
-            if(context == null) { throw new ArgumentNullException(nameof(context));}
-            
-            if (!string.IsNullOrWhiteSpace(context.User?.Identity?.Name))
+            ArgumentNullException.ThrowIfNull(context);
+
+            if (!string.IsNullOrWhiteSpace(context.User.Identity?.Name))
             {
                 return false;
             }
@@ -78,7 +82,7 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
 
         private static bool HandleUnauthorizedRequest(HttpContext context)
         {
-            if(context== null) { throw new ArgumentNullException(nameof(context));}
+            ArgumentNullException.ThrowIfNull(context);
 
             var accept = context.Request.Headers["accept"];
             var mediaTypeWithQualityHeaderValue = GetMediaTypes(accept)?.FirstOrDefault();
@@ -89,14 +93,14 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
                     mediaTypeWithQualityHeaderValue.MediaType != "*/*" &&
                     mediaTypeWithQualityHeaderValue.MediaType != "")
                 {
-                    context.Response.Headers?.Add("WWW-Authenticate", "Bearer");
+                    context.Response.Headers["WWW-Authenticate"] = "Bearer";
                     context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                     return true;
                 }
             }
 
             if (context.Request.Method == "GET" || context.Request.Method == "HEAD") return false;
-            context.Response.Headers?.Add("WWW-Authenticate", "Bearer");
+            context.Response.Headers["WWW-Authenticate"] = "Bearer";
             context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
             return true;
 
@@ -119,7 +123,7 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
                         : new MediaTypeWithQualityHeaderValue("application/octed-stream");
                     return x;
                 })
-                .Where(h => h?.Quality.GetValueOrDefault(1) > 0)
+                .Where(h => h.Quality.GetValueOrDefault(1) > 0)
                 .OrderByDescending(mt => mt.Quality.GetValueOrDefault(1));
         }
     }
