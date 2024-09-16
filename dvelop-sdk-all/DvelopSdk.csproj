@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackageId>Dvelop.Sdk</PackageId>
 
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>Dvelop.Sdk</AssemblyName>
     <RootNamespace>Dvelop.Sdk</RootNamespace>
     <Copyright>Copyright (c) 2019</Copyright>
@@ -12,7 +12,7 @@
     <IsPackable>true</IsPackable>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <PackageProjectUrl></PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/d-velop/dvelop-sdk-cs</PackageProjectUrl>
     
     <RepositoryUrl>https://github.com/d-velop/dvelop-sdk-cs</RepositoryUrl>
     
@@ -21,6 +21,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <LangVersion>latestmajor</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <AssemblyName>Dvelop.Sdk.WebApiExtensions</AssemblyName>
         <RootNamespace>Dvelop.Sdk.WebApiExtensions</RootNamespace>
-        <LangVersion>8</LangVersion>
+        <LangVersion>latestmajor</LangVersion>
     
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>

@@ -6,6 +6,7 @@
     <AssemblyName>Dvelop.Sdk.TenantMiddleware.UnitTest</AssemblyName>
     <RootNamespace>Dvelop.Sdk.TenantMiddleware.UnitTest</RootNamespace>
     <OutputType>Library</OutputType>
+    <LangVersion>latestmajor</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
