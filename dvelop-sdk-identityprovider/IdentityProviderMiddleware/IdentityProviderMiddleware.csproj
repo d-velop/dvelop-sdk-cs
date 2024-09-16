@@ -9,8 +9,8 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <LangVersion>latestmajor</LangVersion>
-    <OutputType>Library</OutputType>
-    <IsPackable>true</IsPackable>
+      <OutputType>Library</OutputType>
+      <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
