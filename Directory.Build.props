@@ -4,6 +4,6 @@
     <Company>d.velop AG</Company>
     <Copyright>Copyright (c) 2024</Copyright>
     <PackageProjectUrl>https://github.com/d-velop/dvelop-sdk-cs</PackageProjectUrl>
-    <VersionPrefix>0.0.10</VersionPrefix>
+    <VersionPrefix>0.1.0</VersionPrefix>
   </PropertyGroup>
 </Project>
