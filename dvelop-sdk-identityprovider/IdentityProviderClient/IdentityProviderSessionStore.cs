@@ -8,7 +8,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
 {
     public class IdentityProviderSessionStore
     {
-        private readonly ISystemClock _clock;
+        private readonly TimeProvider _clock;
         private readonly int _cleanupThreshold;
 
         private readonly ConcurrentDictionary<string, IdentityProviderSessionItem> _sessionCache =
@@ -17,13 +17,13 @@ namespace Dvelop.Sdk.IdentityProvider.Client
         private int _cleanupCounter;
         private readonly object _cleanupLock=new object();
 
-        public IdentityProviderSessionStore(ISystemClock clock, int cleanupThreshold)
+        public IdentityProviderSessionStore(TimeProvider clock, int cleanupThreshold)
         {
             _clock = clock;
             _cleanupThreshold = cleanupThreshold;
         }
 
-        public IdentityProviderSessionStore():this(new SystemClock(), 20)
+        public IdentityProviderSessionStore():this(TimeProvider.System, 20)
         {
             
         }
@@ -34,7 +34,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
             //CleanUp();
             var id = IdFromCookie(cookie);
             if (!_sessionCache.TryGetValue(id, out var sessionItem)) return null;
-            if (sessionItem.Expire.CompareTo(_clock.UtcNow) < 0)
+            if (sessionItem.Expire.CompareTo(_clock.GetUtcNow()) < 0)
             {
                 _sessionCache.TryRemove(id,out _);
                 return null;
@@ -68,7 +68,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
                     foreach (var key in _sessionCache.Keys)
                     {
                         if (!_sessionCache.TryGetValue(key, out var sessionItem)) continue;
-                        if (sessionItem.Expire.CompareTo(_clock.UtcNow) < 0)
+                        if (sessionItem.Expire.CompareTo(_clock.GetUtcNow()) < 0)
                         {
                             _sessionCache.TryRemove(key, out _);
                         }

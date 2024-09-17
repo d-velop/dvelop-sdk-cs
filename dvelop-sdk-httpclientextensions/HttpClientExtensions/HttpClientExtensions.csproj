@@ -1,25 +1,26 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <IsPackable>true</IsPackable>
         <RootNamespace>Dvelop.Sdk.HttpClientExtensions</RootNamespace>
         <AssemblyName>Dvelop.Sdk.HttpClientExtensions</AssemblyName>
         <OutputType>Library</OutputType>
-    
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-  </PropertyGroup>
+        <LangVersion>latestmajor</LangVersion>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
-  </ItemGroup>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\dvelop-sdk-base\BaseInterfaces\BaseInterfaces.csproj" />
-      <ProjectReference Include="..\..\dvelop-sdk-logging\Logging.Abstractions\Logging.Abstractions.csproj" />
-      <ProjectReference Include="..\..\dvelop-sdk-signing\SigningAlgorithms\SigningAlgorithms.csproj" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\dvelop-sdk-base\BaseInterfaces\BaseInterfaces.csproj"/>
+        <ProjectReference Include="..\..\dvelop-sdk-logging\Logging.Abstractions\Logging.Abstractions.csproj"/>
+        <ProjectReference Include="..\..\dvelop-sdk-signing\SigningAlgorithms\SigningAlgorithms.csproj"/>
     </ItemGroup>
 
 </Project>

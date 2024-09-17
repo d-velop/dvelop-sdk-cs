@@ -11,12 +11,12 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
     public class IdentityProviderSessionStoreTest
     {
         private IdentityProviderSessionStore _unit;
-        private Mock<ISystemClock> _clock;
+        private Mock<TimeProvider> _clock;
 
         [TestInitialize]
         public void Setup()
         {
-            _clock = new Mock<ISystemClock> {CallBase = true};
+            _clock = new Mock<TimeProvider> {CallBase = true};
             _unit = new IdentityProviderSessionStore(_clock.Object, 2);
         }
         
@@ -63,7 +63,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
         public void GetExpiredItemShouldReturnNull()
         {
             var now = DateTimeOffset.UtcNow;
-            _clock.SetupSequence(c => c.UtcNow)
+            _clock.SetupSequence(c => c.GetUtcNow())
                 .Returns(now)
                 .Returns(now.AddMinutes(61));   
             
@@ -82,7 +82,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
         public void GetNonExpiredItemShouldReturn()
         {
             var now = DateTimeOffset.UtcNow;
-            _clock.SetupSequence(c => c.UtcNow)
+            _clock.SetupSequence(c => c.GetUtcNow())
                 .Returns(now).Returns(now)      // SET 
                 .Returns(now.AddMinutes(61))    // GET a&1
                 .Returns(now.AddMinutes(61));   // GET b&1

@@ -7,7 +7,7 @@ namespace Dvelop.Sdk.IdentityProvider.Middleware
     {
         public static AuthenticationBuilder AddIdentityProviderAuthentication(this AuthenticationBuilder builder, string authenticationScheme, string displayName, Action<CustomAuthenticationOptions> configureOptions)
         {
-            return builder.AddScheme<CustomAuthenticationOptions, CustomAuthenticationHandler>(authenticationScheme, displayName, configureOptions);
+            return builder.AddScheme<CustomAuthenticationOptions, IdpAuthenticationHandler>(authenticationScheme, displayName, configureOptions);
         }
     }
 
