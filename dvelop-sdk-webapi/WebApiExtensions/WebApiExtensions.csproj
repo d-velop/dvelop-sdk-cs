@@ -13,7 +13,6 @@
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
-        <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.1" />
         <ProjectReference Include="..\..\dvelop-sdk-base\BaseInterfaces\BaseInterfaces.csproj" />
         <ProjectReference Include="..\..\dvelop-sdk-logging\Logging.Abstractions\Logging.Abstractions.csproj" />
         <ProjectReference Include="..\..\dvelop-sdk-signing\SigningAlgorithms\SigningAlgorithms.csproj" />
