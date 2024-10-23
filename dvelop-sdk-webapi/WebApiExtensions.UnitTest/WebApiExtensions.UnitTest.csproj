@@ -1,16 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
-
         <IsPackable>false</IsPackable>
-
         <AssemblyName>Dvelop.Sdk.WebApiExtensions.UnitTest</AssemblyName>
-
         <RootNamespace>Dvelop.Sdk.WebApiExtensions.UnitTest</RootNamespace>
-
         <OutputType>Library</OutputType>
-
         <LangVersion>latestmajor</LangVersion>
     </PropertyGroup>
 
