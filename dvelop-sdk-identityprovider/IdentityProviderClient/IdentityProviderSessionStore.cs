@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
 
 namespace Dvelop.Sdk.IdentityProvider.Client
 {
