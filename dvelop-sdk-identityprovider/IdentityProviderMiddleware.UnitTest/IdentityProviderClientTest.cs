@@ -25,7 +25,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
                 CallBase = true
             };
             _fakeHttpMessageHandler
-                .Setup( h =>  h.Send(It.IsAny<HttpRequestMessage>()))
+                .Setup(h => h.Send(It.IsAny<HttpRequestMessage>()))
                 .Returns(new HttpResponseMessage
                 {
                     Content = new StringContent(JsonConvert.SerializeObject(new UserDto
@@ -44,40 +44,40 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
                 });
             _unit = new IdentityProviderClient(new IdentityProviderClientOptions
             {
-            HttpClient = new HttpClient(_fakeHttpMessageHandler.Object),
-            TenantInformationCallback = () => new TenantInformation {SystemBaseUri = "http://localhost/", TenantId = "0"}
-        
+                HttpClient = new HttpClient(_fakeHttpMessageHandler.Object),
+                TenantInformationCallback = () => new TenantInformation
+                    { SystemBaseUri = "http://localhost/", TenantId = "0" }
             });
         }
-        
+
         [TestMethod]
         public async Task OneSessionShouldOnlyValidateOnce()
         {
             var claimsUser = await _unit.GetClaimsPrincipalAsync("a&1").ConfigureAwait(false);
             Assert.IsNotNull(claimsUser);
-            
+
             claimsUser = await _unit.GetClaimsPrincipalAsync("a&1").ConfigureAwait(false);
             Assert.IsNotNull(claimsUser);
-            
-            _fakeHttpMessageHandler.Verify( h => h.Send(It.IsAny<HttpRequestMessage>()) ,Times.Once);
+
+            _fakeHttpMessageHandler.Verify(h => h.Send(It.IsAny<HttpRequestMessage>()), Times.Once);
         }
-        
+
         [TestMethod]
         public async Task TwoSessionsShouldOnlyValidateOncePerSession()
         {
             var claimsUser = await _unit.GetClaimsPrincipalAsync("a&1").ConfigureAwait(false);
             Assert.IsNotNull(claimsUser);
-            
+
             claimsUser = await _unit.GetClaimsPrincipalAsync("a&2").ConfigureAwait(false);
             Assert.IsNotNull(claimsUser);
-            
+
             claimsUser = await _unit.GetClaimsPrincipalAsync("a&1").ConfigureAwait(false);
             Assert.IsNotNull(claimsUser);
-            
+
             claimsUser = await _unit.GetClaimsPrincipalAsync("a&2").ConfigureAwait(false);
             Assert.IsNotNull(claimsUser);
-            
-            _fakeHttpMessageHandler.Verify( h => h.Send(It.IsAny<HttpRequestMessage>()) ,Times.Exactly(2));
+
+            _fakeHttpMessageHandler.Verify(h => h.Send(It.IsAny<HttpRequestMessage>()), Times.Exactly(2));
         }
 
         [TestMethod]
