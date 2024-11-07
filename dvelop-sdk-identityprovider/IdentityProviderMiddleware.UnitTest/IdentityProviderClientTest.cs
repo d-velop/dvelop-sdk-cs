@@ -45,6 +45,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             _unit = new IdentityProviderClient(new IdentityProviderClientOptions
             {
                 HttpClient = new HttpClient(_fakeHttpMessageHandler.Object),
+                SystemBaseUri = new Uri("http://localhost/"),
                 TenantInformationCallback = () => new TenantInformation
                     { SystemBaseUri = "http://localhost/", TenantId = "0" }
             });
