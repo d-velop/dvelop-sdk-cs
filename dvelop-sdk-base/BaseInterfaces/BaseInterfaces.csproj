@@ -1,10 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
         <RootNamespace>Dvelop.Sdk.BaseInterfaces</RootNamespace>
         <AssemblyName>Dvelop.Sdk.BaseInterfaces</AssemblyName>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <LangVersion>latestmajor</LangVersion>
+        <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
-
+    
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+    </ItemGroup>
 </Project>
