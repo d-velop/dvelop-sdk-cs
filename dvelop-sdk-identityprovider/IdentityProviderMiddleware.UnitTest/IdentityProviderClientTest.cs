@@ -42,7 +42,12 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
                         }
                     }
                 });
-            _unit = new IdentityProviderClient(new HttpClient(_fakeHttpMessageHandler.Object), () => new TenantInformation {SystemBaseUri = "http://localhost/", TenantId = "0"});
+            _unit = new IdentityProviderClient(new IdentityProviderClientOptions
+            {
+            HttpClient = new HttpClient(_fakeHttpMessageHandler.Object),
+            TenantInformationCallback = () => new TenantInformation {SystemBaseUri = "http://localhost/", TenantId = "0"}
+        
+            });
         }
         
         [TestMethod]
