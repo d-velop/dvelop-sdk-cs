@@ -71,7 +71,7 @@ namespace Dvelop.Sdk.IdentityProvider.Client
             _allowedImpersonatedApps = options.AllowedImpersonatedApps;
             _allowImpersonatedUsers = options.AllowImpersonatedUsers;
             _logCallback = options.LogCallBack;
-            _logCallback?.Invoke(IdentityProviderClientLogLevel.Info, "IdentityProviderClient initialized");
+            _logCallback?.Invoke(IdentityProviderClientLogLevel.Debug, "IdentityProviderClient initialized");
         }
 
         public static string CookieName => COOKIENAME;
