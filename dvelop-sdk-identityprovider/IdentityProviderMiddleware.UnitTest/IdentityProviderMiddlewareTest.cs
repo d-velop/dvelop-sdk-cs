@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Web;
 using Dvelop.Sdk.IdentityProvider.Client;
 using Dvelop.Sdk.IdentityProvider.Middleware;
-using FluentAssertions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -18,6 +17,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Shouldly;
 
 namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
 {
@@ -300,13 +300,13 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
                     })
                 .Invoke(context).ConfigureAwait(false);
             
-            context.Response.StatusCode.Should().Be(expectedStatus);
+            context.Response.StatusCode.ShouldBe(expectedStatus);
             
             
-            nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should not have been invoked if signature is wrong");
+            nextMiddleware.HasBeenInvoked.ShouldBeTrue("next middleware should not have been invoked if signature is wrong");
             foreach (var (key, value) in expectedResponseHeader)
             {
-                context.Response.Headers[key].ToString().Should().BeEquivalentTo(value);
+                context.Response.Headers[key].ToString().ShouldBe(value, StringCompareShould.IgnoreCase);
             }
         }
         

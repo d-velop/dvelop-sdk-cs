@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
+using Shouldly;
 
 namespace Dvelop.Sdk.TenantMiddleware.UnitTest
 {
@@ -18,14 +18,14 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         public void TenantMiddlewareOptionsIsNull_ShouldThrowException()
         {
             Action useMiddleware = () => new AppBuilderStub().UseTenantMiddleware(null);
-            useMiddleware.Should().Throw<ArgumentNullException>().WithMessage("*tenantMiddlewareOptions*");
+            useMiddleware.ShouldThrow<ArgumentNullException>("*tenantMiddlewareOptions*");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddlewareExtensions))]
         public void OnTenantIdentifiedCallbackIsNull_ShouldThrowException()
         {
             Action useMiddleware = () => new AppBuilderStub().UseTenantMiddleware(new TenantMiddlewareOptions { OnTenantIdentified = null });
-            useMiddleware.Should().Throw<ArgumentNullException>().WithMessage("*OnTenantIdentified*");
+            useMiddleware.ShouldThrow<ArgumentNullException>( "*OnTenantIdentified*");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddlewareExtensions))]
@@ -37,7 +37,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     OnTenantIdentified = (a, b) => { },
                     DefaultSystemBaseUri = "http:/"
                 });
-            useMiddleware.Should().Throw<ArgumentException>().WithMessage("*DefaultSystemBaseUri*");
+            useMiddleware.ShouldThrow<ArgumentException>("*DefaultSystemBaseUri*");
         }
     }
 
