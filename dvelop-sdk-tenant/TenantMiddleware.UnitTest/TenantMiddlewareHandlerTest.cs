@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
+using Shouldly;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Dvelop.Sdk.TenantMiddleware.UnitTest
@@ -14,7 +14,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         {
             // ReSharper disable once ObjectCreationAsStatement
             Action useMiddleware = () => new TenantMiddlewareHandler(null);
-            useMiddleware.Should().Throw<ArgumentNullException>().WithMessage("*tenantMiddlewareOptions*");
+            useMiddleware.ShouldThrow<ArgumentNullException>("*tenantMiddlewareOptions*");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddlewareHandler))]
@@ -22,7 +22,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         {
             // ReSharper disable once ObjectCreationAsStatement
             Action useMiddleware = () => new TenantMiddlewareHandler(new TenantMiddlewareOptions { OnTenantIdentified = null });
-            useMiddleware.Should().Throw<ArgumentNullException>().WithMessage("*OnTenantIdentified*");
+            useMiddleware.ShouldThrow<ArgumentNullException>("*OnTenantIdentified*");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddlewareHandler))]
@@ -34,7 +34,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                 OnTenantIdentified = (a, b) => { },
                 DefaultSystemBaseUri = "http:/"
             });
-            useMiddleware.Should().Throw<ArgumentException>().WithMessage("*DefaultSystemBaseUri*");
+            useMiddleware.ShouldThrow<ArgumentException>("*DefaultSystemBaseUri*");
         }
     }
 }

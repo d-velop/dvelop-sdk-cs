@@ -3,11 +3,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Shouldly;
 
 namespace Dvelop.Sdk.TenantMiddleware.UnitTest
 {
@@ -33,8 +33,8 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         {
             // ReSharper disable once ObjectCreationAsStatement
             Action useMiddleware = () => new TenantMiddleware(new Mock<RequestDelegate>().Object, null);
-            //useMiddleware.ShouldThrow<ArgumentNullException>().WithMessage("*tenantMiddlewareOptions*");
-            useMiddleware.Should().Throw<ArgumentNullException>().WithMessage("*tenantMiddlewareOptions*");
+            //useMiddleware.ShouldThrow<ArgumentNullException>("*tenantMiddlewareOptions*");
+            useMiddleware.ShouldThrow<ArgumentNullException>("*tenantMiddlewareOptions*");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -43,7 +43,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
             // ReSharper disable once ObjectCreationAsStatement
             Action useMiddleware = () => new TenantMiddleware(new Mock<RequestDelegate>().Object,
                 new TenantMiddlewareOptions { OnTenantIdentified = null });
-            useMiddleware.Should().Throw<ArgumentNullException>().WithMessage("*OnTenantIdentified*");
+            useMiddleware.ShouldThrow<ArgumentNullException>("*OnTenantIdentified*");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -56,7 +56,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     OnTenantIdentified = (a, b) => { },
                     DefaultSystemBaseUri = "http:/"
                 });
-            useMiddleware.Should().Throw<ArgumentException>().WithMessage("*DefaultSystemBaseUri*");
+            useMiddleware.ShouldThrow<ArgumentException>("*DefaultSystemBaseUri*");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -79,8 +79,8 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            systemBaseUriSetByMiddleware.Should().Be(systemBaseUriFromHeader);
-            nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
+            systemBaseUriSetByMiddleware.ShouldBe(systemBaseUriFromHeader);
+            nextMiddleware.HasBeenInvoked.ShouldBeTrue("next middleware should have been invoked");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -113,8 +113,8 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            systemBaseUriSetByMiddleware.Should().Be(systemBaseUriFromHeader);
-            nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
+            systemBaseUriSetByMiddleware.ShouldBe(systemBaseUriFromHeader);
+            nextMiddleware.HasBeenInvoked.ShouldBeTrue("next middleware should have been invoked");
         }
         
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -132,8 +132,8 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            systemBaseUriSetByMiddleware.Should().Be(DefaultSystemBaseUri);
-            nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
+            systemBaseUriSetByMiddleware.ShouldBe(DefaultSystemBaseUri);
+            nextMiddleware.HasBeenInvoked.ShouldBeTrue("next middleware should have been invoked");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -155,8 +155,8 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            systemBaseUriSetByMiddleware.Should().Be(systemBaseUriFromHeader);
-            nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
+            systemBaseUriSetByMiddleware.ShouldBe(systemBaseUriFromHeader);
+            nextMiddleware.HasBeenInvoked.ShouldBeTrue("next middleware should have been invoked");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -174,8 +174,8 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            systemBaseUriSetByMiddleware.Should().BeNull();
-            nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
+            systemBaseUriSetByMiddleware.ShouldBeNull();
+            nextMiddleware.HasBeenInvoked.ShouldBeTrue("next middleware should have been invoked");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -198,8 +198,8 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            tenantIdSetByMiddleware.Should().Be(tenantIdFromHeader);
-            nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
+            tenantIdSetByMiddleware.ShouldBe(tenantIdFromHeader);
+            nextMiddleware.HasBeenInvoked.ShouldBeTrue("next middleware should have been invoked");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -218,8 +218,8 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            tenantIdSetByMiddleware.Should().Be(DefaultTenantId);
-            nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
+            tenantIdSetByMiddleware.ShouldBe(DefaultTenantId);
+            nextMiddleware.HasBeenInvoked.ShouldBeTrue("next middleware should have been invoked");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -242,8 +242,8 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            tenantIdSetByMiddleware.Should().Be(tenantIdFromHeader);
-            nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
+            tenantIdSetByMiddleware.ShouldBe(tenantIdFromHeader);
+            nextMiddleware.HasBeenInvoked.ShouldBeTrue("next middleware should have been invoked");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -261,8 +261,8 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            tenantIdSetByMiddleware.Should().BeNull();
-            nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
+            tenantIdSetByMiddleware.ShouldBeNull();
+            nextMiddleware.HasBeenInvoked.ShouldBeTrue("next middleware should have been invoked");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -298,9 +298,9 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            tenantIdSetByMiddleware.Should().Be(tenantIdFromHeader);
-            systemBaseUriSetByMiddleware.Should().Be(systemBaseUriFromHeader);
-            nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
+            tenantIdSetByMiddleware.ShouldBe(tenantIdFromHeader);
+            systemBaseUriSetByMiddleware.ShouldBe(systemBaseUriFromHeader);
+            nextMiddleware.HasBeenInvoked.ShouldBeTrue("next middleware should have been invoked");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -331,9 +331,9 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            tenantIdSetByMiddleware.Should().Be(tenantIdFromHeader);
-            systemBaseUriSetByMiddleware.Should().Be(DefaultSystemBaseUri);
-            nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
+            tenantIdSetByMiddleware.ShouldBe(tenantIdFromHeader);
+            systemBaseUriSetByMiddleware.ShouldBe(DefaultSystemBaseUri);
+            nextMiddleware.HasBeenInvoked.ShouldBeTrue("next middleware should have been invoked");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -363,9 +363,9 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            tenantIdSetByMiddleware.Should().Be(DefaultTenantId);
-            systemBaseUriSetByMiddleware.Should().Be(systemBaseUriFromHeader);
-            nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
+            tenantIdSetByMiddleware.ShouldBe(DefaultTenantId);
+            systemBaseUriSetByMiddleware.ShouldBe(systemBaseUriFromHeader);
+            nextMiddleware.HasBeenInvoked.ShouldBeTrue("next middleware should have been invoked");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -389,9 +389,9 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            tenantIdSetByMiddleware.Should().Be(DefaultTenantId);
-            systemBaseUriSetByMiddleware.Should().Be(DefaultSystemBaseUri);
-            nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
+            tenantIdSetByMiddleware.ShouldBe(DefaultTenantId);
+            systemBaseUriSetByMiddleware.ShouldBe(DefaultSystemBaseUri);
+            nextMiddleware.HasBeenInvoked.ShouldBeTrue("next middleware should have been invoked");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -416,9 +416,9 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            tenantIdSetByMiddleware.Should().Be(DefaultTenantId);
-            systemBaseUriSetByMiddleware.Should().Be(DefaultSystemBaseUri);
-            nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked");
+            tenantIdSetByMiddleware.ShouldBe(DefaultTenantId);
+            systemBaseUriSetByMiddleware.ShouldBe(DefaultSystemBaseUri);
+            nextMiddleware.HasBeenInvoked.ShouldBeTrue("next middleware should have been invoked");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -445,9 +445,9 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            context.Response.StatusCode.Should().Be(403);
-            onTenantIdentifiedHasBeenInvoked.Should().BeFalse("onTenantIdentified should not have been invoked if signature is wrong");
-            nextMiddleware.HasBeenInvoked.Should().BeFalse("next middleware should not have been invoked if signature is wrong");
+            context.Response.StatusCode.ShouldBe(403);
+            onTenantIdentifiedHasBeenInvoked.ShouldBeFalse("onTenantIdentified should not have been invoked if signature is wrong");
+            nextMiddleware.HasBeenInvoked.ShouldBeFalse("next middleware should not have been invoked if signature is wrong");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -472,9 +472,9 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            context.Response.StatusCode.Should().Be(403);
-            onTenantIdentifiedHasBeenInvoked.Should().BeFalse("onTenantIdentified should not have been invoked if signature is wrong");
-            nextMiddleware.HasBeenInvoked.Should().BeFalse("next middleware should not have been invoked if signature is wrong");
+            context.Response.StatusCode.ShouldBe(403);
+            onTenantIdentifiedHasBeenInvoked.ShouldBeFalse("onTenantIdentified should not have been invoked if signature is wrong");
+            nextMiddleware.HasBeenInvoked.ShouldBeFalse("next middleware should not have been invoked if signature is wrong");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -499,9 +499,9 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            context.Response.StatusCode.Should().Be(403);
-            onTenantIdentifiedHasBeenInvoked.Should().BeFalse("onTenantIdentified should not have been invoked if signature is wrong");
-            nextMiddleware.HasBeenInvoked.Should().BeFalse("next middleware should not have been invoked if signature is wrong");
+            context.Response.StatusCode.ShouldBe(403);
+            onTenantIdentifiedHasBeenInvoked.ShouldBeFalse("onTenantIdentified should not have been invoked if signature is wrong");
+            nextMiddleware.HasBeenInvoked.ShouldBeFalse("next middleware should not have been invoked if signature is wrong");
         }
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
         public async Task TenantIdHeaderAndWrongSignatureButIgnoredSignature_ShouldReturn200AndInvokeNext()
@@ -534,10 +534,10 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            context.Response.StatusCode.Should().Be(200);
-            onTenantIdentifiedHasBeenInvoked.Should().BeTrue("onTenantIdentified should not have been invoked if wrong signature is ignored");
-            nextMiddleware.HasBeenInvoked.Should().BeTrue("next middleware should have been invoked if wrong signature is ignored");
-            logIsWorking.Should().BeTrue("log callback has not been invoked");
+            context.Response.StatusCode.ShouldBe(200);
+            onTenantIdentifiedHasBeenInvoked.ShouldBeTrue("onTenantIdentified should not have been invoked if wrong signature is ignored");
+            nextMiddleware.HasBeenInvoked.ShouldBeTrue("next middleware should have been invoked if wrong signature is ignored");
+            logIsWorking.ShouldBeTrue("log callback has not been invoked");
         }
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
         public async Task NoneBase64Signature_ShouldReturn403AndNotInvokeNext()
@@ -563,9 +563,9 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            context.Response.StatusCode.Should().Be(403);
-            onTenantIdentifiedHasBeenInvoked.Should().BeFalse("onTenantIdentified should not have been invoked if signature is wrong");
-            nextMiddleware.HasBeenInvoked.Should().BeFalse("next middleware should not have been invoked if signature is wrong");
+            context.Response.StatusCode.ShouldBe(403);
+            onTenantIdentifiedHasBeenInvoked.ShouldBeFalse("onTenantIdentified should not have been invoked if signature is wrong");
+            nextMiddleware.HasBeenInvoked.ShouldBeFalse("next middleware should not have been invoked if signature is wrong");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -602,9 +602,9 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            context.Response.StatusCode.Should().Be(403);
-            onTenantIdentifiedHasBeenInvoked.Should().BeFalse("onTenantIdentified should not have been invoked if signature is wrong");
-            nextMiddleware.HasBeenInvoked.Should().BeFalse("next middleware should not have been invoked if signature is wrong");
+            context.Response.StatusCode.ShouldBe(403);
+            onTenantIdentifiedHasBeenInvoked.ShouldBeFalse("onTenantIdentified should not have been invoked if signature is wrong");
+            nextMiddleware.HasBeenInvoked.ShouldBeFalse("next middleware should not have been invoked if signature is wrong");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -629,9 +629,9 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            context.Response.StatusCode.Should().Be(403);
-            onTenantIdentifiedHasBeenInvoked.Should().BeFalse("onTenantIdentified should not have been invoked if signature is wrong");
-            nextMiddleware.HasBeenInvoked.Should().BeFalse("next middleware should not have been invoked if signature is wrong");
+            context.Response.StatusCode.ShouldBe(403);
+            onTenantIdentifiedHasBeenInvoked.ShouldBeFalse("onTenantIdentified should not have been invoked if signature is wrong");
+            nextMiddleware.HasBeenInvoked.ShouldBeFalse("next middleware should not have been invoked if signature is wrong");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -660,9 +660,9 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            context.Response.StatusCode.Should().Be(500);
-            onTenantIdentifiedHasBeenInvoked.Should().BeFalse("onTenantIdentified should not have been invoked if signature is wrong");
-            nextMiddleware.HasBeenInvoked.Should().BeFalse("next middleware should not have been invoked if signature is wrong");
+            context.Response.StatusCode.ShouldBe(500);
+            onTenantIdentifiedHasBeenInvoked.ShouldBeFalse("onTenantIdentified should not have been invoked if signature is wrong");
+            nextMiddleware.HasBeenInvoked.ShouldBeFalse("next middleware should not have been invoked if signature is wrong");
         }
 
         private string GetBase64SignatureFor(string message, byte[] sigKey)
