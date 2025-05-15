@@ -91,7 +91,12 @@ namespace Dvelop.Sdk.IdentityProvider.Client
                 systemBaseUri = ti.SystemBaseUri;
             }
 
-            var result = _sessionStore.GetPrincipal(authSessionId + "-" + tenantId);
+            var result = _sessionStore.GetPrincipal(authSessionId + "-" + tenantId, out var doRefresh);
+            if (doRefresh)
+            {
+                _logCallback?.Invoke(IdentityProviderClientLogLevel.Debug, "Session is about to expire, refreshing...");
+                _ = CreatePrincipalAsync(authSessionId, tenantId, systemBaseUri).ConfigureAwait(false);
+            }
             if (result == null)
             {
                 _logCallback?.Invoke(IdentityProviderClientLogLevel.Debug, "Principal for authSessionId not found in cache");
