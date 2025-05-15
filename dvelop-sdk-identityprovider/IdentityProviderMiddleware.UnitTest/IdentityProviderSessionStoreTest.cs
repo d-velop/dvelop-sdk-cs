@@ -79,6 +79,29 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
         }
         
         [TestMethod]
+        public void GetNonExpiredItemShouldReturnAndRefresh()
+        {
+            var now = DateTimeOffset.UtcNow;
+            _clock.SetupSequence(c => c.GetUtcNow())
+                // .Returns(now)                    // SET 
+                .Returns(now.AddMinutes(56))     // GET a&1
+                .Returns(now.AddMinutes(61));    // GET a&1
+            
+            const string user1 = "a&1";
+            var claimsPrincipal1 = new ClaimsPrincipal();
+            
+            _unit.SetPrincipal(user1, now.AddHours(1), claimsPrincipal1);
+            
+            // 56 minutes later
+            Assert.IsNotNull(_unit.GetPrincipal(user1, out var doRefresh));
+            Assert.IsTrue(doRefresh);
+            
+            // 61 minutes later
+            Assert.IsNull(_unit.GetPrincipal(user1, out doRefresh));
+            Assert.IsFalse(doRefresh);
+        }
+
+        [TestMethod]
         public void GetNonExpiredItemShouldReturn()
         {
             var now = DateTimeOffset.UtcNow;
