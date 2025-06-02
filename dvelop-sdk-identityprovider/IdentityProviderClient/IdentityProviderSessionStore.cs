@@ -6,7 +6,6 @@ namespace Dvelop.Sdk.IdentityProvider.Client
 {
     public class IdentityProviderSessionStore
     {
-        private TimeSpan CacheRefreshTimeout = TimeSpan.FromMinutes(5);
         private readonly TimeProvider _clock;
         private readonly int _cleanupThreshold;
 
@@ -48,7 +47,14 @@ namespace Dvelop.Sdk.IdentityProvider.Client
             var result = sessionItem.Cookie.Equals(cookie) ? sessionItem.Principal : null;
             if (result != null)
             {
-                doRefresh = sessionItem.Expire - now < CacheRefreshTimeout;
+                // If the session is close to expire, we want to refresh it
+                // We calculate the cache refresh timeout as 20% of the remaining time until expiration
+                var cacheExpireTimeout = (sessionItem.Expire - sessionItem.Created) * 0.2;
+                // Ensure the cache refresh timeout does not exceed 5 minutes
+                var cacheRefreshTimeout = new TimeSpan(Math.Min(TimeSpan.FromMinutes(5).Ticks, cacheExpireTimeout.Ticks));
+                
+                // Check if the session is close to expire
+                doRefresh = sessionItem.Expire - now < cacheRefreshTimeout;
             }
             return result;
         }
@@ -57,10 +63,12 @@ namespace Dvelop.Sdk.IdentityProvider.Client
         {
             CleanUp();
             var id = IdFromCookie(cookie);
+            var now = _clock.GetUtcNow();
             var sessionItem = new IdentityProviderSessionItem
             {
                 Cookie = cookie,
                 Principal = principal,
+                Created = now,
                 Expire = expire
             };
             _sessionCache[id] = sessionItem;

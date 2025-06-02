@@ -9,6 +9,8 @@ namespace Dvelop.Sdk.IdentityProvider.Client
 
         public string Cookie { get; set; }
 
+        public DateTimeOffset Created { get; set; }
+
         public DateTimeOffset Expire { get; set; }
     }
 }
