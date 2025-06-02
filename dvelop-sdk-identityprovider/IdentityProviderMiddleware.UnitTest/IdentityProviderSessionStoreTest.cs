@@ -65,6 +65,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             var now = DateTimeOffset.UtcNow;
             _clock.SetupSequence(c => c.GetUtcNow())
                 .Returns(now)
+                .Returns(now)
                 .Returns(now.AddMinutes(61));   
             
             const string user1 = "a&1";
@@ -79,11 +80,11 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
         }
         
         [TestMethod]
-        public void GetNonExpiredItemShouldReturnAndRefresh()
+        public void GetNonExpiredItemWithExpireTimeOverFiveMinutesShouldReturnAndRefresh()
         {
             var now = DateTimeOffset.UtcNow;
             _clock.SetupSequence(c => c.GetUtcNow())
-                // .Returns(now)                    // SET 
+                .Returns(now)                    // SET 
                 .Returns(now.AddMinutes(56))     // GET a&1
                 .Returns(now.AddMinutes(61));    // GET a&1
             
@@ -102,11 +103,35 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
         }
 
         [TestMethod]
+        public void GetNonExpiredItemWithExpireTimeUnderFiveMinutesShouldReturnAndRefresh()
+        {
+            var now = DateTimeOffset.UtcNow;
+            _clock.SetupSequence(c => c.GetUtcNow())
+                .Returns(now)                    // SET 
+                .Returns(now.AddMinutes(17))     // GET a&1
+                .Returns(now.AddMinutes(21));    // GET a&1
+            
+            const string user1 = "a&1";
+            var claimsPrincipal1 = new ClaimsPrincipal();
+            
+            _unit.SetPrincipal(user1, now.AddMinutes(20), claimsPrincipal1);
+            
+            // 17 minutes later
+            Assert.IsNotNull(_unit.GetPrincipal(user1, out var doRefresh));
+            Assert.IsTrue(doRefresh);
+            
+            // 21 minutes later
+            Assert.IsNull(_unit.GetPrincipal(user1, out doRefresh));
+            Assert.IsFalse(doRefresh);
+        }
+
+        [TestMethod]
         public void GetNonExpiredItemShouldReturn()
         {
             var now = DateTimeOffset.UtcNow;
             _clock.SetupSequence(c => c.GetUtcNow())
                 .Returns(now).Returns(now)      // SET 
+                .Returns(now).Returns(now)      // GET
                 .Returns(now.AddMinutes(61))    // GET a&1
                 .Returns(now.AddMinutes(61));   // GET b&1
             
