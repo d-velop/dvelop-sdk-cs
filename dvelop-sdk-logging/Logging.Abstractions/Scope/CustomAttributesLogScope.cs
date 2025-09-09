@@ -37,7 +37,7 @@ namespace Dvelop.Sdk.Logging.Abstractions.Scope
             get
             {
                 (string key, object value) = Items.ToList()[index];
-                return new KeyValuePair<string, object>($"{name}.{key}", value);
+                return new KeyValuePair<string, object>($"{Name}.{key}", value);
             }
         }
     }
