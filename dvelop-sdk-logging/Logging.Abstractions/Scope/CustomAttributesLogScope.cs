@@ -1,28 +1,37 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Dvelop.Sdk.Logging.Abstractions.Scope
 {
-    public interface ICustomAttributesLogScope
+    public interface ICustomAttributesLogScope: IReadOnlyList<KeyValuePair<string, object>>
     {
         Dictionary<string, object> Items { get; }
         string Name { get; }
     }
 
-    public class CustomAttributesLogScope : ICustomAttributesLogScope
+    public class CustomAttributesLogScope(string name, Dictionary<string, object> items) : ICustomAttributesLogScope
     {
-        public Dictionary<string, object> Items { get; }
-        public string Name { get; }
+        public Dictionary<string, object> Items { get; } = items;
+        public string Name { get; } = name;
 
-        public CustomAttributesLogScope(string name, Dictionary<string, object> items)
+        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
         {
-            Name = name;
-            Items = items;
+            return Items.GetEnumerator();
         }
 
         public override string ToString()
         {
             return $"CustomAttributesLogScope:{Name} => Items: {string.Join(", ", Items.Select(i => $"'{i.Key}:{i.Value}'"))}";
         }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public int Count => Items.Count;
+
+        public KeyValuePair<string, object> this[int index] => Items.ToList()[index];
     }
 }
