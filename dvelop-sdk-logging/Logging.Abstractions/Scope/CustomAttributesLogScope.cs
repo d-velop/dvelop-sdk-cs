@@ -32,6 +32,13 @@ namespace Dvelop.Sdk.Logging.Abstractions.Scope
 
         public int Count => Items.Count;
 
-        public KeyValuePair<string, object> this[int index] => Items.ToList()[index];
+        public KeyValuePair<string, object> this[int index]
+        {
+            get
+            {
+                (string key, object value) = Items.ToList()[index];
+                return new KeyValuePair<string, object>($"{name}.{key}", value);
+            }
+        }
     }
 }
