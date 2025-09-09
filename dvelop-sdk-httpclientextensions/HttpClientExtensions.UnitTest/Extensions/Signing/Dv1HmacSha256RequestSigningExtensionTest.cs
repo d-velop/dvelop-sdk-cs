@@ -46,15 +46,14 @@ namespace Dvelop.Sdk.HttpClientExtensions.UnitTest.Extensions.Signing
             Assert.IsNotNull(x.Headers.GetValues("x-dv-signature-headers").FirstOrDefault());
             Assert.AreEqual("x-dv-signature-algorithm,x-dv-signature-headers,x-dv-signature-timestamp",x.Headers.GetValues("x-dv-signature-headers").FirstOrDefault());
             Assert.IsNotNull(x.Headers.GetValues("x-dv-signature-timestamp").FirstOrDefault());
-            Assert.AreEqual( "Bearer", x.Headers.Authorization.Scheme );
-            Assert.IsNotNull( x.Headers.Authorization.Parameter );
+            Assert.AreEqual( "Bearer", x.Headers.Authorization?.Scheme );
+            Assert.IsNotNull( x.Headers.Authorization?.Parameter );
         }
         
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(null)]
         [DataRow("")]
         [DataRow(" ")]
-        [ExpectedException( typeof(ArgumentException) )]
         public async Task TestEmptyValidSecret(string secret)
         {
             var x = new HttpRequestMessage
@@ -63,12 +62,10 @@ namespace Dvelop.Sdk.HttpClientExtensions.UnitTest.Extensions.Signing
                 Content = new StringContent("{\"type\":\"subscribe\",\"tenantId\":\"id\",\"baseUri\":\"https://someone.d-velop.cloud\"}\n"),
                 RequestUri = new Uri("https://developer.d-velop.cloud/myapp/dvelop-cloud-lifecycle-event")
             };
-            
-            await x.SignWithDv1HmacSha256(secret).ConfigureAwait(false);
+            await Assert.ThrowsExactlyAsync<ArgumentException>(async () => await x.SignWithDv1HmacSha256(secret).ConfigureAwait(false));
         }
         
         [TestMethod]
-        [ExpectedException(typeof(FormatException))]
         public async Task TestInvalidSecret()
         {
             var x = new HttpRequestMessage
@@ -77,8 +74,7 @@ namespace Dvelop.Sdk.HttpClientExtensions.UnitTest.Extensions.Signing
                 Content = new StringContent("{\"type\":\"subscribe\",\"tenantId\":\"id\",\"baseUri\":\"https://someone.d-velop.cloud\"}\n"),
                 RequestUri = new Uri("https://developer.d-velop.cloud/myapp/dvelop-cloud-lifecycle-event")
             };
-            
-            await x.SignWithDv1HmacSha256("not base 64").ConfigureAwait(false);
+            await Assert.ThrowsExactlyAsync<FormatException>(async () => await x.SignWithDv1HmacSha256("not base 64").ConfigureAwait(false));
         }
     }
 }
