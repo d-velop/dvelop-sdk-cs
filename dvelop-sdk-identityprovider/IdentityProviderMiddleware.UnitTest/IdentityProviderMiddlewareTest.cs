@@ -108,7 +108,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
         }
         
         [DynamicData(nameof(GetTestNoAuthSessionIdData), DynamicDataSourceType.Method ,DynamicDataDisplayName = "DisplayName")]
-        [DataTestMethod]
+        [TestMethod]
         public async Task TestNoAuthSessionId(string testName, string requestMethod, Dictionary<string,string> requestHeader, string requestUri, int expectedStatus,  Dictionary<string,string> expectedResponseHeader,bool allowExternalValidation)
         {
             Console.WriteLine(testName);
@@ -162,7 +162,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
         }
 
         [DynamicData(nameof(GetTestInvalidAuthSessionIdData), DynamicDataSourceType.Method, DynamicDataDisplayName = "DisplayName")]
-        [DataTestMethod]
+        [TestMethod]
         public async Task TestInvalidAuthSessionId(string testName, string requestMethod,
             Dictionary<string, string> requestHeader, string requestUri, int expectedStatus,
             Dictionary<string, string> expectedResponseHeader, bool allowExternalValidation)
@@ -214,7 +214,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
         }
         
         [DynamicData(nameof(GetTestNoAuthSessionIdAndGetRequestAndAcceptHeaderIsData), DynamicDataSourceType.Method, DynamicDataDisplayName = "DisplayName")]
-        [DataTestMethod]
+        [TestMethod]
         public async Task GetTestNoAuthSessionIdAndGetRequestAndAcceptHeaderIs(string acceptHeader,bool anonymousAllowed, bool redirectExpected)
         {
             

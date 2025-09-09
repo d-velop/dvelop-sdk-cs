@@ -5,7 +5,7 @@ namespace Dvelop.Sdk.Logging.Abstractions.Scope
 {
     public class TenantLogScope(string tenantId) : IReadOnlyList<KeyValuePair<string, object>>
     {
-        private readonly List<KeyValuePair<string, object>> _list = [new("dvelop.tenant-id", tenantId??"0")];
+        private readonly List<KeyValuePair<string, object>> _list = [new("dvelop.tenant.id", tenantId??"0")];
         public string TenantId { get; } = tenantId;
 
         public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
