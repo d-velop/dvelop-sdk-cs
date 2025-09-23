@@ -7,7 +7,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
     [TestClass]
     public class IdentityProviderExtensionsTest
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow( null, null, null )]
         [DataRow( "123", null, null )]
         [DataRow( "123&abc", null, "123&abc" )]
