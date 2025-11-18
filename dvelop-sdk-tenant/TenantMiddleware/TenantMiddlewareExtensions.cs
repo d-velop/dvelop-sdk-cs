@@ -15,5 +15,16 @@ namespace Dvelop.Sdk.TenantMiddleware
             app.UseMiddleware<TenantMiddleware>(tenantMiddlewareOptions);
             return app;
         }
+
+        private static readonly IgnoreTenantMiddlewareAttribute _ignoreTenantMiddleware = new IgnoreTenantMiddlewareAttribute();
+
+        public static TBuilder IgnoreTenantMiddleware<TBuilder>(this TBuilder builder) where TBuilder : IEndpointConventionBuilder
+        {
+            builder.Add(endpointBuilder =>
+            {
+                endpointBuilder.Metadata.Add(_ignoreTenantMiddleware);
+            });
+            return builder;
+        }
     }
 }

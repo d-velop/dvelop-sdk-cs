@@ -37,20 +37,27 @@ namespace Dvelop.Sdk.TenantMiddleware
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var systemBaseUriFromHeader = context.Request.Headers[SYSTEM_BASE_URI_HEADER];
-            var tenantIdFromHeader = context.Request.Headers[TENANT_ID_HEADER];
-            var base64Signature = context.Request.Headers[SIGNATURE_HEADER];
-
-            var status = Invoke(_tenantMiddlewareOptions, systemBaseUriFromHeader, tenantIdFromHeader, base64Signature);
-            if (status != 0)
+            if (!IgnoredTenantMiddlewareAttribute(context))
             {
-                context.Response.StatusCode = (int)status;
-                return;
-            }
+                var systemBaseUriFromHeader = context.Request.Headers[SYSTEM_BASE_URI_HEADER];
+                var tenantIdFromHeader = context.Request.Headers[TENANT_ID_HEADER];
+                var base64Signature = context.Request.Headers[SIGNATURE_HEADER];
 
+                var status = Invoke(_tenantMiddlewareOptions, systemBaseUriFromHeader, tenantIdFromHeader,
+                    base64Signature);
+                if (status != 0)
+                {
+                    context.Response.StatusCode = (int)status;
+                    return;
+                }
+            }
             await _next(context).ConfigureAwait(false);
         }
-
+        private static bool IgnoredTenantMiddlewareAttribute(HttpContext context)
+        {
+            var endpoint = context.GetEndpoint();
+            return endpoint?.Metadata.GetMetadata<IgnoreTenantMiddlewareAttribute>() != null;
+        }
         internal static HttpStatusCode Invoke(TenantMiddlewareOptions tenantMiddlewareOptions, string systemBaseUriFromHeader,
             string tenantIdFromHeader, string base64Signature)
         {
