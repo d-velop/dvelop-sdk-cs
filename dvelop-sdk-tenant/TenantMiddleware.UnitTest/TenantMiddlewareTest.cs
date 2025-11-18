@@ -27,7 +27,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
             166, 219, 144, 209, 189, 1, 178, 73, 139, 47, 21, 236, 142, 56, 71, 245, 43, 188, 163, 52, 239, 102, 94,
             153, 255, 159, 199, 149, 163, 145, 161, 24
         };
-        
+
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
         public void TenantMiddlewareOptionsIsNull_ShouldThrowException()
         {
@@ -60,13 +60,14 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
-        public async Task BaseUriHeaderAndNullDefaultBaseUri_ShouldUseHeaderAndInvokeNext()
+        public async Task BaseUriAndTenantIdHeaderAndNullDefaultBaseUri_ShouldUseHeaderAndInvokeNext()
         {
             const string systemBaseUriFromHeader = "https://sample.mydomain.de";
-
+            const string tenantIdFromHeader = "a12be5";
             var context = new DefaultHttpContext();
-            context.Request.Headers.Append(SystemBaseUriHeader, new StringValues(new[] {systemBaseUriFromHeader}));
-            context.Request.Headers.Append(SignatureHeader, new[] {GetBase64SignatureFor(systemBaseUriFromHeader, _signatureKey)});
+            context.Request.Headers.Append(SystemBaseUriHeader, new StringValues(new[] { systemBaseUriFromHeader }));
+            context.Request.Headers.Append(TenantIdHeader, new StringValues(new[] { tenantIdFromHeader }));
+            context.Request.Headers.Append(SignatureHeader, new[] { GetBase64SignatureFor(systemBaseUriFromHeader + tenantIdFromHeader, _signatureKey) });
 
             var systemBaseUriSetByMiddleware = "null";
             var nextMiddleware = new MiddlewareMock(null);
@@ -87,10 +88,11 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         public async Task WrongSignatureWithValidAdditionalSignatureSecret_ShouldUseHeaderAndInvokeNext()
         {
             const string systemBaseUriFromHeader = "https://sample.mydomain.de";
-
+            const string tenantIdFromHeader = "a12be5";
             var context = new DefaultHttpContext();
             context.Request.Headers.Append(SystemBaseUriHeader, new StringValues([systemBaseUriFromHeader]));
-            context.Request.Headers.Append(SignatureHeader, new[] {GetBase64SignatureFor(systemBaseUriFromHeader, _signatureKey)});
+            context.Request.Headers.Append(TenantIdHeader, new StringValues(new[] { tenantIdFromHeader }));
+            context.Request.Headers.Append(SignatureHeader, new[] { GetBase64SignatureFor(systemBaseUriFromHeader + tenantIdFromHeader, _signatureKey) });
 
             var wrongSignatureKey = new byte[]
             {
@@ -116,12 +118,12 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
             systemBaseUriSetByMiddleware.ShouldBe(systemBaseUriFromHeader);
             nextMiddleware.HasBeenInvoked.ShouldBeTrue("next middleware should have been invoked");
         }
-        
+
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
         public async Task NoBaseUriHeaderAndDefaultBaseUri_ShouldUseDefaultBaseUriAndInvokeNext()
         {
             var context = new DefaultHttpContext();
-            
+
             var systemBaseUriSetByMiddleware = "null";
             var nextMiddleware = new MiddlewareMock(null);
             await new TenantMiddleware(nextMiddleware.InvokeAsync,
@@ -137,12 +139,14 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
-        public async Task BaseUriHeaderAndDefaultBaseUri_ShouldUseHeaderAndInvokeNext()
+        public async Task BaseUriAndTenantIdHeaderAndDefaultBaseUri_ShouldUseHeaderAndInvokeNext()
         {
             const string systemBaseUriFromHeader = "https://sample.mydomain.de";
+            const string tenantIdFromHeader = "a12be5";
             var context = new DefaultHttpContext();
-            context.Request.Headers.Append(SystemBaseUriHeader, new StringValues(new[] {systemBaseUriFromHeader}));
-            context.Request.Headers.Append(SignatureHeader, new[] {GetBase64SignatureFor(systemBaseUriFromHeader, _signatureKey)});
+            context.Request.Headers.Append(SystemBaseUriHeader, new StringValues(new[] { systemBaseUriFromHeader }));
+            context.Request.Headers.Append(TenantIdHeader, new StringValues(new[] { tenantIdFromHeader }));
+            context.Request.Headers.Append(SignatureHeader, new[] { GetBase64SignatureFor(systemBaseUriFromHeader + tenantIdFromHeader, _signatureKey) });
 
             var systemBaseUriSetByMiddleware = "null";
             var nextMiddleware = new MiddlewareMock(null);
@@ -179,12 +183,14 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
-        public async Task TenantIdHeaderAndNullDefaultTenantId_ShouldUseHeaderAndInvokeNext()
+        public async Task BaseUriAndTenantIdHeaderAndNullDefaultTenantId_ShouldUseHeaderAndInvokeNext()
         {
+            const string systemBaseUriFromHeader = "https://sample.mydomain.de";
             const string tenantIdFromHeader = "a12be5";
             var context = new DefaultHttpContext();
-            context.Request.Headers.Append(TenantIdHeader, new StringValues(new[] {tenantIdFromHeader}));
-            context.Request.Headers.Append(SignatureHeader, new[] {GetBase64SignatureFor(tenantIdFromHeader, _signatureKey)});
+            context.Request.Headers.Append(SystemBaseUriHeader, new StringValues(new[] { systemBaseUriFromHeader }));
+            context.Request.Headers.Append(TenantIdHeader, new StringValues(new[] { tenantIdFromHeader }));
+            context.Request.Headers.Append(SignatureHeader, new[] { GetBase64SignatureFor(systemBaseUriFromHeader + tenantIdFromHeader, _signatureKey) });
 
 
             var tenantIdSetByMiddleware = "null";
@@ -206,7 +212,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         public async Task NoTenantIdHeaderAndDefaultTenantId_ShouldUseDefaultTenantIdAndInvokeNext()
         {
             var context = new DefaultHttpContext();
-            
+
 
             var tenantIdSetByMiddleware = "null";
             var nextMiddleware = new MiddlewareMock(null);
@@ -223,12 +229,14 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
-        public async Task TenantIdHeaderAndDefaultTenantId_ShouldUseHeaderAndInvokeNext()
+        public async Task BaseUriAndTenantIdHeaderAndDefaultTenantId_ShouldUseHeaderAndInvokeNext()
         {
             const string tenantIdFromHeader = "a12be5";
+            const string systemBaseUriFromHeader = "https://sample.mydomain.de";
             var context = new DefaultHttpContext();
-            context.Request.Headers.Append(TenantIdHeader, new StringValues(new[] {tenantIdFromHeader}));
-            context.Request.Headers.Append(SignatureHeader, new[] {GetBase64SignatureFor(tenantIdFromHeader, _signatureKey)});
+            context.Request.Headers.Append(SystemBaseUriHeader, new StringValues(new[] { systemBaseUriFromHeader }));
+            context.Request.Headers.Append(TenantIdHeader, new StringValues(new[] { tenantIdFromHeader }));
+            context.Request.Headers.Append(SignatureHeader, new[] { GetBase64SignatureFor(systemBaseUriFromHeader + tenantIdFromHeader, _signatureKey) });
 
 
             var tenantIdSetByMiddleware = "null";
@@ -250,7 +258,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         public async Task NoTenantIdHeaderAndNullDefaultTenantId_ShouldUseNullAndInvokeNext()
         {
             var context = new DefaultHttpContext();
-            
+
             var tenantIdSetByMiddleware = "null";
             var nextMiddleware = new MiddlewareMock(null);
             await new TenantMiddleware(nextMiddleware.InvokeAsync,
@@ -272,14 +280,14 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
             const string systemBaseUriFromHeader = "https://sample.mydomain.de";
 
             var context = new DefaultHttpContext();
-            context.Request.Headers.Append(TenantIdHeader, new[] {tenantIdFromHeader});
-            context.Request.Headers.Append(SystemBaseUriHeader, new[] {systemBaseUriFromHeader});
+            context.Request.Headers.Append(TenantIdHeader, new[] { tenantIdFromHeader });
+            context.Request.Headers.Append(SystemBaseUriHeader, new[] { systemBaseUriFromHeader });
             context.Request.Headers.Append(SignatureHeader,
                 new[]
                 {
                     GetBase64SignatureFor(systemBaseUriFromHeader + tenantIdFromHeader, _signatureKey)
                 });
-                  
+
 
             var tenantIdSetByMiddleware = "null";
             var systemBaseUriSetByMiddleware = "null";
@@ -304,18 +312,17 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
-        public async Task TenantIdHeaderAndNoBaseUriHeader_ShouldUseTenantIdHeaderAndDefaultSystemBaseUriAndInvokeNext()
+        public async Task TenantIdHeaderAndNoBaseUriHeader_ShouldReturn403AndNotInvokeNext()
         {
             const string tenantIdFromHeader = "a12be5";
 
             var context = new DefaultHttpContext();
-            context.Request.Headers.Append(TenantIdHeader, new[] {tenantIdFromHeader});
+            context.Request.Headers.Append(TenantIdHeader, new[] { tenantIdFromHeader });
             context.Request.Headers.Append(SignatureHeader,
-                    new[] {GetBase64SignatureFor(tenantIdFromHeader, _signatureKey)});
-                    
+                    new[] { GetBase64SignatureFor(tenantIdFromHeader, _signatureKey) });
 
-            var tenantIdSetByMiddleware = "null";
-            var systemBaseUriSetByMiddleware = "null";
+
+            var onTenantIdentifiedHasBeenInvoked = false;
             var nextMiddleware = new MiddlewareMock(null);
             await new TenantMiddleware(nextMiddleware.InvokeAsync,
                     new TenantMiddlewareOptions
@@ -323,31 +330,29 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                         DefaultTenantId = DefaultTenantId,
                         DefaultSystemBaseUri = DefaultSystemBaseUri,
                         SignatureSecretKey = _signatureKey,
-                        OnTenantIdentified = (tenantId, systemBaseUri) =>
+                        OnTenantIdentified = (_, _) =>
                         {
-                            tenantIdSetByMiddleware = tenantId;
-                            systemBaseUriSetByMiddleware = systemBaseUri;
+                            onTenantIdentifiedHasBeenInvoked = true;
                         }
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            tenantIdSetByMiddleware.ShouldBe(tenantIdFromHeader);
-            systemBaseUriSetByMiddleware.ShouldBe(DefaultSystemBaseUri);
-            nextMiddleware.HasBeenInvoked.ShouldBeTrue("next middleware should have been invoked");
+            context.Response.StatusCode.ShouldBe(403);
+            onTenantIdentifiedHasBeenInvoked.ShouldBeFalse("onTenantIdentified should not have been invoked if signature is wrong");
+            nextMiddleware.HasBeenInvoked.ShouldBeFalse("next middleware should not have been invoked if signature is wrong");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
-        public async Task SystemBaseUriHeaderAndNoTenantIdHeader_ShouldUseSystemBaseUriHeaderAndDefaultTenantIdAndInvokeNext()
+        public async Task SystemBaseUriHeaderAndNoTenantIdHeader_ShouldReturn403AndNotInvokeNext()
         {
             const string systemBaseUriFromHeader = "https://sample.mydomain.de";
 
             var context = new DefaultHttpContext();
-            context.Request.Headers.Append(SystemBaseUriHeader, new[] {systemBaseUriFromHeader});
+            context.Request.Headers.Append(SystemBaseUriHeader, new[] { systemBaseUriFromHeader });
             context.Request.Headers.Append(SignatureHeader,
-                new[] {GetBase64SignatureFor(systemBaseUriFromHeader, _signatureKey)});
-                   
-            var tenantIdSetByMiddleware = "null";
-            var systemBaseUriSetByMiddleware = "null";
+                new[] { GetBase64SignatureFor(systemBaseUriFromHeader, _signatureKey) });
+
+            var onTenantIdentifiedHasBeenInvoked = false;
             var nextMiddleware = new MiddlewareMock(null);
             await new TenantMiddleware(nextMiddleware.InvokeAsync,
                     new TenantMiddlewareOptions
@@ -355,17 +360,16 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                         DefaultTenantId = DefaultTenantId,
                         DefaultSystemBaseUri = DefaultSystemBaseUri,
                         SignatureSecretKey = _signatureKey,
-                        OnTenantIdentified = (tenantId, systemBaseUri) =>
+                        OnTenantIdentified = (_, _) =>
                         {
-                            tenantIdSetByMiddleware = tenantId;
-                            systemBaseUriSetByMiddleware = systemBaseUri;
+                            onTenantIdentifiedHasBeenInvoked = true;
                         }
                     })
                 .InvokeAsync(context).ConfigureAwait(false);
 
-            tenantIdSetByMiddleware.ShouldBe(DefaultTenantId);
-            systemBaseUriSetByMiddleware.ShouldBe(systemBaseUriFromHeader);
-            nextMiddleware.HasBeenInvoked.ShouldBeTrue("next middleware should have been invoked");
+            context.Response.StatusCode.ShouldBe(403);
+            onTenantIdentifiedHasBeenInvoked.ShouldBeFalse("onTenantIdentified should not have been invoked if signature is wrong");
+            nextMiddleware.HasBeenInvoked.ShouldBeFalse("next middleware should not have been invoked if signature is wrong");
         }
 
         [TestMethod, UnitUnderTest(typeof(TenantMiddleware))]
@@ -428,11 +432,11 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
             const string systemBaseUriFromHeader = "https://sample.mydomain.de";
 
             var context = new DefaultHttpContext();
-            context.Request.Headers.Append(TenantIdHeader, new[] {tenantIdFromHeader});
-            context.Request.Headers.Append(SystemBaseUriHeader, new[] {systemBaseUriFromHeader});
+            context.Request.Headers.Append(TenantIdHeader, new[] { tenantIdFromHeader });
+            context.Request.Headers.Append(SystemBaseUriHeader, new[] { systemBaseUriFromHeader });
             context.Request.Headers.Append(SignatureHeader,
-                new[] {GetBase64SignatureFor("wrong data", _signatureKey)});
-                   
+                new[] { GetBase64SignatureFor("wrong data", _signatureKey) });
+
             var nextMiddleware = new MiddlewareMock(null);
             var onTenantIdentifiedHasBeenInvoked = false;
             await new TenantMiddleware(nextMiddleware.InvokeAsync,
@@ -456,10 +460,10 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
             const string systemBaseUriFromHeader = "https://sample.mydomain.de";
 
             var context = new DefaultHttpContext();
-            context.Request.Headers.Append(SystemBaseUriHeader, new[] {systemBaseUriFromHeader});
+            context.Request.Headers.Append(SystemBaseUriHeader, new[] { systemBaseUriFromHeader });
             context.Request.Headers.Append(SignatureHeader,
-                new[] {GetBase64SignatureFor("wrong data", _signatureKey)});
-                    
+                new[] { GetBase64SignatureFor("wrong data", _signatureKey) });
+
             var nextMiddleware = new MiddlewareMock(null);
             var onTenantIdentifiedHasBeenInvoked = false;
             await new TenantMiddleware(nextMiddleware.InvokeAsync,
@@ -483,10 +487,10 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
             const string tenantIdFromHeader = "a12be5";
 
             var context = new DefaultHttpContext();
-            context.Request.Headers.Append(TenantIdHeader, new[] {tenantIdFromHeader});
+            context.Request.Headers.Append(TenantIdHeader, new[] { tenantIdFromHeader });
             context.Request.Headers.Append(SignatureHeader,
-                new[] {GetBase64SignatureFor("wrong data", _signatureKey)});
-                    
+                new[] { GetBase64SignatureFor("wrong data", _signatureKey) });
+
             var nextMiddleware = new MiddlewareMock(null);
             var onTenantIdentifiedHasBeenInvoked = false;
             await new TenantMiddleware(nextMiddleware.InvokeAsync,
@@ -507,12 +511,13 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         public async Task TenantIdHeaderAndWrongSignatureButIgnoredSignature_ShouldReturn200AndInvokeNext()
         {
             const string tenantIdFromHeader = "a12be5";
-
+            const string systemBaseUriFromHeader = "https://sample.mydomain.de";
             var context = new DefaultHttpContext();
-            context.Request.Headers.Append(TenantIdHeader, new[] {tenantIdFromHeader});
+            context.Request.Headers.Append(TenantIdHeader, new[] { tenantIdFromHeader });
+            context.Request.Headers.Append(SystemBaseUriHeader, new[] { systemBaseUriFromHeader });
             context.Request.Headers.Append(SignatureHeader,
-                new[] {GetBase64SignatureFor("wrong data", _signatureKey)});
-        
+                new[] { GetBase64SignatureFor("wrong data", _signatureKey) });
+
             var nextMiddleware = new MiddlewareMock(null);
             var onTenantIdentifiedHasBeenInvoked = false;
             var logIsWorking = false;
@@ -546,10 +551,10 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
             const string systemBaseUriFromHeader = "https://sample.mydomain.de";
 
             var context = new DefaultHttpContext();
-            context.Request.Headers.Append(TenantIdHeader, new[] {tenantIdFromHeader});
-            context.Request.Headers.Append(SystemBaseUriHeader, new[] {systemBaseUriFromHeader});
-            context.Request.Headers.Append(SignatureHeader, new[] {"abc+(9-!"});
-                    
+            context.Request.Headers.Append(TenantIdHeader, new[] { tenantIdFromHeader });
+            context.Request.Headers.Append(SystemBaseUriHeader, new[] { systemBaseUriFromHeader });
+            context.Request.Headers.Append(SignatureHeader, new[] { "abc+(9-!" });
+
 
             var nextMiddleware = new MiddlewareMock(null);
             var onTenantIdentifiedHasBeenInvoked = false;
@@ -581,15 +586,15 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
             };
 
             var context = new DefaultHttpContext();
-            context.Request.Headers.Append(TenantIdHeader, new[] {tenantIdFromHeader});
-            context.Request.Headers.Append(SystemBaseUriHeader, new[] {systemBaseUriFromHeader});
+            context.Request.Headers.Append(TenantIdHeader, new[] { tenantIdFromHeader });
+            context.Request.Headers.Append(SystemBaseUriHeader, new[] { systemBaseUriFromHeader });
             context.Request.Headers.Append(SignatureHeader,
                 new[]
                 {
                     GetBase64SignatureFor(systemBaseUriFromHeader + tenantIdFromHeader,
                         wrongSignatureKey)
                 });
-                    
+
             var nextMiddleware = new MiddlewareMock(null);
             var onTenantIdentifiedHasBeenInvoked = false;
             await new TenantMiddleware(nextMiddleware.InvokeAsync,
@@ -614,9 +619,9 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
             const string systemBaseUriFromHeader = "https://sample.mydomain.de";
 
             var context = new DefaultHttpContext();
-            context.Request.Headers.Append(TenantIdHeader, new[] {tenantIdFromHeader});
-            context.Request.Headers.Append(SystemBaseUriHeader, new[] {systemBaseUriFromHeader});
-        
+            context.Request.Headers.Append(TenantIdHeader, new[] { tenantIdFromHeader });
+            context.Request.Headers.Append(SystemBaseUriHeader, new[] { systemBaseUriFromHeader });
+
             var nextMiddleware = new MiddlewareMock(null);
             var onTenantIdentifiedHasBeenInvoked = false;
             await new TenantMiddleware(nextMiddleware.InvokeAsync,
@@ -641,14 +646,14 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
             const string systemBaseUriFromHeader = "https://sample.mydomain.de";
 
             var context = new DefaultHttpContext();
-            context.Request.Headers.Append(TenantIdHeader, new[] {tenantIdFromHeader});
-            context.Request.Headers.Append(SystemBaseUriHeader, new[] {systemBaseUriFromHeader});
+            context.Request.Headers.Append(TenantIdHeader, new[] { tenantIdFromHeader });
+            context.Request.Headers.Append(SystemBaseUriHeader, new[] { systemBaseUriFromHeader });
             context.Request.Headers.Append(SignatureHeader,
                 new[]
                 {
                     GetBase64SignatureFor(systemBaseUriFromHeader + tenantIdFromHeader, _signatureKey)
                 });
-                    
+
             var nextMiddleware = new MiddlewareMock(null);
             var onTenantIdentifiedHasBeenInvoked = false;
             await new TenantMiddleware(nextMiddleware.InvokeAsync,
@@ -674,11 +679,11 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
             return Convert.ToBase64String(hash);
         }
 
-        private class MiddlewareMock 
+        private class MiddlewareMock
         {
             public bool HasBeenInvoked { get; private set; }
 
-            public MiddlewareMock(RequestDelegate ignored) 
+            public MiddlewareMock(RequestDelegate ignored)
             {
             }
 

@@ -12,7 +12,7 @@ namespace Dvelop.Sdk.TenantMiddleware
 {
     public class TenantMiddleware
     {
-        private readonly  TenantMiddlewareOptions _tenantMiddlewareOptions;
+        private readonly TenantMiddlewareOptions _tenantMiddlewareOptions;
         private readonly RequestDelegate _next;
 
         // ReSharper disable once InconsistentNaming
@@ -22,7 +22,7 @@ namespace Dvelop.Sdk.TenantMiddleware
         // ReSharper disable once InconsistentNaming
         internal const string SIGNATURE_HEADER = "x-dv-sig-1";
 
-        public TenantMiddleware(RequestDelegate next, TenantMiddlewareOptions tenantMiddlewareOptions) 
+        public TenantMiddleware(RequestDelegate next, TenantMiddlewareOptions tenantMiddlewareOptions)
         {
             if (tenantMiddlewareOptions == null) throw new ArgumentNullException(nameof(tenantMiddlewareOptions));
             if (tenantMiddlewareOptions.OnTenantIdentified == null)
@@ -55,19 +55,14 @@ namespace Dvelop.Sdk.TenantMiddleware
             string tenantIdFromHeader, string base64Signature)
         {
             tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Debug, $"TenantMiddleware invoke started with {systemBaseUriFromHeader}, {tenantIdFromHeader}, {base64Signature}");
-            if (systemBaseUriFromHeader != null || tenantIdFromHeader != null)
+            if (tenantMiddlewareOptions.SignatureSecretKey != null && tenantMiddlewareOptions.SignatureSecretKey.Length > 0)
             {
-                if (base64Signature == null)
+                // If a signature key is configured, x-dv-baseuri and x-dv-tenant-id and x-dv-sig-1 must be provided (Cloud scenario)
+                if (systemBaseUriFromHeader == null || tenantIdFromHeader == null || base64Signature == null)
                 {
                     tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Debug, "Signature is missing in request header");
                     return HttpStatusCode.Forbidden;
                 }
-                if (tenantMiddlewareOptions.SignatureSecretKey == null)
-                {
-                    tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Error, "SignatureSecretKey is missing in tenantMiddlewareOptions");
-                    return HttpStatusCode.InternalServerError;
-                }
-
                 if (tenantMiddlewareOptions.IgnoreSignature)
                 {
                     tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Error, "Signature is ignored, don't use this in production environment!");
@@ -82,9 +77,9 @@ namespace Dvelop.Sdk.TenantMiddleware
                     {
                         var signature = Convert.FromBase64String(base64Signature);
                         if (!SignatureIsValid(
-                                messageBytes, 
-                                signature, 
-                                tenantMiddlewareOptions.SignatureSecretKey, 
+                                messageBytes,
+                                signature,
+                                tenantMiddlewareOptions.SignatureSecretKey,
                                 tenantMiddlewareOptions.AdditionalSignatureSecretKeys))
                         {
                             tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Debug,
@@ -107,11 +102,22 @@ namespace Dvelop.Sdk.TenantMiddleware
                         return HttpStatusCode.Forbidden;
                     }
                 }
+                tenantMiddlewareOptions.OnTenantIdentified(tenantIdFromHeader, systemBaseUriFromHeader);
+                tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Debug,
+                    $"Tenant {tenantIdFromHeader} identified!");
+                return 0;
             }
-            tenantMiddlewareOptions.OnTenantIdentified(tenantIdFromHeader ?? tenantMiddlewareOptions.DefaultTenantId,
-                systemBaseUriFromHeader ?? tenantMiddlewareOptions.DefaultSystemBaseUri);
-            tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Debug,
-                "Tenant identified!");
+
+            // If no signature key is configured, x-dv-baseuri and x-dv-tenant-id and x-dv-sig-1 must not be provided (Misconfigured Cloud scenario)
+            if (systemBaseUriFromHeader != null || tenantIdFromHeader != null || base64Signature != null)
+            {
+                tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Debug, "SignatureSecretKey is missing in tenantMiddlewareOptions");
+                return HttpStatusCode.InternalServerError;
+            }
+
+            // if no signature key is configured and no x-dv-baseuri, and x-dv-tenant-id, and x-dv-sig-1 are send use the default tenant id and system base uri (OnPrem scenario)
+            tenantMiddlewareOptions.OnTenantIdentified(tenantMiddlewareOptions.DefaultTenantId, tenantMiddlewareOptions.DefaultSystemBaseUri);
+            tenantMiddlewareOptions.LogCallback?.Invoke(TenantMiddlewareLogLevel.Debug, $"Tenant {tenantMiddlewareOptions.DefaultTenantId} identified!");
             return 0;
         }
 
