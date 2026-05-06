@@ -1,25 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Dvelop.Sdk.TenantMiddleware.UnitTest
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     [ExcludeFromCodeCoverage]
-    public sealed class UnitUnderTestAttribute : TestCategoryBaseAttribute
+    public sealed class UnitUnderTestAttribute : CategoryAttribute
     {
-        public override IList<string> TestCategories { get; }
+        public UnitUnderTestAttribute(Type classUnderTest) : base($"Unittests for [{classUnderTest.Name}]") { }
 
-        public UnitUnderTestAttribute(Type classUnderTest) : this(classUnderTest.Name) { }
+        public UnitUnderTestAttribute(Type classUnderTest, string context) : base($"Unittests for [{classUnderTest.Name}] {context}") { }
 
-        public UnitUnderTestAttribute(Type classUnderTest, string context) : this(classUnderTest.Name, context) { }
-
-        public UnitUnderTestAttribute(Type classUnderTest, Type context) : this(classUnderTest.Name, context.Name) { }
-
-        public UnitUnderTestAttribute(string unit, string context = null)
-        {
-            TestCategories = new List<string> { $"Unittests for [{unit}] {context}" };
-        }
+        public UnitUnderTestAttribute(Type classUnderTest, Type context) : base($"Unittests for [{classUnderTest.Name}] {context.Name}") { }
     }
 }

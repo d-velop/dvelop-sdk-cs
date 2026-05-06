@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace Dvelop.Sdk.Dashboard.Dto.Response.Types
+﻿namespace Dvelop.Sdk.Dashboard.Dto.Response.Types
 {
     public class TextDto : AbstractDashboardDto
     {

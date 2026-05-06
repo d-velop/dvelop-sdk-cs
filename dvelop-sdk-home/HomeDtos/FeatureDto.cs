@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Dvelop.Sdk.Home.Dto
+﻿namespace Dvelop.Sdk.Home.Dto
 {
     
     public class FeatureDto

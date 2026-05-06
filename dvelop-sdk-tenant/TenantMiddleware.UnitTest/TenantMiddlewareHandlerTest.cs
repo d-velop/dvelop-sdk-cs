@@ -1,40 +1,39 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
-using Shouldly;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Dvelop.Sdk.TenantMiddleware.UnitTest
 {
-    [TestClass]
+    [TestFixture]
     [ExcludeFromCodeCoverage]
     public class TenantMiddlewareHandlerTest
     {
-        [TestMethod, UnitUnderTest(typeof(TenantMiddlewareHandler))]
+        [Test, UnitUnderTest(typeof(TenantMiddlewareHandler))]
         public void TenantMiddlewareOptionsIsNull_ShouldThrowException()
         {
-            // ReSharper disable once ObjectCreationAsStatement
             Action useMiddleware = () => new TenantMiddlewareHandler(null);
-            useMiddleware.ShouldThrow<ArgumentNullException>("*tenantMiddlewareOptions*");
+            var ex = Assert.Throws<ArgumentNullException>(() => useMiddleware());
+            Assert.That(ex.Message, Does.Contain("tenantMiddlewareOptions"));
         }
 
-        [TestMethod, UnitUnderTest(typeof(TenantMiddlewareHandler))]
+        [Test, UnitUnderTest(typeof(TenantMiddlewareHandler))]
         public void OnTenantIdentifiedCallbackIsNull_ShouldThrowException()
         {
-            // ReSharper disable once ObjectCreationAsStatement
             Action useMiddleware = () => new TenantMiddlewareHandler(new TenantMiddlewareOptions { OnTenantIdentified = null });
-            useMiddleware.ShouldThrow<ArgumentNullException>("*OnTenantIdentified*");
+            var ex = Assert.Throws<ArgumentNullException>(() => useMiddleware());
+            Assert.That(ex.Message, Does.Contain("OnTenantIdentified"));
         }
 
-        [TestMethod, UnitUnderTest(typeof(TenantMiddlewareHandler))]
+        [Test, UnitUnderTest(typeof(TenantMiddlewareHandler))]
         public void DefaultSystemBaseUriIsNoValidUri_ShouldThrowException()
         {
-            // ReSharper disable once ObjectCreationAsStatement
             Action useMiddleware = () => new TenantMiddlewareHandler(new TenantMiddlewareOptions
             {
                 OnTenantIdentified = (a, b) => { },
                 DefaultSystemBaseUri = "http:/"
             });
-            useMiddleware.ShouldThrow<ArgumentException>("*DefaultSystemBaseUri*");
+            var ex = Assert.Throws<ArgumentException>(() => useMiddleware());
+            Assert.That(ex.Message, Does.Contain("DefaultSystemBaseUri"));
         }
     }
 }

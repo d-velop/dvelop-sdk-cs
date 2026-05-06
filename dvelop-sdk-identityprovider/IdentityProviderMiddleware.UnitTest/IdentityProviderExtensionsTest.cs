@@ -1,16 +1,16 @@
 using Dvelop.Sdk.IdentityProvider.Middleware;
 using Microsoft.AspNetCore.Http;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
 {
-    [TestClass]
+    [TestFixture]
     public class IdentityProviderExtensionsTest
     {
-        [TestMethod]
-        [DataRow( null, null, null )]
-        [DataRow( "123", null, null )]
-        [DataRow( "123&abc", null, "123&abc" )]
+        [Test]
+        [TestCase(null, null, null)]
+        [TestCase("123", null, null)]
+        [TestCase("123&abc", null, "123&abc")]
         public void TestGetAuthSessionIdFromBearer(string actualBearer, string actualCookie, string expected)
         {
             var context = new DefaultHttpContext();
@@ -18,11 +18,11 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             context.Request.Path = "/some/uri";
             if (actualBearer != null)
             {
-                context.Request.Headers["Authorization"]=$"Bearer {actualBearer}";
+                context.Request.Headers["Authorization"] = $"Bearer {actualBearer}";
             }
 
             var c = context.GetAuthSessionId();
-            Assert.AreEqual(expected, c);
+            Assert.That(c, Is.EqualTo(expected));
         }
     }
 }
