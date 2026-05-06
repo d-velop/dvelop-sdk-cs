@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
 using Dvelop.Sdk.Logging.Abstractions.State.Attribute;
 
 namespace Dvelop.Sdk.Logging.Abstractions.State.Default

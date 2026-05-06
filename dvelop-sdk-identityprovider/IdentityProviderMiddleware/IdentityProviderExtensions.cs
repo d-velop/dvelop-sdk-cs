@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using Dvelop.Sdk.IdentityProvider.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

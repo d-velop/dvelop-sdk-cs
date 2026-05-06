@@ -5,7 +5,6 @@ using Dvelop.Sdk.Logging.Abstractions.Extension;
 using Dvelop.Sdk.Logging.Abstractions.Scope;
 using Dvelop.Sdk.Logging.Abstractions.State;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 

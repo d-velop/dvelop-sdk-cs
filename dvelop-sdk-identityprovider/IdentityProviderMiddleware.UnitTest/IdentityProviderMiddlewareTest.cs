@@ -2,30 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Web;
 using Dvelop.Sdk.IdentityProvider.Client;
 using Dvelop.Sdk.IdentityProvider.Middleware;
+using FakeItEasy;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Shouldly;
+using NUnit.Framework;
 
 namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
 {
-    [TestClass]
+    [TestFixture]
     [ExcludeFromCodeCoverage]
     public class IdentityProviderMiddlewareTest
     {
-        private Mock<FakeHttpMessageHandler> _fakeMessageHandler;
+        private FakeHttpMessageHandler _fakeMessageHandler;
         private const string DEFAULT_SYSTEM_BASE_URI = "https://default.mydomain.de";
 
         private const string VALID_AUTH_SESSION_ID =
@@ -37,15 +34,15 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
         private const string VALID_EXTERNAL_AUTH_SESSION_ID =
             "1XGxJeb0q+/fS8biFi8FE7TovJPPEPyzlDxT6bh5p5pHA/x7CEi1w9egVhEMz8IWhrtvJRFnkSqJnLr61cOKf/i5eWuu7Duh+OTtTjMOt9w=&Cnh4NNU90wH_OVlgbzbdZOEu1aSuPlbUctiCdYTonZ3Ap_Zd3bVL79I-dPdHf4OOgO8NKEdqyLsqc8RhAOreXgJqXuqsreeI";
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
-            _fakeMessageHandler = new Mock<FakeHttpMessageHandler>() { CallBase = true };
+            _fakeMessageHandler = A.Fake<FakeHttpMessageHandler>(o => o.CallsBaseMethods());
         }
 
         private static IEnumerable<object[]> GetTestNoAuthSessionIdData()
         {
-            
+
             yield return
             [
                 "IDP-1740_path",
@@ -54,7 +51,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
                     {"Location","/identityprovider/login?redirect=%2fh%25C3%25BCme"}
                 }, false
             ];
-            
+
             yield return
             [
                 "IDP-1740_query",
@@ -63,7 +60,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
                     {"Location","/identityprovider/login?redirect=%2Fbla%3Fpath%3D%252Fh%25C3%25BCme"}
                 }, false
             ];
-            
+
             yield return
             [
                 "GetRequestAndHtmlAccepted_Should_RedirectToIdp",
@@ -81,7 +78,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             ];
             yield return
             [
-                "OtherCookieAndGetRequestAndHtmlAccepted_Should_RedirectsToIdp", 
+                "OtherCookieAndGetRequestAndHtmlAccepted_Should_RedirectsToIdp",
                 "GET", new Dictionary<string, string>{{"Cookie","AnyCookie=adabdk"},{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, false
             ];
             yield return
@@ -91,7 +88,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             ];
             yield return
             [
-                "PutRequestAndHtmlAccepted_ReturnsStatus401AndWWW-AuthenticateBearerHeader", 
+                "PutRequestAndHtmlAccepted_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
                 "PUT", new Dictionary<string, string>{{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"WWW-Authenticate","Bearer" }}, false
             ];
             yield return
@@ -104,30 +101,29 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
                 "PatchRequestAndHtmlAccepted_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
                 "PATCH", new Dictionary<string, string>{{"Accept","text/html"}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"WWW-Authenticate","Bearer" }}, false
             ];
-              
+
         }
-        
-        [DynamicData(nameof(GetTestNoAuthSessionIdData), DynamicDataSourceType.Method ,DynamicDataDisplayName = "DisplayName")]
-        [TestMethod]
-        public async Task TestNoAuthSessionId(string testName, string requestMethod, Dictionary<string,string> requestHeader, string requestUri, int expectedStatus,  Dictionary<string,string> expectedResponseHeader,bool allowExternalValidation)
+
+        [TestCaseSource(nameof(GetTestNoAuthSessionIdData))]
+        public async Task TestNoAuthSessionId(string testName, string requestMethod, Dictionary<string,string> requestHeader, string requestUri, int expectedStatus, Dictionary<string,string> expectedResponseHeader, bool allowExternalValidation)
         {
             Console.WriteLine(testName);
-            await TestMiddleWare(requestMethod,requestHeader,requestUri,false,expectedStatus,expectedResponseHeader,allowExternalValidation).ConfigureAwait(false);
+            await TestMiddleWare(requestMethod, requestHeader, requestUri, false, expectedStatus, expectedResponseHeader, allowExternalValidation).ConfigureAwait(false);
         }
 
         private static IEnumerable<object[]> GetTestInvalidAuthSessionIdData()
         {
             const string invalidToken = "200e7388-1834-434b-be79-3745181e1457";
-            
+
             yield return
             [
-                "GetRequestAndHtmlAccepted_Middleware_RedirectsToIdp", 
+                "GetRequestAndHtmlAccepted_Middleware_RedirectsToIdp",
                 "GET", new Dictionary<string, string>{{"Accept", "text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, false
             ];
             yield return
             [
                 "HeadRequestAndHtmlAccepted_Middleware_RedirectsToIdp",
-                "HEAD", new Dictionary<string, string>{{"Accept", "text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 302,new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, false
+                "HEAD", new Dictionary<string, string>{{"Accept", "text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 302, new Dictionary<string, string>{{"Location","/identityprovider/login?redirect=%2Fa%2Fb%3Fq1%3Dx%26q2%3D1"}}, false
             ];
             yield return
             [
@@ -147,12 +143,12 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             yield return
             [
                 "DeleteRequestAndHtmlAccepted_Middleware_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
-                "DELETE", new Dictionary<string, string>{{"Accept","text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 401,new Dictionary<string, string>{{"Www-Authenticate","Bearer" }}, false
+                "DELETE", new Dictionary<string, string>{{"Accept","text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"Www-Authenticate","Bearer" }}, false
             ];
             yield return
             [
                 "PatchRequestAndHtmlAccepted_Middleware_ReturnsStatus401AndWWW-AuthenticateBearerHeader",
-                "PATCH", new Dictionary<string, string>{{"Accept","text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1",401, new Dictionary<string, string>{{"Www-Authenticate","Bearer" }}, false
+                "PATCH", new Dictionary<string, string>{{"Accept","text/html"}, {"Authorization", "Bearer " + invalidToken}}, "/a/b?q1=x&q2=1", 401, new Dictionary<string, string>{{"Www-Authenticate","Bearer" }}, false
             ];
             yield return
             [
@@ -161,38 +157,37 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             ];
         }
 
-        [DynamicData(nameof(GetTestInvalidAuthSessionIdData), DynamicDataSourceType.Method, DynamicDataDisplayName = "DisplayName")]
-        [TestMethod]
+        [TestCaseSource(nameof(GetTestInvalidAuthSessionIdData))]
         public async Task TestInvalidAuthSessionId(string testName, string requestMethod,
             Dictionary<string, string> requestHeader, string requestUri, int expectedStatus,
             Dictionary<string, string> expectedResponseHeader, bool allowExternalValidation)
         {
             Console.WriteLine(testName);
-            await TestMiddleWare(requestMethod,requestHeader,requestUri,false,expectedStatus,expectedResponseHeader,allowExternalValidation).ConfigureAwait(false);
+            await TestMiddleWare(requestMethod, requestHeader, requestUri, false, expectedStatus, expectedResponseHeader, allowExternalValidation).ConfigureAwait(false);
         }
 
         private static IEnumerable<object[]> GetTestNoAuthSessionIdAndGetRequestAndAcceptHeaderIsData()
         {
             yield return ["", true, true];
             yield return ["text/", true, false];
-            yield return ["text/*",true,  true];
+            yield return ["text/*", true, true];
             yield return ["*/*", true, true];
-            yield return ["application/json; q=1.0, */*; q=0.8",true,  false]; // GO middleware says true
+            yield return ["application/json; q=1.0, */*; q=0.8", true, false]; // GO middleware says true
             yield return ["text/html", true, true];
             yield return ["something/else", true, false];
             yield return ["text/html; q=1", true, true];
-            yield return ["text/html; q=1.0",true,  true];
-            yield return ["text/html; q=0.9",true,  true];
-            yield return ["text/html; q=0",true,  true]; // GO middleware says false
-            yield return ["text/html; q=0.0",true,  true]; // GO middleware says false
+            yield return ["text/html; q=1.0", true, true];
+            yield return ["text/html; q=0.9", true, true];
+            yield return ["text/html; q=0", true, true]; // GO middleware says false
+            yield return ["text/html; q=0.0", true, true]; // GO middleware says false
             yield return ["application/json", true, false];
-            yield return ["application/json; q=1.0, text/html; q=0.9",true,  false]; // GO middleware says true 
+            yield return ["application/json; q=1.0, text/html; q=0.9", true, false]; // GO middleware says true
             yield return ["application/json; q=1.0, text/html; q=0", true, false];
             yield return ["application/json; q=0.9, text/html; q=1.0", true, true];
-            yield return ["application/json; q=1.0, text/html; q=0.",true,  false];
+            yield return ["application/json; q=1.0, text/html; q=0.", true, false];
             yield return ["text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3", true, true];
-            
-            
+
+
             yield return ["", false, true];
             yield return ["text/", false, false];
             yield return ["text/*", false, true];
@@ -206,39 +201,37 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             yield return ["text/html; q=0", false, true]; // GO middleware says false
             yield return ["text/html; q=0.0", false, true]; // GO middleware says false
             yield return ["application/json", false, false];
-            yield return ["application/json; q=1.0, text/html; q=0.9", false, false]; // GO middleware says true 
+            yield return ["application/json; q=1.0, text/html; q=0.9", false, false]; // GO middleware says true
             yield return ["application/json; q=1.0, text/html; q=0", false, false];
             yield return ["application/json; q=0.9, text/html; q=1.0", false, true];
             yield return ["application/json; q=1.0, text/html; q=0.", false, false];
             yield return ["text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3", false, true];
         }
-        
-        [DynamicData(nameof(GetTestNoAuthSessionIdAndGetRequestAndAcceptHeaderIsData), DynamicDataSourceType.Method, DynamicDataDisplayName = "DisplayName")]
-        [TestMethod]
-        public async Task GetTestNoAuthSessionIdAndGetRequestAndAcceptHeaderIs(string acceptHeader,bool anonymousAllowed, bool redirectExpected)
+
+        [TestCaseSource(nameof(GetTestNoAuthSessionIdAndGetRequestAndAcceptHeaderIsData))]
+        public async Task GetTestNoAuthSessionIdAndGetRequestAndAcceptHeaderIs(string acceptHeader, bool anonymousAllowed, bool redirectExpected)
         {
-            
             Console.WriteLine(acceptHeader);
             var requestHeader = new Dictionary<string, string>{{"Accept", acceptHeader}};
             await TestMiddleWare("GET",
                 requestHeader,
                 "/a/b?q1=x&q2=1",
                 anonymousAllowed,
-                redirectExpected?302:401,
+                redirectExpected ? 302 : 401,
                 new Dictionary<string, string>(),
-                false ).ConfigureAwait(false);
+                false).ConfigureAwait(false);
         }
-        
-        
-        private async Task TestMiddleWare(string requestMethod, Dictionary<string,string> requestHeader, string requestUri, bool allowAnonymous, int expectedStatus,  Dictionary<string,string> expectedResponseHeader,bool allowExternalValidation)
+
+
+        private async Task TestMiddleWare(string requestMethod, Dictionary<string,string> requestHeader, string requestUri, bool allowAnonymous, int expectedStatus, Dictionary<string,string> expectedResponseHeader, bool allowExternalValidation)
         {
             var uri = new Uri(requestUri, UriKind.RelativeOrAbsolute);
             if (!uri.IsAbsoluteUri)
             {
-                uri =new Uri(new Uri("http://localhost/", UriKind.Absolute), uri);
+                uri = new Uri(new Uri("http://localhost/", UriKind.Absolute), uri);
             }
-          
-            
+
+
             var context = new DefaultHttpContext
             {
                 Request =
@@ -255,34 +248,32 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
                 context.Request.QueryString = context.Request.QueryString.Add(s, y[s]);
             }
 
-            
-            //TODO: Path und Query splitten und einbauen
 
             foreach (var (key, value) in requestHeader)
             {
                 context.Request.Headers[key] = new[] { value };
             }
-            
-            _fakeMessageHandler.Setup(mh => mh.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage()
+
+            A.CallTo(() => _fakeMessageHandler.Send(A<HttpRequestMessage>.Ignored)).Returns(new HttpResponseMessage()
             {
                 StatusCode = HttpStatusCode.OK,
                 Content = new StringContent(""),
             });
-            
-            var client = new HttpClient(_fakeMessageHandler.Object);
-            
+
+            var client = new HttpClient(_fakeMessageHandler);
+
             var feature = new MockResponseFeature();
             context.Features.Set<IHttpResponseFeature>(feature);
 
-            var endpointFeatureMock = new Mock<IEndpointFeature>();
-            
-            endpointFeatureMock.SetupGet(endpointFeature => endpointFeature.Endpoint)
-                .Returns(new RouteEndpoint(_ => Task.CompletedTask, 
-                    RoutePatternFactory.Parse("/"), 0, 
-                    new EndpointMetadataCollection(allowAnonymous?new AllowAnonymousAttribute():new AuthorizeAttribute()), "Dummy"));
-            
-            context.Features.Set(endpointFeatureMock.Object);
-            
+            var endpointFeatureFake = A.Fake<IEndpointFeature>();
+
+            A.CallTo(() => endpointFeatureFake.Endpoint)
+                .Returns(new RouteEndpoint(_ => Task.CompletedTask,
+                    RoutePatternFactory.Parse("/"), 0,
+                    new EndpointMetadataCollection(allowAnonymous ? new AllowAnonymousAttribute() : new AuthorizeAttribute()), "Dummy"));
+
+            context.Features.Set(endpointFeatureFake);
+
             async Task Next(HttpContext ctx)
             {
                 Console.WriteLine(ctx.Response.Headers.Count);
@@ -299,22 +290,14 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
                         HttpClient = client
                     })
                 .Invoke(context).ConfigureAwait(false);
-            
-            context.Response.StatusCode.ShouldBe(expectedStatus);
-            
-            
-            nextMiddleware.HasBeenInvoked.ShouldBeTrue("next middleware should not have been invoked if signature is wrong");
+
+            Assert.That(context.Response.StatusCode, Is.EqualTo(expectedStatus));
+
+            Assert.That(nextMiddleware.HasBeenInvoked, Is.True, "next middleware should not have been invoked if signature is wrong");
             foreach (var (key, value) in expectedResponseHeader)
             {
-                context.Response.Headers[key].ToString().ShouldBe(value, StringCompareShould.IgnoreCase);
+                Assert.That(context.Response.Headers[key].ToString(), Is.EqualTo(value).IgnoreCase);
             }
-        }
-        
-        //Used by Tests to create a readable TestName
-        public static string DisplayName(MethodInfo methodInfo, object[] data)
-        {
-            var displayName = $"{data[0]} ({string.Join( ", ", data.Skip(1)  )})";
-            return string.IsNullOrWhiteSpace(displayName) ? "-" : displayName;
         }
 
         [Authorize]
@@ -331,15 +314,17 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
                     context.Response.StatusCode = 401;
 
                     await next(context).ConfigureAwait(false);
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     Console.WriteLine(e);
                     throw;
                 }
             }
         }
-        
-        private class MockResponseFeature : IHttpResponseFeature {
+
+        private class MockResponseFeature : IHttpResponseFeature
+        {
             public Stream Body { get; set; }
 
             public bool HasStarted { get; private set; }
@@ -352,18 +337,20 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
 
             private Func<object, Task> _callback;
             private object _state;
-            
-            public void OnCompleted(Func<object, Task> callback, object state) {
+
+            public void OnCompleted(Func<object, Task> callback, object state)
+            {
                 //...No-op
             }
 
-            public void OnStarting(Func<object, Task> callback, object state) {
+            public void OnStarting(Func<object, Task> callback, object state)
+            {
                 _callback = callback;
                 _state = state;
             }
-          
 
-            public Task InvokeCallBack() {
+            public Task InvokeCallBack()
+            {
                 HasStarted = true;
                 return _callback(_state);
             }

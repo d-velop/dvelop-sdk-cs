@@ -5,15 +5,15 @@ using System.Threading.Tasks;
 using Dvelop.Sdk.WebApiExtensions.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Dvelop.Sdk.WebApiExtensions.UnitTest.Extensions
 {
-    [TestClass]
+    [TestFixture]
     [ExcludeFromCodeCoverage]
     public class Dv1HmacSha256RequestSigningExtensionTest
     {
-        [TestMethod]
+        [Test]
         public async Task TestCalculateDv1HmacSha256SignatureFromExample()
         {
             var x = new DefaultHttpContext
@@ -33,10 +33,10 @@ namespace Dvelop.Sdk.WebApiExtensions.UnitTest.Extensions
             var features = x.HttpContext.Features.Get<IHttpRequestFeature>();
             features.RawTarget = "https://acme-apptemplate.service.d-velop.cloud/myapp/dvelop-cloud-lifecycle-event";
             var calculated = await x.Request.CalculateDv1HmacSha256Signature("Rg9iJXX0Jkun9u4Rp6no8HTNEdHlfX9aZYbFJ9b6YdQ=").ConfigureAwait(false);
-            Assert.AreEqual( "02783453441665bf27aa465cbbac9b98507ae94c54b6be2b1882fe9a05ec104c", calculated );
+            Assert.That(calculated, Is.EqualTo("02783453441665bf27aa465cbbac9b98507ae94c54b6be2b1882fe9a05ec104c"));
         }
 
-        [TestMethod]
+        [Test]
         public async Task TestCalculateDv1HmacSha256Signature1()
         {
             var x = new DefaultHttpContext
@@ -56,10 +56,10 @@ namespace Dvelop.Sdk.WebApiExtensions.UnitTest.Extensions
             var features = x.HttpContext.Features.Get<IHttpRequestFeature>();
             features.RawTarget = "https://acme-apptemplate.service.d-velop.cloud/prod/acme-apptemplatecs/dvelop-cloud-lifecycle-event";
             var calculated = await x.Request.CalculateDv1HmacSha256Signature("Rg9iJXX0Jkun9u4Rp6no8HTNEdHlfX9aZYbFJ9b6YdQ=").ConfigureAwait(false);
-            Assert.AreEqual( "cc2bfbac52f30ddee41e4475963f8136c60cab678941560538b1281ad2722aac", calculated);
+            Assert.That(calculated, Is.EqualTo("cc2bfbac52f30ddee41e4475963f8136c60cab678941560538b1281ad2722aac"));
         }
-        
-        [TestMethod]
+
+        [Test]
         public async Task TestCalculateDv1HmacSha256Signature2()
         {
             var x = new DefaultHttpContext
@@ -79,7 +79,7 @@ namespace Dvelop.Sdk.WebApiExtensions.UnitTest.Extensions
             var features = x.HttpContext.Features.Get<IHttpRequestFeature>();
             features.RawTarget = "https://acme-apptemplate.service.d-velop.cloud/prod/acme-apptemplatecs/dvelop-cloud-lifecycle-event";
             var calculated = await x.Request.CalculateDv1HmacSha256Signature("Rg9iJXX0Jkun9u4Rp6no8HTNEdHlfX9aZYbFJ9b6YdQ=").ConfigureAwait(false);
-            Assert.AreEqual( "58b07086ef6d987016d35c8ca2b0c1e48ed1aa8ffe31819402ad8f06c7bd4486", calculated);
+            Assert.That(calculated, Is.EqualTo("58b07086ef6d987016d35c8ca2b0c1e48ed1aa8ffe31819402ad8f06c7bd4486"));
         }
     }
 }
