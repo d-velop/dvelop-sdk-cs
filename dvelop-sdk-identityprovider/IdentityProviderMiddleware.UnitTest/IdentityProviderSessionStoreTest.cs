@@ -54,8 +54,11 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             var user2 = "a&2";
             var claimsPrincipal = new ClaimsPrincipal();
             _unit.SetPrincipal(user1, DateTime.Now.AddHours(1), claimsPrincipal);
-            Assert.That(_unit.GetPrincipal(user1), Is.EqualTo(claimsPrincipal));
-            Assert.That(_unit.GetPrincipal(user2), Is.Null);
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(_unit.GetPrincipal(user1), Is.EqualTo(claimsPrincipal));
+                Assert.That(_unit.GetPrincipal(user2), Is.Null);
+            }
         }
 
         [Test]
@@ -71,8 +74,11 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
 
             _unit.SetPrincipal(user1, now.AddHours(1), claimsPrincipal);
 
-            Assert.That(_unit.GetPrincipal(user1), Is.Not.Null);
-            Assert.That(_unit.GetPrincipal(user1), Is.Null);
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(_unit.GetPrincipal(user1), Is.Not.Null);
+                Assert.That(_unit.GetPrincipal(user1), Is.Null);
+            }
         }
 
         [Test]
@@ -90,13 +96,21 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
 
             _unit.SetPrincipal(user1, now.AddHours(1), claimsPrincipal1);
 
+            bool doRefresh;
+
             // 56 minutes later
-            Assert.That(_unit.GetPrincipal(user1, out var doRefresh), Is.Not.Null);
-            Assert.That(doRefresh, Is.True);
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(_unit.GetPrincipal(user1, out doRefresh), Is.Not.Null);
+                Assert.That(doRefresh, Is.True);
+            }
 
             // 61 minutes later
-            Assert.That(_unit.GetPrincipal(user1, out doRefresh), Is.Null);
-            Assert.That(doRefresh, Is.False);
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(_unit.GetPrincipal(user1, out doRefresh), Is.Null);
+                Assert.That(doRefresh, Is.False);
+            }
         }
 
         [Test]
@@ -114,13 +128,21 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
 
             _unit.SetPrincipal(user1, now.AddMinutes(20), claimsPrincipal1);
 
+            bool doRefresh;
+
             // 17 minutes later
-            Assert.That(_unit.GetPrincipal(user1, out var doRefresh), Is.Not.Null);
-            Assert.That(doRefresh, Is.True);
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(_unit.GetPrincipal(user1, out doRefresh), Is.Not.Null);
+                Assert.That(doRefresh, Is.True);
+            }
 
             // 21 minutes later
-            Assert.That(_unit.GetPrincipal(user1, out doRefresh), Is.Null);
-            Assert.That(doRefresh, Is.False);
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(_unit.GetPrincipal(user1, out doRefresh), Is.Null);
+                Assert.That(doRefresh, Is.False);
+            }
         }
 
         [Test]
@@ -143,12 +165,18 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             _unit.SetPrincipal(user2, now.AddHours(2), claimsPrincipal2);
 
             // 59 minutes later
-            Assert.That(_unit.GetPrincipal(user1), Is.Not.Null);
-            Assert.That(_unit.GetPrincipal(user2), Is.Not.Null);
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(_unit.GetPrincipal(user1), Is.Not.Null);
+                Assert.That(_unit.GetPrincipal(user2), Is.Not.Null);
+            }
 
             // 61 minutes later
-            Assert.That(_unit.GetPrincipal(user1), Is.Null);
-            Assert.That(_unit.GetPrincipal(user2), Is.Not.Null);
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(_unit.GetPrincipal(user1), Is.Null);
+                Assert.That(_unit.GetPrincipal(user2), Is.Not.Null);
+            }
         }
     }
 }

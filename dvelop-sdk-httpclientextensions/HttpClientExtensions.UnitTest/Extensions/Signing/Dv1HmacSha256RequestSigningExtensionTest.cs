@@ -41,13 +41,16 @@ namespace Dvelop.Sdk.HttpClientExtensions.UnitTest.Extensions.Signing
 
             await x.SignWithDv1HmacSha256("Rg9iJXX0Jkun9u4Rp6no8HTNEdHlfX9aZYbFJ9b6YdQ=").ConfigureAwait(false);
 
-            Assert.That(x.Headers.GetValues("x-dv-signature-algorithm").FirstOrDefault(), Is.Not.Null);
-            Assert.That(x.Headers.GetValues("x-dv-signature-algorithm").FirstOrDefault(), Is.EqualTo("DV1-HMAC-SHA256"));
-            Assert.That(x.Headers.GetValues("x-dv-signature-headers").FirstOrDefault(), Is.Not.Null);
-            Assert.That(x.Headers.GetValues("x-dv-signature-headers").FirstOrDefault(), Is.EqualTo("x-dv-signature-algorithm,x-dv-signature-headers,x-dv-signature-timestamp"));
-            Assert.That(x.Headers.GetValues("x-dv-signature-timestamp").FirstOrDefault(), Is.Not.Null);
-            Assert.That(x.Headers.Authorization?.Scheme, Is.EqualTo("Bearer"));
-            Assert.That(x.Headers.Authorization?.Parameter, Is.Not.Null);
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(x.Headers.GetValues("x-dv-signature-algorithm").FirstOrDefault(), Is.Not.Null);
+                Assert.That(x.Headers.GetValues("x-dv-signature-algorithm").FirstOrDefault(), Is.EqualTo("DV1-HMAC-SHA256"));
+                Assert.That(x.Headers.GetValues("x-dv-signature-headers").FirstOrDefault(), Is.Not.Null);
+                Assert.That(x.Headers.GetValues("x-dv-signature-headers").FirstOrDefault(), Is.EqualTo("x-dv-signature-algorithm,x-dv-signature-headers,x-dv-signature-timestamp"));
+                Assert.That(x.Headers.GetValues("x-dv-signature-timestamp").FirstOrDefault(), Is.Not.Null);
+                Assert.That(x.Headers.Authorization?.Scheme, Is.EqualTo("Bearer"));
+                Assert.That(x.Headers.Authorization?.Parameter, Is.Not.Null);
+            }
         }
 
         [Test]

@@ -249,9 +249,9 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
 
 
             var y = HttpUtility.ParseQueryString(uri.Query);
-            foreach (var s in y.AllKeys)
+            foreach (var key in y.AllKeys)
             {
-                context.Request.QueryString = context.Request.QueryString.Add(s, y[s]);
+                context.Request.QueryString = context.Request.QueryString.Add(key, y[key]);
             }
 
 
@@ -297,12 +297,14 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
                     })
                 .Invoke(context).ConfigureAwait(false);
 
-            Assert.That(context.Response.StatusCode, Is.EqualTo(expectedStatus));
-
-            Assert.That(nextMiddleware.HasBeenInvoked, Is.True, "next middleware should not have been invoked if signature is wrong");
-            foreach (var (key, value) in expectedResponseHeader)
+            using (Assert.EnterMultipleScope())
             {
-                Assert.That(context.Response.Headers[key].ToString(), Is.EqualTo(value).IgnoreCase);
+                Assert.That(context.Response.StatusCode, Is.EqualTo(expectedStatus));
+                Assert.That(nextMiddleware.HasBeenInvoked, Is.True, "next middleware should not have been invoked if signature is wrong");
+                foreach (var (key, value) in expectedResponseHeader)
+                {
+                    Assert.That(context.Response.Headers[key].ToString(), Is.EqualTo(value).IgnoreCase);
+                }
             }
         }
 
