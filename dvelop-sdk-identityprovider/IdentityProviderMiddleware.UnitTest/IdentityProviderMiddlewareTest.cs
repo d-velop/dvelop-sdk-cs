@@ -40,6 +40,12 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
             _fakeMessageHandler = A.Fake<FakeHttpMessageHandler>(o => o.CallsBaseMethods());
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            _fakeMessageHandler.Dispose();
+        }
+
         private static IEnumerable<object[]> GetTestNoAuthSessionIdData()
         {
 

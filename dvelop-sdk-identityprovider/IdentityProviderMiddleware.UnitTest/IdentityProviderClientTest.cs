@@ -21,6 +21,7 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
         public void Setup()
         {
             _fakeHttpMessageHandler = A.Fake<FakeHttpMessageHandler>(o => o.CallsBaseMethods());
+
             A.CallTo(() => _fakeHttpMessageHandler.Send(A<HttpRequestMessage>.Ignored))
                 .Returns(new HttpResponseMessage
                 {
@@ -45,6 +46,12 @@ namespace Dvelop.Sdk.IdentityProviderMiddleware.UnitTest
                 TenantInformationCallback = () => new TenantInformation
                     { SystemBaseUri = "http://localhost/", TenantId = "0" }
             });
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _fakeHttpMessageHandler.Dispose();
         }
 
         [Test]
