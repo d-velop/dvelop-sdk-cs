@@ -12,7 +12,7 @@
 
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.203" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300" PrivateAssets="All" />
         <ProjectReference Include="..\..\dvelop-sdk-base\BaseInterfaces\BaseInterfaces.csproj" />
         <ProjectReference Include="..\..\dvelop-sdk-logging\Logging.Abstractions\Logging.Abstractions.csproj" />
         <ProjectReference Include="..\..\dvelop-sdk-signing\SigningAlgorithms\SigningAlgorithms.csproj" />
