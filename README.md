@@ -25,7 +25,7 @@ The project has alpha status. **So for now expect things to change.**
 
 ## Usage
 
-Include the d.velop sdk packages as dependencies in your .NET 8 project file (`myproject.csproj`) and restore them with `dotnet restore` via commandline or from within your IDE.
+Include the d.velop sdk packages as dependencies in your .NET 10 project file (`myproject.csproj`) and restore them with `dotnet restore` via commandline or from within your IDE.
 
 Example:
 ```xml

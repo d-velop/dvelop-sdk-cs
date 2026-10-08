@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <RootNamespace>Dvelop.Sdk.CloudCenter.Dto</RootNamespace>
         <AssemblyName>Dvelop.Sdk.CloudCenter.Dto</AssemblyName>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
