@@ -20,8 +20,8 @@ namespace Dvelop.Sdk.ApplicationInformation
             get
             {
                 var assemblyInfoVersion = _assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
-                Match version = Regex.Match(assemblyInfoVersion?.InformationalVersion ?? "", @"(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)[\s-]*(?<qualifier>.*)", RegexOptions.None, TimeSpan.FromMinutes(1));
-                string qualifier = version.Groups["qualifier"].Value;
+                var version = Regex.Match(assemblyInfoVersion?.InformationalVersion ?? "", @"(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)[\s-]*(?<qualifier>.*)", RegexOptions.None, TimeSpan.FromMinutes(1));
+                var qualifier = version.Groups["qualifier"].Value;
                 return new SemVer
                 {
                     Major = int.Parse(version.Groups["major"].Value),

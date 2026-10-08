@@ -25,7 +25,7 @@ The project has alpha status. **So for now expect things to change.**
 
 ## Usage
 
-Include the d.velop sdk packages as dependencies in your .NET 8 project file (`myproject.csproj`) and restore them with `dotnet restore` via commandline or from within your IDE.
+Include the d.velop sdk packages as dependencies in your .NET 10 project file (`myproject.csproj`) and restore them with `dotnet restore` via commandline or from within your IDE.
 
 Example:
 ```xml
@@ -87,16 +87,6 @@ Use `ToString("s")` for `Major.Minor.Patch`; the default format additionally app
 ## Contributing
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Build local
-
-You can build a version of this library with following command:
-
-```bash
-dotnet pack -o dist --version-suffix alpha
-```
-
-You will need to have an installed and configured dotnet SDK.
 
 ## Versioning
 

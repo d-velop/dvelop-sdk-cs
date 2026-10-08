@@ -4,9 +4,9 @@ namespace Dvelop.Sdk.ApplicationInformation
 {
     public partial class SemVer
 {
-    public int Major { get; set; } = 0;
-    public int Minor { get; set; } = 0;
-    public int Patch { get; set; } = 0;
+    public int Major { get; set; }
+    public int Minor { get; set; }
+    public int Patch { get; set; }
     public string Qualifier { get; set; } = string.Empty;
 
 
