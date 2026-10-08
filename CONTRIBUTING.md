@@ -150,3 +150,26 @@ Further paragraphs come after blank lines.
 - Typically a hyphen or asterisk is used for the bullet, followed by a
   single space, with blank lines in between, but conventions vary here
 ```
+
+# Releasing
+
+Releases are published to [nuget.org](https://www.nuget.org/packages/Dvelop.Sdk) by the GitHub Actions workflow
+[`publish.yml`](.github/workflows/publish.yml). Only maintainers with access to the `NUGET_PUSH` secret can release.
+
+1.  Set `<VersionPrefix>` in `Directory.Build.props` to the new `Major.Minor.Patch` version and merge the change to `main`.
+
+2.  Push a tag starting with `v` (e.g. `v0.3.0`) on that commit:
+
+    ```bash
+    git tag v0.3.0
+    git push origin v0.3.0
+    ```
+
+3.  The workflow builds and tests the solution, then packs and pushes all packages to nuget.org
+    as version `<VersionPrefix>.<run number>` (e.g. `0.3.0.57`).
+
+Please note:
+
+*   The version is taken from `VersionPrefix`, **not** from the tag name. Keep both in sync.
+*   Every push to `main` publishes a prerelease (Debug build) as `<VersionPrefix>.<run number>-prerelease`.
+*   `build.yml` builds and tests every push on every branch.
