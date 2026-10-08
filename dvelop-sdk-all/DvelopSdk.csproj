@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackageId>Dvelop.Sdk</PackageId>
 
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <AssemblyName>Dvelop.Sdk</AssemblyName>
     <RootNamespace>Dvelop.Sdk</RootNamespace>
     <Copyright>Copyright (c) 2024</Copyright>
@@ -28,6 +28,7 @@
 
 
   <ItemGroup>
+    <ProjectReference Include="..\dvelop-sdk-application\ApplicationInformation\ApplicationInformation.csproj" />
     <ProjectReference Include="..\dvelop-sdk-base\BaseDtos\BaseDtos.csproj" />
     <ProjectReference Include="..\dvelop-sdk-cloudcenter\CloudCenterDtos\CloudCenterDtos.csproj" />
     <ProjectReference Include="..\dvelop-sdk-config\ConfigDtos\ConfigDtos.csproj" />

@@ -1,10 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <IsPackable>true</IsPackable>
         <TargetFramework>net10.0</TargetFramework>
-        <AssemblyName>Dvelop.Sdk.SigningAlgorithms</AssemblyName>
-        <RootNamespace>Dvelop.Sdk.SigningAlgorithms</RootNamespace>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AssemblyName>Dvelop.Sdk.ApplicationInformation</AssemblyName>
+        <RootNamespace>Dvelop.Sdk.ApplicationInformation</RootNamespace>
+        <IsPackable>true</IsPackable>
         <LangVersion>latestmajor</LangVersion>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <IncludeSymbols>true</IncludeSymbols>
@@ -13,8 +15,10 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.401" PrivateAssets="All" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.12" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.12" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\dvelop-sdk-base\BaseInterfaces\BaseInterfaces.csproj" />
     </ItemGroup>
 
 </Project>

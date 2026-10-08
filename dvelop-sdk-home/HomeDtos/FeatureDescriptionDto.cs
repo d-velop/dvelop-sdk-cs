@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Dvelop.Sdk.Home.Dto
 {
+    [Obsolete("Use Dashboard-App instead")]
     public class FeatureDescriptionDto
     {
         public FeatureDescriptionDto()

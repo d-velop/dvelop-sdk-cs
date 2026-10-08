@@ -1,6 +1,8 @@
-﻿namespace Dvelop.Sdk.Home.Dto
+﻿using System;
+
+namespace Dvelop.Sdk.Home.Dto
 {
-    
+    [Obsolete("Use Dashboard-App instead")]
     public class FeatureDto
     {
         public string Id { get; set; }
