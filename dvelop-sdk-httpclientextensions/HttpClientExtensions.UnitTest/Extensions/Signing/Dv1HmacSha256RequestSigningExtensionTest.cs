@@ -65,7 +65,7 @@ namespace Dvelop.Sdk.HttpClientExtensions.UnitTest.Extensions.Signing
                 Content = new StringContent("{\"type\":\"subscribe\",\"tenantId\":\"id\",\"baseUri\":\"https://someone.d-velop.cloud\"}\n"),
                 RequestUri = new Uri("https://developer.d-velop.cloud/myapp/dvelop-cloud-lifecycle-event")
             };
-            Assert.ThrowsAsync<ArgumentException>(() => x.SignWithDv1HmacSha256(secret));
+            await Assert.ThrowsAsync<ArgumentException>(() => x.SignWithDv1HmacSha256(secret));
         }
 
         [Test]
@@ -77,7 +77,7 @@ namespace Dvelop.Sdk.HttpClientExtensions.UnitTest.Extensions.Signing
                 Content = new StringContent("{\"type\":\"subscribe\",\"tenantId\":\"id\",\"baseUri\":\"https://someone.d-velop.cloud\"}\n"),
                 RequestUri = new Uri("https://developer.d-velop.cloud/myapp/dvelop-cloud-lifecycle-event")
             };
-            Assert.ThrowsAsync<FormatException>(() => x.SignWithDv1HmacSha256("not base 64"));
+            await Assert.ThrowsAsync<FormatException>(() => x.SignWithDv1HmacSha256("not base 64"));
         }
     }
 }
