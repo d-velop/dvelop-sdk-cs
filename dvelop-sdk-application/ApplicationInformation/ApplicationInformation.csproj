@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AssemblyName>Dvelop.Sdk.ApplicationInformation</AssemblyName>
+        <RootNamespace>Dvelop.Sdk.ApplicationInformation</RootNamespace>
+        <IsPackable>true</IsPackable>
+        <LangVersion>latestmajor</LangVersion>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.401" PrivateAssets="All" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\dvelop-sdk-base\BaseInterfaces\BaseInterfaces.csproj" />
+    </ItemGroup>
+
+</Project>

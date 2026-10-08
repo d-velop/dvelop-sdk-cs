@@ -28,6 +28,7 @@
 
 
   <ItemGroup>
+    <ProjectReference Include="..\dvelop-sdk-application\ApplicationInformation\ApplicationInformation.csproj" />
     <ProjectReference Include="..\dvelop-sdk-base\BaseDtos\BaseDtos.csproj" />
     <ProjectReference Include="..\dvelop-sdk-cloudcenter\CloudCenterDtos\CloudCenterDtos.csproj" />
     <ProjectReference Include="..\dvelop-sdk-config\ConfigDtos\ConfigDtos.csproj" />
