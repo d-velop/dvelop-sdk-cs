@@ -7,12 +7,13 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 
 namespace Dvelop.Sdk.TenantMiddleware
 {
     public class TenantMiddleware
     {
-        private readonly  TenantMiddlewareOptions _tenantMiddlewareOptions;
+        private readonly IOptionsMonitor<TenantMiddlewareOptions> _optionsMonitor;
         private readonly RequestDelegate _next;
 
         // ReSharper disable once InconsistentNaming
@@ -22,26 +23,35 @@ namespace Dvelop.Sdk.TenantMiddleware
         // ReSharper disable once InconsistentNaming
         internal const string SIGNATURE_HEADER = "x-dv-sig-1";
 
-        public TenantMiddleware(RequestDelegate next, TenantMiddlewareOptions tenantMiddlewareOptions) 
+        public TenantMiddleware(RequestDelegate next, TenantMiddlewareOptions tenantMiddlewareOptions)
         {
-            if (tenantMiddlewareOptions == null) throw new ArgumentNullException(nameof(tenantMiddlewareOptions));
-            if (tenantMiddlewareOptions.OnTenantIdentified == null)
-                throw new ArgumentNullException(nameof(tenantMiddlewareOptions.OnTenantIdentified));
-            if (tenantMiddlewareOptions.DefaultSystemBaseUri != null &&
-                !Uri.IsWellFormedUriString(tenantMiddlewareOptions.DefaultSystemBaseUri, UriKind.RelativeOrAbsolute))
-                throw new ArgumentException("Is no valid URI", nameof(tenantMiddlewareOptions.DefaultSystemBaseUri));
+            TenantMiddlewareOptionsValidator.ThrowIfInvalid(tenantMiddlewareOptions);
 
-            _tenantMiddlewareOptions = tenantMiddlewareOptions;
+            _optionsMonitor = new StaticOptionsMonitor<TenantMiddlewareOptions>(tenantMiddlewareOptions);
+            _next = next;
+        }
+
+        /// <summary>
+        /// Uses the current value of the monitor for every request, so reloaded options (e.g. a rotated
+        /// signature secret) are used without restart. The options are validated by
+        /// <see cref="TenantMiddlewareOptionsValidator"/> when they are built.
+        /// </summary>
+        public TenantMiddleware(RequestDelegate next, IOptionsMonitor<TenantMiddlewareOptions> tenantMiddlewareOptionsMonitor)
+        {
+            _optionsMonitor = tenantMiddlewareOptionsMonitor ?? throw new ArgumentNullException(nameof(tenantMiddlewareOptionsMonitor));
             _next = next;
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
+            // Read CurrentValue only once per request, so a reload cannot mix old and new values within one request.
+            var tenantMiddlewareOptions = _optionsMonitor.CurrentValue;
+
             var systemBaseUriFromHeader = context.Request.Headers[SYSTEM_BASE_URI_HEADER];
             var tenantIdFromHeader = context.Request.Headers[TENANT_ID_HEADER];
             var base64Signature = context.Request.Headers[SIGNATURE_HEADER];
 
-            var status = Invoke(_tenantMiddlewareOptions, systemBaseUriFromHeader, tenantIdFromHeader, base64Signature);
+            var status = Invoke(tenantMiddlewareOptions, systemBaseUriFromHeader, tenantIdFromHeader, base64Signature);
             if (status != 0)
             {
                 context.Response.StatusCode = (int)status;

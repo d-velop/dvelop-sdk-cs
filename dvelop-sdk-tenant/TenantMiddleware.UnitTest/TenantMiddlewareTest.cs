@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using NUnit.Framework;
 
@@ -30,7 +31,7 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         [Test, UnitUnderTest(typeof(TenantMiddleware))]
         public void TenantMiddlewareOptionsIsNull_ShouldThrowException()
         {
-            Action useMiddleware = () => new TenantMiddleware(A.Fake<RequestDelegate>(), null);
+            Action useMiddleware = () => new TenantMiddleware(A.Fake<RequestDelegate>(), (TenantMiddlewareOptions)null);
             var ex = Assert.Throws<ArgumentNullException>(() => useMiddleware());
             Assert.That(ex.Message, Does.Contain("tenantMiddlewareOptions"));
         }
@@ -723,6 +724,84 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                 Assert.That(onTenantIdentifiedHasBeenInvoked, Is.False, "onTenantIdentified should not have been invoked if signature is wrong");
                 Assert.That(nextMiddleware.HasBeenInvoked, Is.False, "next middleware should not have been invoked if signature is wrong");
             }
+        }
+
+        [Test, UnitUnderTest(typeof(TenantMiddleware))]
+        public void OptionsMonitorIsNull_ShouldThrowException()
+        {
+            Action useMiddleware = () => new TenantMiddleware(A.Fake<RequestDelegate>(), (IOptionsMonitor<TenantMiddlewareOptions>)null);
+            var ex = Assert.Throws<ArgumentNullException>(() => useMiddleware());
+            Assert.That(ex.Message, Does.Contain("tenantMiddlewareOptionsMonitor"));
+        }
+
+        [Test, UnitUnderTest(typeof(TenantMiddleware))]
+        public async Task OptionsMonitorWithRotatedSignatureKey_ShouldUseCurrentKey()
+        {
+            const string systemBaseUriFromHeader = "https://sample.mydomain.de";
+            var rotatedSignatureKey = new byte[]
+            {
+                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
+                29, 30, 31, 32
+            };
+
+            var options = new TenantMiddlewareOptions
+            {
+                SignatureSecretKey = _signatureKey,
+                OnTenantIdentified = (_, _) => { }
+            };
+            var monitor = A.Fake<IOptionsMonitor<TenantMiddlewareOptions>>();
+            A.CallTo(() => monitor.CurrentValue).ReturnsLazily(() => options);
+
+            var nextMiddleware = new MiddlewareMock(null);
+            var middleware = new TenantMiddleware(nextMiddleware.InvokeAsync, monitor);
+
+            HttpContext CreateContext(byte[] signingKey)
+            {
+                var context = new DefaultHttpContext();
+                context.Request.Headers.Append(SystemBaseUriHeader, new[] {systemBaseUriFromHeader});
+                context.Request.Headers.Append(SignatureHeader, new[] {GetBase64SignatureFor(systemBaseUriFromHeader, signingKey)});
+                return context;
+            }
+
+            var beforeRotation = CreateContext(_signatureKey);
+            await middleware.InvokeAsync(beforeRotation).ConfigureAwait(false);
+
+            options = new TenantMiddlewareOptions
+            {
+                SignatureSecretKey = rotatedSignatureKey,
+                OnTenantIdentified = (_, _) => { }
+            };
+
+            var oldKeyAfterRotation = CreateContext(_signatureKey);
+            await middleware.InvokeAsync(oldKeyAfterRotation).ConfigureAwait(false);
+            var newKeyAfterRotation = CreateContext(rotatedSignatureKey);
+            await middleware.InvokeAsync(newKeyAfterRotation).ConfigureAwait(false);
+
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(beforeRotation.Response.StatusCode, Is.EqualTo(200));
+                Assert.That(oldKeyAfterRotation.Response.StatusCode, Is.EqualTo(403));
+                Assert.That(newKeyAfterRotation.Response.StatusCode, Is.EqualTo(200));
+            }
+        }
+
+        [Test, UnitUnderTest(typeof(TenantMiddleware))]
+        public async Task OptionsMonitor_ShouldReadCurrentValueOncePerRequest()
+        {
+            var monitor = A.Fake<IOptionsMonitor<TenantMiddlewareOptions>>();
+            A.CallTo(() => monitor.CurrentValue).Returns(new TenantMiddlewareOptions
+            {
+                DefaultTenantId = DefaultTenantId,
+                DefaultSystemBaseUri = DefaultSystemBaseUri,
+                OnTenantIdentified = (_, _) => { }
+            });
+
+            var middleware = new TenantMiddleware(new MiddlewareMock(null).InvokeAsync, monitor);
+            A.CallTo(() => monitor.CurrentValue).MustNotHaveHappened();
+
+            await middleware.InvokeAsync(new DefaultHttpContext()).ConfigureAwait(false);
+
+            A.CallTo(() => monitor.CurrentValue).MustHaveHappenedOnceExactly();
         }
 
         private string GetBase64SignatureFor(string message, byte[] sigKey)
