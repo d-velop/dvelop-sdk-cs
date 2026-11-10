@@ -153,7 +153,35 @@ app.UseTenantMiddleware(new TenantMiddlewareOptions
 | `IgnoreSignature`                         | Accepts the headers without verifying the signature. **For tests only!**               |
 | `LogCallback`                             | Receives log messages (`Debug`, `Info`, `Error`) of the middleware                     |
 
-`TenantMiddlewareHandler` is a `DelegatingHandler` which applies the same rules to outgoing/in-process `HttpClient` requests, e.g. in integration tests.
+#### Reloadable options
+
+To apply changed options at runtime, e.g. a rotated signature secret, register the options in the DI container. The middleware then reads them via `IOptionsMonitor<TenantMiddlewareOptions>` on every request:
+
+```csharp
+// appsettings.json: "TenantMiddleware": { "SignatureSecretKey": "<base64>", "DefaultSystemBaseUri": "https://my-company.d-velop.cloud" }
+builder.Services.AddTenantMiddleware(o =>
+        o.OnTenantIdentified = (tenantId, systemBaseUri) => { /* ... */ })
+    .Bind(builder.Configuration.GetSection("TenantMiddleware"));
+
+// ...
+app.UseTenantMiddleware();
+```
+
+> **Note on migration:**  
+> When moving to `AddTenantMiddleware` remove your own registration of `TenantMiddlewareOptions`.
+> Otherwise you might get a "constructors are ambiguous" error when DI wants to resolve the middleware.
+
+`AddTenantMiddleware` registers the `TenantMiddlewareOptionsValidator`, and invalid options make the application fail on startup.
+
+- The options are only rebuilt when an `IOptionsChangeTokenSource<TenantMiddlewareOptions>` signals a change. `.Bind(section)` registers one automatically. If you set the values only in lambdas, e.g. `.Configure<IConfiguration>((o, cfg) => ...)`, register one yourself, otherwise the values are never refreshed:
+  ```csharp
+  builder.Services.AddSingleton<IOptionsChangeTokenSource<TenantMiddlewareOptions>>(sp =>
+      new ConfigurationChangeTokenSource<TenantMiddlewareOptions>(sp.GetRequiredService<IConfiguration>()));
+  ```
+- On every rebuild all configure steps run again, so the delegates are recreated, too. They must not rely on being created only once.
+- While rotating the secret, add the old one to `AdditionalSignatureSecretKeys`, so requests signed with it are still accepted.
+
+`TenantMiddlewareHandler` is a `DelegatingHandler` which applies the same rules to outgoing/in-process `HttpClient` requests, e.g. in integration tests. It also has a constructor that takes an `IOptionsMonitor<TenantMiddlewareOptions>`.
 
 ### Dvelop.Sdk.IdentityProvider.Middleware and Dvelop.Sdk.IdentityProvider.Client
 

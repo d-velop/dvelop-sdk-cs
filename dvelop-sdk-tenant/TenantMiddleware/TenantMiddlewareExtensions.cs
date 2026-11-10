@@ -1,5 +1,8 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 
 namespace Dvelop.Sdk.TenantMiddleware
 {
@@ -8,12 +11,46 @@ namespace Dvelop.Sdk.TenantMiddleware
         public static IApplicationBuilder UseTenantMiddleware(this IApplicationBuilder app,
             TenantMiddlewareOptions tenantMiddlewareOptions)
         {
-            if (tenantMiddlewareOptions == null) throw new ArgumentNullException(nameof(tenantMiddlewareOptions));
-            if (tenantMiddlewareOptions.OnTenantIdentified == null) throw new ArgumentNullException(nameof(tenantMiddlewareOptions.OnTenantIdentified));
-            if (tenantMiddlewareOptions.DefaultSystemBaseUri != null && !Uri.IsWellFormedUriString(tenantMiddlewareOptions.DefaultSystemBaseUri, UriKind.RelativeOrAbsolute)) throw new ArgumentException("Is no valid URI", nameof(tenantMiddlewareOptions.DefaultSystemBaseUri));
+            TenantMiddlewareOptionsValidator.ThrowIfInvalid(tenantMiddlewareOptions);
 
             app.UseMiddleware<TenantMiddleware>(tenantMiddlewareOptions);
             return app;
+        }
+
+        /// <summary>
+        /// Uses the <see cref="TenantMiddlewareOptions"/> registered via <see cref="AddTenantMiddleware"/>.
+        /// Changes of the options (e.g. a rotated signature secret) are applied at runtime.
+        /// </summary>
+        public static IApplicationBuilder UseTenantMiddleware(this IApplicationBuilder app)
+        {
+            ArgumentNullException.ThrowIfNull(app);
+
+            var optionsMonitor = app.ApplicationServices.GetRequiredService<IOptionsMonitor<TenantMiddlewareOptions>>();
+            // validate the options now to fail fast on startup
+            TenantMiddlewareOptionsValidator.ThrowIfInvalid(optionsMonitor.CurrentValue);
+            // Pass the monitor explicitly, so ActivatorUtilities does not have to choose between the constructors.
+            app.UseMiddleware<TenantMiddleware>(optionsMonitor);
+            return app;
+        }
+
+        /// <summary>
+        /// Registers <see cref="TenantMiddlewareOptions"/> including validation on startup.
+        /// The returned <see cref="OptionsBuilder{TOptions}"/> can be used for further configuration,
+        /// e.g. <c>.Bind(configuration.GetSection("TenantMiddleware"))</c>.
+        /// </summary>
+        public static OptionsBuilder<TenantMiddlewareOptions> AddTenantMiddleware(this IServiceCollection services,
+            Action<TenantMiddlewareOptions> configure = null)
+        {
+            ArgumentNullException.ThrowIfNull(services);
+
+            services.TryAddEnumerable(ServiceDescriptor
+                .Singleton<IValidateOptions<TenantMiddlewareOptions>, TenantMiddlewareOptionsValidator>());
+
+            var optionsBuilder = services.AddOptions<TenantMiddlewareOptions>();
+            if (configure is not null)
+                optionsBuilder.Configure(configure);
+            optionsBuilder.ValidateOnStart();
+            return optionsBuilder;
         }
     }
 }
