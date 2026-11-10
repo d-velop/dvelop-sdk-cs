@@ -1,41 +1,93 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+# Builds, tests and publishes the NuGet packages to nuget.org using trusted publishing (OIDC, no API key).
+#
+# - push to main:  prerelease  <VersionPrefix>-prerelease.<run_number>
+# - push of v*:    release     version taken from the tag (v1.2.3 -> 1.2.3)
+#
+# nuget.org trusted publishing policy: owner d-velop, repo dvelop-sdk-cs, workflow publish.yml.
+# TODO (needs repo admin): run the publish job in GitHub environments (nuget-prerelease for main,
+# nuget-release with required reviewers for v* tags), add a second policy naming the environment.
+# See https://github.com/d-velop/dvelop-sdk-cs/issues/230
 
 name: "Publish to nuget.org"
 
 on:
   push:
-    branches: 
+    branches:
       - "main"
     tags:
       - "v*"
 
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v7
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v6
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
-      - name: Create Version
-        run: echo "VERSION=$(grep -oPm1 "(?<=<VersionPrefix>)[^<]+" ./Directory.Build.props)" >> $GITHUB_ENV
-      - name: Print Version
-        run: echo ${{ env.VERSION }}
-      - uses: ./.github/workflows/build-action
-      - if: ${{startsWith(github.event.ref, 'refs/tags/v')}}
-        name: Publish Release NuGet
+      - name: Determine version
+        id: version
         run: |
-          dotnet clean
-          dotnet build -c Release /p:Version="${{ env.VERSION }}.${{ github.run_number }}"
-          dotnet pack -c Release /p:Version="${{ env.VERSION }}.${{ github.run_number }}" /p:InformationalVersion="${{ env.VERSION }}+${{github.ref_name}}/${{github.sha}}"
-          dotnet nuget push "**/*.${{ env.VERSION }}.${{ github.run_number }}.nupkg" -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_PUSH}} --skip-duplicate
-      - if: ${{ !startsWith(github.event.ref, 'refs/tags/v') }}
-        name: Publish Prerelease NuGet
-        run: |
-          dotnet clean
-          dotnet build -c Debug /p:Version="${{ env.VERSION }}.${{ github.run_number }}-prerelease"
-          dotnet pack -c Debug /p:Version="${{ env.VERSION }}.${{ github.run_number }}-prerelease" /p:InformationalVersion="${{ env.VERSION }}+${{github.ref_name}}/${{github.sha}}"
-          dotnet nuget push "**/*.${{ env.VERSION }}.${{ github.run_number }}-prerelease.nupkg" -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_PUSH}} --skip-duplicate
+          prefix=$(grep -oPm1 '(?<=<VersionPrefix>)[^<]+' ./Directory.Build.props)
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            version="${GITHUB_REF_NAME#v}"
+            if [[ "$version" != "$prefix"* ]]; then
+              echo "::error::Tag $GITHUB_REF_NAME does not match VersionPrefix $prefix in Directory.Build.props"
+              exit 1
+            fi
+          else
+            version="$prefix-prerelease.$GITHUB_RUN_NUMBER"
+          fi
+          echo "Version: $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Restore
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore -c Release /p:Version="${{ steps.version.outputs.version }}"
+      - name: Test
+        run: dotnet test --no-build -c Release --verbosity normal
+      - name: Pack
+        run: >
+          dotnet pack --no-build -c Release -o dist
+          /p:Version="${{ steps.version.outputs.version }}"
+          /p:InformationalVersion="${{ steps.version.outputs.version }}+${{ github.ref_name }}/${{ github.sha }}"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: packages
+          path: dist/*nupkg
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # request the OIDC token used by NuGet/login
+      contents: read
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: packages
+          path: dist
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+      - name: NuGet login (trusted publishing)
+        id: login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ vars.NUGET_USER }}
+      - name: Push packages
+        run: >
+          dotnet nuget push "dist/*.nupkg"
+          -s https://api.nuget.org/v3/index.json
+          -k "${{ steps.login.outputs.NUGET_API_KEY }}"
+          --skip-duplicate
