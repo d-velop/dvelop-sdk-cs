@@ -3,10 +3,28 @@ updates:
   - package-ecosystem: "nuget"
     directory: "/"
     schedule:
-      interval: daily
-    open-pull-requests-limit: 10
+      interval: weekly
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 3
+    groups:
+      microsoft-extensions:
+        patterns:
+          - "Microsoft.Extensions.*"
+      testing:
+        patterns:
+          - "coverlet.*"
+          - "FakeItEasy"
+          - "Microsoft.NET.Test.Sdk"
+          - "NUnit*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: daily
-    open-pull-requests-limit: 10
+      interval: weekly
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 3
+    groups:
+      actions:
+        patterns:
+          - "*"
