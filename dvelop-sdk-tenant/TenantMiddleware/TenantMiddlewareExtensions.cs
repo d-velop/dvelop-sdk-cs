@@ -26,6 +26,8 @@ namespace Dvelop.Sdk.TenantMiddleware
             ArgumentNullException.ThrowIfNull(app);
 
             var optionsMonitor = app.ApplicationServices.GetRequiredService<IOptionsMonitor<TenantMiddlewareOptions>>();
+            // validate the options now to fail fast on startup
+            TenantMiddlewareOptionsValidator.ThrowIfInvalid(optionsMonitor.CurrentValue);
             // Pass the monitor explicitly, so ActivatorUtilities does not have to choose between the constructors.
             app.UseMiddleware<TenantMiddleware>(optionsMonitor);
             return app;

@@ -81,6 +81,16 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         }
 
         [Test, UnitUnderTest(typeof(TenantMiddlewareExtensions))]
+        public void UseTenantMiddlewareWithOptionsButWithoutAddTenantMiddleware_ShouldThrowOnStartup()
+        {
+            // the options infrastructure is registered (as in every ASP.NET Core host), but AddTenantMiddleware is missing
+            using var provider = new ServiceCollection().AddOptions().BuildServiceProvider();
+
+            var ex = Assert.Throws<ArgumentNullException>(() => new ApplicationBuilder(provider).UseTenantMiddleware());
+            Assert.That(ex.Message, Does.Contain("OnTenantIdentified"));
+        }
+
+        [Test, UnitUnderTest(typeof(TenantMiddlewareExtensions))]
         public async Task UseTenantMiddleware_ShouldUseOptionsFromServiceProvider()
         {
             string identifiedTenantId = null;

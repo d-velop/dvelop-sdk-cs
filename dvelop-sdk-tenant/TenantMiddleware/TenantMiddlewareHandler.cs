@@ -25,6 +25,8 @@ namespace Dvelop.Sdk.TenantMiddleware
         public TenantMiddlewareHandler(IOptionsMonitor<TenantMiddlewareOptions> tenantMiddlewareOptionsMonitor)
         {
             _optionsMonitor = tenantMiddlewareOptionsMonitor ?? throw new ArgumentNullException(nameof(tenantMiddlewareOptionsMonitor));
+            // validate the options now to fail fast on startup and behave like the "legacy" constructor
+            TenantMiddlewareOptionsValidator.ThrowIfInvalid(_optionsMonitor.CurrentValue);
         }
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)

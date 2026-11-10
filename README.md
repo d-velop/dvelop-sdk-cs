@@ -167,6 +167,10 @@ builder.Services.AddTenantMiddleware(o =>
 app.UseTenantMiddleware();
 ```
 
+> **Note on migration:**  
+> When moving to `AddTenantMiddleware` remove your own registration of `TenantMiddlewareOptions`.
+> Otherwise you might get a "constructors are ambiguous" error when DI wants to resolve the middleware.
+
 `AddTenantMiddleware` registers the `TenantMiddlewareOptionsValidator`, and invalid options make the application fail on startup.
 
 - The options are only rebuilt when an `IOptionsChangeTokenSource<TenantMiddlewareOptions>` signals a change. `.Bind(section)` registers one automatically. If you set the values only in lambdas, e.g. `.Configure<IConfiguration>((o, cfg) => ...)`, register one yourself, otherwise the values are never refreshed:

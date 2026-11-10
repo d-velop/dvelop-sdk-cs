@@ -54,6 +54,16 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
         }
 
         [Test, UnitUnderTest(typeof(TenantMiddlewareHandler))]
+        public void OptionsMonitorWithInvalidOptions_ShouldThrowException()
+        {
+            var monitor = A.Fake<IOptionsMonitor<TenantMiddlewareOptions>>();
+            A.CallTo(() => monitor.CurrentValue).Returns(new TenantMiddlewareOptions { OnTenantIdentified = null });
+
+            var ex = Assert.Throws<ArgumentNullException>(() => new TenantMiddlewareHandler(monitor));
+            Assert.That(ex.Message, Does.Contain("OnTenantIdentified"));
+        }
+
+        [Test, UnitUnderTest(typeof(TenantMiddlewareHandler))]
         public async Task OptionsMonitorWithRotatedSignatureKey_ShouldUseCurrentKey()
         {
             const string systemBaseUri = "https://sample.mydomain.de";
@@ -87,7 +97,8 @@ namespace Dvelop.Sdk.TenantMiddleware.UnitTest
                 Assert.That(oldKeyAfterRotation, Is.EqualTo(HttpStatusCode.Forbidden));
                 Assert.That(newKeyAfterRotation, Is.EqualTo(HttpStatusCode.OK));
             }
-            A.CallTo(() => monitor.CurrentValue).MustHaveHappened(3, Times.Exactly);
+            // once for the validation in the constructor, then once per request
+            A.CallTo(() => monitor.CurrentValue).MustHaveHappened(4, Times.Exactly);
         }
 
         private class OkHandler : HttpMessageHandler
